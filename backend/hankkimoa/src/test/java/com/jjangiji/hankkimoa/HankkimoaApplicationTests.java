@@ -9,5 +9,4 @@ class HankkimoaApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

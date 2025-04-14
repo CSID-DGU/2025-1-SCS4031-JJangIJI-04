@@ -25,8 +25,8 @@ public class ExpenseService {
     @Transactional
     public Long createExpense(ExpenseCreateRequest request) {
         // todo 유저 목표 금액여부 확인
-        ExpenseSavingGoalEntity expenseSavingGoalEntity = getExpenseSavingGoalEntity(request.expectSavingGoalId());
-        RestaurantEntity restaurantEntity = getRestaurantEntity(request.restaurantId());
+        ExpenseSavingGoalEntity expenseSavingGoalEntity = readExpenseSavingGoalEntity(request.expectSavingGoalId());
+        RestaurantEntity restaurantEntity = readRestaurantEntity(request.restaurantId());
         Expense expense = request.toExpense();
 
         ExpenseEntity expenseEntity = new ExpenseEntity(expenseSavingGoalEntity, restaurantEntity, expense);
@@ -34,13 +34,13 @@ public class ExpenseService {
         return saved.getId();
     }
 
-    private ExpenseSavingGoalEntity getExpenseSavingGoalEntity(Long id) {
+    private ExpenseSavingGoalEntity readExpenseSavingGoalEntity(Long id) {
         return expenseSavingGoalRepository.findById(id)
                 .orElseThrow(() -> new HankkiMoaException(
                         ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
     }
 
-    private RestaurantEntity getRestaurantEntity(Long id) {
+    private RestaurantEntity readRestaurantEntity(Long id) {
         if (id == null) return null;
 
         return restaurantRepository.findById(id)

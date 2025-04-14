@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.place.repository;
+package com.jjangiji.hankkimoa.restaurant.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

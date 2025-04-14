@@ -46,7 +46,7 @@ public class Expense {
         return expenseDate.getDate();
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating.getValue();
     }
 

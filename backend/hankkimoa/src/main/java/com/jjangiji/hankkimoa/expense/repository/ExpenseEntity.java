@@ -2,7 +2,7 @@ package com.jjangiji.hankkimoa.expense.repository;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
-import com.jjangiji.hankkimoa.place.repository.RestaurantEntity;
+import com.jjangiji.hankkimoa.restaurant.repository.RestaurantEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

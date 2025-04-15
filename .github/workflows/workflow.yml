@@ -1,0 +1,85 @@
+#1. 워크플로 이름
+name: CI/CD
+
+#2. 워크플로 시작 조건
+on:
+  push:
+    branches:
+      -dev-be  # dev-be에 푸시할 때마다, 추후 dev에 머지 시 수정
+      -feat/#6-CICD #테스트 후 삭제
+
+jobs:
+  build:
+    #3. 실행 환경 지정
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    #4. 실행 스텝 지정
+
+    ##JDK setting
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      ## Gradle setting
+      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
+      # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
+      #
+      # - name: Setup Gradle
+      #   uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      #   with:
+      #     gradle-version: '8.9'
+      #
+      # - name: Build with Gradle 8.9
+      #   run: gradle build
+
+      ## gradle build
+      - name: Build with Gradle
+        run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
+
+      ## docker build & push to production
+      - name: Docker build & push to prod
+        if: contains(github.ref, 'main')
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_REPO }}/hankkimoa_back .
+          docker push ${{ secrets.DOCKER_REPO }}/hankkimoa_back
+
+      ## Deployment to AWS EC2
+      - name: Deploy to AWS EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_IP }}
+          port: 22
+          username: ubuntu
+          key: ${{ secrets.AWS_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be
+                docker-compose up -d
+
+  dependency-submission:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'

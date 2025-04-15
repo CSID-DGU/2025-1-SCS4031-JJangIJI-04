@@ -23,19 +23,19 @@ jobs:
 
       ## JDK Setting
       - name: Set up JDK 17
-      - uses: actions/setup-java@v4
-      - with:
-      - java-version: '17'
-      - distribution: 'temurin'
+        uses: actions/setup-java@v4
+        with:
+        java-version: '17'
+        distribution: 'temurin'
 
       ## Gradle setting
       # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
-      - uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
       - name: Gradle Wrapper 실행 권한 추가
-      - run: chmod +x gradlew
+        run: chmod +x gradlew
 
       - name: Write application.yml
         env:
@@ -46,7 +46,7 @@ jobs:
 
       ## gradle build
       - name: Build with Gradle
-      - run: ./gradlew build
+        run: ./gradlew build
 
       ## docker build & push to production
       - name: Docker build & push to prod
@@ -67,7 +67,7 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
             # mews_dev 이미지 기반 컨테이너만 종료 및 삭제
-            docker ps -a —filter "ancestor=${{ secrets.DOCKER_USERNAME }}/hankkimoa_back" -q | xargs -r docker rm -f
+            docker ps -a --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/hankkimoa_back" -q | xargs -r docker rm -f
 
             # mews_dev 이미지 삭제 (실패해도 무시)
             docker rmi ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back || true
@@ -76,4 +76,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
 
             # 새로운 컨테이너 실행 (포트나 볼륨 등은 상황에 맞게 수정)
-            docker run -d —name hankkimoa_back -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
+            docker run -d --name hankkimoa_back -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back

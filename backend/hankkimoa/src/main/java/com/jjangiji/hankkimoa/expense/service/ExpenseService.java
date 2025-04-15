@@ -45,4 +45,16 @@ public class ExpenseService {
                 .orElseThrow(() -> new HankkiMoaException(
                         ExceptionCode.RESTAURANT_NOT_FOUND));
     }
+
+    @Transactional
+    public void deleteExpense(Long expenseId) {
+        Expense expense = readExpense(expenseId);
+        expenseRepository.deleteById(expense.getId());
+    }
+
+    private Expense readExpense(Long id) {
+        return expenseRepository.findById(id)
+                .orElseThrow(() -> new HankkiMoaException(
+                        ExceptionCode.EXPENSE_NOT_FOUND));
+    }
 }

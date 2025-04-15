@@ -1,6 +1,8 @@
 package com.jjangiji.hankkimoa.expense.service;
 
 import com.jjangiji.hankkimoa.IntegrationTest;
+import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
+import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
@@ -64,5 +66,28 @@ class ExpenseServiceTest extends IntegrationTest {
 
         // then
         Assertions.assertThat(expenseId).isNotNull();
+    }
+
+    @DisplayName("지출 내역 삭제 성공")
+    @Test
+    void deleteExpense() {
+        // given
+        ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
+                new ExpenseSavingGoal(80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
+        ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
+                "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
+        Long expenseId = expenseService.createExpense(request);
+
+        // when & then
+        Assertions.assertThatCode(() -> expenseService.deleteExpense(expenseId))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("지출 내역 삭제 성공")
+    @Test
+    void failWhenExpenseNotExist() {
+        Assertions.assertThatCode(() -> expenseService.deleteExpense(1L))
+                .isInstanceOf(HankkiMoaException.class)
+                .hasMessage(ExceptionCode.EXPENSE_NOT_FOUND.getMessage());
     }
 }

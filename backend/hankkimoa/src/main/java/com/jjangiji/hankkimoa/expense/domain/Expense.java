@@ -79,19 +79,19 @@ public class Expense extends BaseEntity {
     }
 
     private void validateExpense(Integer expense) {
-        if (expense < EXPENSE_MIN) {
+        if (expense != null && expense < EXPENSE_MIN) {
             throw new HankkiMoaException(ExceptionCode.MONEY_NEGATIVE);
         }
     }
 
     private void validateExpenseDate(LocalDate date) {
-        if (date.isAfter(LocalDate.now())) {
+        if (date != null & date.isAfter(LocalDate.now())) {
             throw new HankkiMoaException(ExceptionCode.EXPENSE_DATE_INVALID);
         }
     }
 
     private void validateRating(Integer rating) {
-        if (rating < RATING_MIN || rating > RATING_MAX) {
+        if (rating != null && (rating < RATING_MIN || rating > RATING_MAX)) {
             throw new HankkiMoaException(ExceptionCode.RATING_INVALID_FORMAT);
         }
     }

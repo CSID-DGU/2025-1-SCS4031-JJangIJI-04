@@ -3,7 +3,7 @@ name: CI
 
 #2. 워크플로 시작 조건
 on:
-  push:
+  pull_request:
     branches:
       - dev
       - dev-be

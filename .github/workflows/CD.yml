@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     #3. 실행 환경 지정
     runs-on: ubuntu-latest
     defaults:

@@ -73,7 +73,7 @@ public class Expense extends BaseEntity {
     }
 
     private void validateMemo(String memo) {
-        if (memo.length() > MEMO_MAX_LENGTH) {
+        if (memo != null && memo.length() > MEMO_MAX_LENGTH) {
             throw new HankkiMoaException(ExceptionCode.MEMO_INVALID_LENGTH);
         }
     }

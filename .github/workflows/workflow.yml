@@ -5,8 +5,8 @@ name: CI/CD
 on:
   push:
     branches:
-      -dev-be  # dev-be에 푸시할 때마다, 추후 dev에 머지 시 수정
-      -feat/#6-CICD #테스트 후 삭제
+      - dev-be  # dev-be에 푸시할 때마다, 추후 dev에 머지 시 수정
+      - feat/#6-CICD #테스트 후 삭제
 
 jobs:
   build:

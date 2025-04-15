@@ -1,10 +1,11 @@
 package com.jjangiji.hankkimoa.expense.domain;
 
-import jakarta.persistence.Column;
+import com.jjangiji.hankkimoa.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class ExpenseSavingGoal {
+public class ExpenseSavingGoal extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +23,13 @@ public class ExpenseSavingGoal {
 
     // todo userEntity 매핑
 
-    @Column(nullable = false)
+    @NotNull(message = "예산이 NULL일 수 없습니다.")
     private Integer budget;
 
-    @Column(nullable = false)
+    @NotNull(message = "시작일이 NULL일 수 없습니다.")
     private LocalDate startDate;
 
-    @Column(nullable = false)
+    @NotNull(message = "종료일이 NULL일 수 없습니다.")
     private LocalDate endDate;
 
     public ExpenseSavingGoal(Long id, Integer budget, LocalDate startDate, LocalDate endDate) {

@@ -1,13 +1,13 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
-import jakarta.persistence.Column;
+import com.jjangiji.hankkimoa.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -15,7 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Restaurant {
+public class Restaurant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Restaurant {
 
     // todo 다른 필드 매핑
 
-    @Column(nullable = false)
+    @NotNull(message = "이름이 NULL일 수 없습니다.")
     private String name;
 
     public Restaurant(Long id, String name) {

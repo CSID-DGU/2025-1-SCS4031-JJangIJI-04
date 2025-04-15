@@ -4,6 +4,7 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.ExceptionResponse;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -43,16 +44,36 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException exception,
             HttpServletRequest request) {
         FieldError fieldError = exception.getFieldError();
-        String errorMessage = ExceptionCode.INVALID_PARAMETER.getMessage();
+        String exceptionMessage = ExceptionCode.INVALID_PARAMETER.getMessage();
         if (fieldError != null) {
-            errorMessage = fieldError.getDefaultMessage();
+            exceptionMessage = fieldError.getDefaultMessage();
         }
 
         ExceptionResponse response = new ExceptionResponse(
                 request.getMethod(),
                 request.getRequestURI(),
                 ExceptionCode.INVALID_PARAMETER.name(),
-                errorMessage);
+                exceptionMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleConstraintViolation(
+            ConstraintViolationException exception,
+            HttpServletRequest request) {
+        String exceptionMessage = exception.getConstraintViolations()
+                .stream()
+                .findFirst()
+                .get().getMessage();
+
+        ExceptionResponse response = new ExceptionResponse(
+                request.getMethod(),
+                request.getRequestURI(),
+                ExceptionCode.INVALID_PARAMETER.name(),
+                exceptionMessage
+        );
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }

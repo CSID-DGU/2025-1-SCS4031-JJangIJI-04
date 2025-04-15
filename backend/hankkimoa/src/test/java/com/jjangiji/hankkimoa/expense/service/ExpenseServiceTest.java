@@ -3,6 +3,7 @@ package com.jjangiji.hankkimoa.expense.service;
 import com.jjangiji.hankkimoa.IntegrationTest;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
+import java.util.Optional;
 
 class ExpenseServiceTest extends IntegrationTest {
 
@@ -78,9 +80,12 @@ class ExpenseServiceTest extends IntegrationTest {
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
         Long expenseId = expenseService.createExpense(request);
 
+        // when
+        expenseService.deleteExpense(expenseId);
+        Optional<Expense> expense = expenseRepository.findById(expenseId);
+
         // when & then
-        Assertions.assertThatCode(() -> expenseService.deleteExpense(expenseId))
-                .doesNotThrowAnyException();
+        Assertions.assertThat(expense).isEmpty();
     }
 
     @DisplayName("지출 내역 삭제 성공")

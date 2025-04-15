@@ -12,6 +12,9 @@ jobs:
   build:
     #3. 실행 환경 지정
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/hankkimoa  # 실제 Gradle 빌드가 실행되는 경로로 통일
     permissions:
       contents: read
     #4. 실행 스텝 지정
@@ -32,23 +35,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
-
-      # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-      # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-      #
-      # - name: Setup Gradle
-      #   uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-      #   with:
-      #     gradle-version: '8.9'
-      #
-      # - name: Build with Gradle 8.9
-      #   run: gradle build
+      - name: Gradle Wrapper 실행 권한 추가
+        run: chmod +x gradlew
 
       ## gradle build
       - name: Build with Gradle
-        working-directory: ./backend/hankkimoa
         run: ./gradlew build -x test -x ktlintCheck -x ktlintTestSourceSetCheck -x ktlintMainSourceSetCheck -x ktlintKotlinScriptCheck
 
       ## docker build & push to production
@@ -61,6 +52,7 @@ jobs:
 
       ## Deployment to AWS EC2
       - name: Deploy to AWS EC2
+        if: contains(github.ref, 'main')  # main 브랜치일 때만 배포하도록 조건 추가
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AWS_IP }}
@@ -68,12 +60,14 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USER_NAME }}/${{ secrets.DOCKER_IMAGE_NAME }}-be
-                docker-compose up -d
+            docker pull ${{ secrets.DOCKER_REPO }}/hankkimoa_back  # 변수명 일치시킴
+            docker-compose up -d
 
   dependency-submission:
-
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/hankkimoa  # 작업 디렉토리 추가
     permissions:
       contents: write
 
@@ -84,3 +78,4 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+

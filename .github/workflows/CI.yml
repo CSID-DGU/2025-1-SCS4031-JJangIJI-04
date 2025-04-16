@@ -8,7 +8,11 @@ on:
       - dev
       - dev-be
       - main
-      - feat/#6-CICD
+  push:
+    paths:
+      - 'backend/**'
+    branches:
+      - feat/#6-CICD    #테스트
 
 jobs:
   build:

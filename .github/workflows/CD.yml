@@ -4,8 +4,13 @@ on:
   pull_request:
     paths:
       - 'backend/**'
-    branches: [ "dev" , "main", "feat/#6-CICD"]
+    branches: [ "dev" , "main"]
     types: [closed]
+  push:
+    paths:
+      - 'backend/**'
+    branches:
+      - feat/#6-CICD    #테스트
 
 jobs:
   build:

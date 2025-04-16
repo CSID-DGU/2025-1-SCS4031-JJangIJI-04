@@ -11,6 +11,7 @@ on:
   push:
     paths:
       - 'backend/**'
+      - '.github/workflows/**'
     branches:
       - feat/#6-CICD    #테스트
 

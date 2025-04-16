@@ -1,19 +1,18 @@
-name: CI
+name: backend-ci
 
 on:
   pull_request:
-    branches:
-      - dev
-      - dev-be
-      - main
-      - feat/#6-CICD
+    paths:
+      - 'backend/**'
+      - '.github/workflows/**'
+    branches: [ "dev" , "main", "dev-be"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend/hankkimoa  # 실제 Gradle 빌드가 실행되는 경로로 통일
+        working-directory: ./backend/hankkimoa
     permissions:
       contents: read
 

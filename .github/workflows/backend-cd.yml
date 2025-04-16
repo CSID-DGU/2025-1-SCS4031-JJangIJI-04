@@ -1,9 +1,16 @@
-name: CD
+name: backend-cd
 
 on:
+  workflow_run:
+    workflows: [ "backend-ci" ]
+    types: [completed]
+    conclusion: success
   pull_request:
-    branches: [ "dev" , "main", "feat/#6-CICD"]
     types: [closed]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/**'
+    branches: [ "dev" , "main" ]
 
 jobs:
   build:
@@ -11,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend/hankkimoa  # 실제 Gradle 빌드가 실행되는 경로로 통일
+        working-directory: ./backend/hankkimoa
     permissions:
       contents: read
 
@@ -21,14 +28,18 @@ jobs:
       - name: JDK 17 세팅
         uses: actions/setup-java@v4
         with:
-        java-version: '17'
-        distribution: 'temurin'
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Gradle 세팅
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew
+
+
+      - name: application_yml 작성을 위한 디렉토리 생성        #임시 디렉토리 생성
+        run: mkdir -p backend/hankkimoa/src/main/resources
 
       - name: application.yml 작성
         env:
@@ -38,7 +49,7 @@ jobs:
           echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
 
       - name: 도커 빌드 및 푸쉬
         run: |

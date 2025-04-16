@@ -2,7 +2,7 @@ name: CD
 
 on:
   workflow_run:
-    workflows: [ "CI" ]  # CI 워크플로우 이름과 일치해야 함
+    workflows: [ "CI" ]
     types:
       - completed
     paths:
@@ -18,20 +18,14 @@ on:
       - 'backend/**'
     branches: [ "dev" , "main"]
     types: [closed]
-  push:
-    paths:
-      - 'backend/**'
-      - '.github/workflows/**'
-    branches:
-      - feat/#6-CICD    #테스트
 
 jobs:
   build:
-    #if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend/hankkimoa  # 실제 Gradle 빌드가 실행되는 경로로 통일
+        working-directory: ./backend/hankkimoa
     permissions:
       contents: read
 
@@ -50,7 +44,7 @@ jobs:
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew
 
-      - name: application_yml 작성을 위한 디렉토리 생성 #아래 테스트를 위해 디렉토리 생성
+      - name: application_yml 작성을 위한 디렉토리 생성        #임시 디렉토리 생성
         run: mkdir -p backend/hankkimoa/src/main/resources
 
       - name: application.yml 작성

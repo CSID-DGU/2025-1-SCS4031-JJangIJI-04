@@ -2,20 +2,15 @@ name: CD
 
 on:
   workflow_run:
-    workflows: [ "CI" ]
-    types:
-      - completed
-    paths:
-      - 'backend/**'
-      - '.github/workflows/**'
-    branches: [ "dev" , "main"]
+    workflows: [ "backend-ci" ]
+    types: [completed]
     conclusion: success
   pull_request:
+    types: [closed]
     paths:
       - 'backend/**'
       - '.github/workflows/**'
-    branches: [ "dev" , "main"]
-    types: [closed]
+    branches: [ "dev" , "main" ]
 
 jobs:
   build:
@@ -50,7 +45,7 @@ jobs:
           APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
 
         run: |
-          echo "${APPLICATION_YML}" > backend/hankkimoa/srmain/resourcc/es/application.yml
+          echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build

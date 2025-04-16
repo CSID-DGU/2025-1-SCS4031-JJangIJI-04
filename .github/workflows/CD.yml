@@ -55,7 +55,7 @@ jobs:
           echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
 
       - name: 도커 빌드 및 푸쉬
         run: |

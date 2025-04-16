@@ -1,6 +1,18 @@
 name: CD
 
 on:
+  workflow_run:
+    workflows: [ "CI" ]  # CI 워크플로우 이름과 일치해야 함
+    types:
+      - completed
+    paths:
+      - 'backend/**'
+      - '.github/workflows/**'
+    branches:
+      - feat/#6-CICD
+      - dev
+      - main
+    conclusion: success
   pull_request:
     paths:
       - 'backend/**'
@@ -37,6 +49,9 @@ jobs:
 
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew
+
+      - name: application_yml 작성을 위한 디렉토리 생성 #아래 테스트를 위해 디렉토리 생성
+        run: mkdir -p backend/hankkimoa/src/main/resources
 
       - name: application.yml 작성
         env:

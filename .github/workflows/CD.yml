@@ -8,10 +8,7 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/**'
-    branches:
-      - feat/#6-CICD
-      - dev
-      - main
+    branches: [ "dev" , "main"]
     conclusion: success
   pull_request:
     paths:

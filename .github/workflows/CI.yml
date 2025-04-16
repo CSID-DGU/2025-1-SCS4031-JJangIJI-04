@@ -5,10 +5,7 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/**'
-    branches:
-      - dev
-      - dev-be
-      - main
+    branches: [ "dev" , "main", "dev-be"]
 
 jobs:
   build:

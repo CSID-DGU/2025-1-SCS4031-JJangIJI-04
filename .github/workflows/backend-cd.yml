@@ -37,6 +37,7 @@ jobs:
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew
 
+
       - name: application_yml 작성을 위한 디렉토리 생성        #임시 디렉토리 생성
         run: mkdir -p backend/hankkimoa/src/main/resources
 

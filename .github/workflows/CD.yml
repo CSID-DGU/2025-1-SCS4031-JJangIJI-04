@@ -13,6 +13,7 @@ on:
   pull_request:
     paths:
       - 'backend/**'
+      - '.github/workflows/**'
     branches: [ "dev" , "main"]
     types: [closed]
 
@@ -49,7 +50,7 @@ jobs:
           APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
 
         run: |
-          echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
+          echo "${APPLICATION_YML}" > backend/hankkimoa/srmain/resourcc/es/application.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build

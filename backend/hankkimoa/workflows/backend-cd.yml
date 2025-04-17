@@ -10,6 +10,8 @@ on:
     paths:
       - 'backend/**'
     branches: [ "dev" , "main" ]
+  push:
+    branches: ["feat/#6-backend-cicd"]
 
 jobs:
   build:

@@ -1,19 +1,17 @@
 name: backend-cd
 
 on:
-  workflow_run:
-    workflows: [ "backend-ci" ]
-    types: [completed]
-    conclusion: success
   pull_request:
     types: [closed]
     paths:
       - 'backend/**'
     branches: [ "dev" , "main" ]
+  push:
+    branches: ["feat/#6-backend-cicd"]
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
+    #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -65,11 +63,7 @@ jobs:
           script: |
             docker logout
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
             docker ps -a --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/hankkimoa_back" -q | xargs -r docker rm -f
-
             docker rmi ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back || true
-
             docker pull ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
-
             docker run -d --name hankkimoa_back -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back

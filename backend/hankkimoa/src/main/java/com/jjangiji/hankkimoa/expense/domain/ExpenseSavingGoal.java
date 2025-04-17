@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -43,5 +44,13 @@ public class ExpenseSavingGoal extends BaseEntity {
         this.budget = budget;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public int calculateRemainingBudget(List<Expense> expenses) {
+        int expenseSum = expenses
+                .stream()
+                .mapToInt(Expense::getExpense).sum();
+
+        return budget - expenseSum;
     }
 }

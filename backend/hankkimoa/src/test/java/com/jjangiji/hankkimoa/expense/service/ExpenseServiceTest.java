@@ -1,6 +1,6 @@
 package com.jjangiji.hankkimoa.expense.service;
 
-import com.jjangiji.hankkimoa.IntegrationTest;
+import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.Expense;

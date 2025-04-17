@@ -1,10 +1,6 @@
 name: backend-cd
 
 on:
-  workflow_run:
-    workflows: [ "backend-ci" ]
-    types: [completed]
-    conclusion: success
   pull_request:
     types: [closed]
     paths:

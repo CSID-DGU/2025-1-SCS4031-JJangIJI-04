@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa;
+package com.jjangiji.hankkimoa.config;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;

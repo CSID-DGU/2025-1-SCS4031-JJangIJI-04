@@ -4,7 +4,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 @Getter
-public enum ExpenseStatusMessage {
+public enum ExpenseStatus {
 
     SUCCESS("잘 절약하고 있어요! 앞으로도 화이팅!", 60, 100),
     ENCOURAGE("조금 만 더 노력해볼까요? 오늘도 힘내세요!", 30, 60),
@@ -15,13 +15,13 @@ public enum ExpenseStatusMessage {
     private final int minPercentage;
     private final int maxPercentage;
 
-    ExpenseStatusMessage(String message, int minPercentage, int maxPercentage) {
+    ExpenseStatus(String message, int minPercentage, int maxPercentage) {
         this.message = message;
         this.minPercentage = minPercentage;
         this.maxPercentage = maxPercentage;
     }
 
-    public static ExpenseStatusMessage convert(int budget, int expense) {
+    public static ExpenseStatus convert(int budget, int expense) {
         int percentageLeft = calculatePercentage(budget, expense);
         return Arrays.stream(values())
                 .filter(status -> status.minPercentage < percentageLeft && percentageLeft <= status.maxPercentage)

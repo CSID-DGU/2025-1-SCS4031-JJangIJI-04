@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -52,5 +53,9 @@ public class ExpenseSavingGoal extends BaseEntity {
                 .mapToInt(Expense::getExpense).sum();
 
         return budget - expenseSum;
+    }
+
+    public int getDays() {
+        return Period.between(startDate, endDate).plusDays(1).getDays();
     }
 }

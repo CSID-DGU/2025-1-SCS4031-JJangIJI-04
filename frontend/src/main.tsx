@@ -1,10 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@/app/styles'; // 전역 스타일 import
-import { App } from '@/app';
+import { GlobalStyle } from '@/app/styles/global';
+import { App } from '@/app/App';
 
-createRoot(document.getElementById('root')!).render(
+const root = createRoot(document.getElementById('root')!);
+root.render(
   <StrictMode>
+    <GlobalStyle />
     <App />
   </StrictMode>
 );

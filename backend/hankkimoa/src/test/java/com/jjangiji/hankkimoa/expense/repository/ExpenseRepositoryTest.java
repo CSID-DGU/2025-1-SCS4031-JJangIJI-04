@@ -16,6 +16,7 @@ import java.util.List;
 class ExpenseRepositoryTest extends RepositoryTest {
 
     private ExpenseSavingGoal expenseSavingGoal;
+    private ExpenseSavingGoal expenseSavingGoal2;
     private Restaurant restaurant;
 
     @Autowired
@@ -28,6 +29,7 @@ class ExpenseRepositoryTest extends RepositoryTest {
     @BeforeEach
     void setUp() {
         expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
+        expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(100_000, LocalDate.now(), LocalDate.now().plusDays(7)));
         restaurant  = restaurantRepository.save(new Restaurant("한끼식당"));
     }
 
@@ -72,5 +74,46 @@ class ExpenseRepositoryTest extends RepositoryTest {
         // then
         Assertions.assertThat(expenses.get(0).getCreatedAt())
                 .isAfter(expenses.get(1).getCreatedAt());
+    }
+
+    @DisplayName("지출 절약 목표 금액 내의 지출 전부 조회")
+    @Test
+    void findAllByExpenseSavingGoalOrder() {
+        // given
+        LocalDate date = LocalDate.of(2025, 4, 17);
+        Expense expense1 = new Expense(expenseSavingGoal, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", date, 5);
+        Expense expense2 = new Expense(expenseSavingGoal2, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", date, 5);
+        expenseRepository.saveAll(List.of(expense1, expense2));
+
+        // when
+        List<Expense> result = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+
+        // then
+        Assertions.assertThat(result).containsOnly(expense1);
+    }
+
+    @DisplayName("지출 절약 목표 금액 내의 지출 전부 조회 : 오름차순")
+    @Test
+    void findAllByExpenseSavingGoalOrderByExpenseDateAsc() {
+        // given
+        LocalDate date = LocalDate.of(2025, 4, 17);
+        LocalDate dateBefore = date.minusDays(1);
+                Expense expense1 = new Expense(expenseSavingGoal, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", dateBefore, 5);
+        Expense expense2 = new Expense(expenseSavingGoal, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", date, 5);
+        expenseRepository.saveAll(List.of(expense1, expense2));
+
+        // when
+        List<Expense> result = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+
+        // then
+        Assertions.assertThat(result).containsExactly(expense1, expense2);
     }
 }

@@ -1,24 +1,9 @@
-import { useState } from 'react';
+import { Layout } from '@/shared/layouts/Layout.tsx';
 
 export const App = () => {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <main className="app-content">
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            test count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </main>
-    </>
+    <Layout>
+      <div /> {/* 나중에 라우터 + a 추가 예정 */}
+    </Layout>
   );
 };

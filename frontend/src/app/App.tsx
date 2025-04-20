@@ -1,9 +1,6 @@
-import { Layout } from '@/shared/layouts/Layout.tsx';
+import { router } from '@/app/routes/index.tsx';
+import { RouterProvider } from 'react-router-dom';
 
 export const App = () => {
-  return (
-    <Layout>
-      <div /> {/* 나중에 라우터 + a 추가 예정 */}
-    </Layout>
-  );
+  return <RouterProvider router={router} />;
 };

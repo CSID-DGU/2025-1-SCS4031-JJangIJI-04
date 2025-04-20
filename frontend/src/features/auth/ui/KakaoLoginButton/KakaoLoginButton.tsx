@@ -4,7 +4,7 @@ export const KakaoLoginButton = () => {
   return (
     <ButtonWrapper>
       <ButtonImage
-        src="/public/images/kakao-login-large.png"
+        src="/public/images/kakao-login-button.png"
         alt="카카오 계정으로 로그인"
       />
     </ButtonWrapper>

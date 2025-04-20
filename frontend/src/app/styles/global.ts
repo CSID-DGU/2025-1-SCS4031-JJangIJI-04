@@ -23,7 +23,7 @@ export const GlobalStyle = createGlobalStyle`
     --font-size-sm: 14px;
     --font-size-md: 16px;
     --font-size-lg: 18px;
-    --font-size-xl: 20px;
+    --font-size-xl: 50px;
   }
 
   * {

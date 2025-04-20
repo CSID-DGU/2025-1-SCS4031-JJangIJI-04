@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { Outlet } from 'react-router-dom';
 
 interface LayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
   hasFooter?: boolean; // footer 유무 옵션
 }
 
@@ -10,10 +11,12 @@ interface MainProps {
   $hasFooter: boolean;
 }
 
-export const Layout = ({ children, hasFooter = true }: LayoutProps) => {
+export const Layout = ({ hasFooter = true }: LayoutProps) => {
   return (
     <Container>
-      <Main $hasFooter={hasFooter}>{children}</Main>
+      <Main $hasFooter={hasFooter}>
+        <Outlet />
+      </Main>
       {hasFooter && (
         <Footer>
           <nav>{/* 추후 footer import */}</nav>

@@ -1,10 +1,8 @@
 // app/routes/index.tsx
 import { createBrowserRouter } from 'react-router-dom';
+import { LandingPage } from '@/pages/Landing/LandingPage';
 //import { Layout } from '@/shared/layouts/Layout';
 //import { PrivateRoute } from '@/app/routes/PrivateRoute';
-
-// pages로 이동시킬 것
-const LandingPage = () => <div>Landing Page</div>;
 
 export const router = createBrowserRouter([
   // Public Routes

@@ -11,7 +11,7 @@ export const LandingPage = () => {
 
       <MiddleSection>
         <LogoImage>
-          <img src="/public/icons/logo.png" alt="한끼모아 로고" />
+          <img src="/icons/logo.png" alt="한끼모아 로고" />
         </LogoImage>
       </MiddleSection>
 

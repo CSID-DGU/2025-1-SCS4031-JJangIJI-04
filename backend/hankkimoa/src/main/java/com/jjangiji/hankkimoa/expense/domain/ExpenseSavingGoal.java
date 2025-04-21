@@ -48,11 +48,17 @@ public class ExpenseSavingGoal extends BaseEntity {
     }
 
     public int calculateRemainingBudget(List<Expense> expenses) {
-        int expenseSum = expenses
-                .stream()
-                .mapToInt(Expense::getExpense).sum();
-
+        int expenseSum = calculateUsedExpenses(expenses);
         return budget - expenseSum;
+    }
+
+    public int calculateUsedExpenses(List<Expense> expenses) {
+        return expenses.stream()
+                .mapToInt(Expense::getExpense).sum();
+    }
+
+    public int calculatePercentage(List<Expense> expenses) {
+        return Math.round(((budget - calculateUsedExpenses(expenses)) * 100 / budget));
     }
 
     public int getDays() {

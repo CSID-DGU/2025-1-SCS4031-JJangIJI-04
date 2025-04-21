@@ -6,30 +6,24 @@ import java.util.Arrays;
 @Getter
 public enum ExpenseStatus {
 
-    SUCCESS("잘 절약하고 있어요! 앞으로도 화이팅!", 60, 100),
-    ENCOURAGE("조금 만 더 노력해볼까요? 오늘도 힘내세요!", 30, 60),
-    WARNING("절약 금액이 얼마 남지 않았어요! 오늘은 가성비 맛집을 찾아보는게 어떨까요?", 0, 30),
-    FAIL("이번 주는 달성에 실패했습니다. 다음 주에는 성공하기를 바래요!", -1, 0);
+    GOOD(1000, Integer.MAX_VALUE),
+    NOT_BAD(-1000, 1000),
+    BAD(Integer.MIN_VALUE, -1000),
+    ;
 
-    private final String message;
-    private final int minPercentage;
-    private final int maxPercentage;
+    private final int minDifference;
+    private final int maxDifference;
 
-    ExpenseStatus(String message, int minPercentage, int maxPercentage) {
-        this.message = message;
-        this.minPercentage = minPercentage;
-        this.maxPercentage = maxPercentage;
+    ExpenseStatus(int minDifference, int maxDifference) {
+        this.minDifference = minDifference;
+        this.maxDifference = maxDifference;
     }
 
-    public static ExpenseStatus convert(int budget, int expense) {
-        int percentageLeft = calculatePercentage(budget, expense);
+    public static ExpenseStatus convert(ExpenseSavingGoal expenseSavingGoal, ExpenseByDate expenseByDate) {
+        int budgetDifference = (expenseSavingGoal.getBudget() / expenseSavingGoal.getDays()) - expenseByDate.calculateTotalExpense();
         return Arrays.stream(values())
-                .filter(status -> status.minPercentage < percentageLeft && percentageLeft <= status.maxPercentage)
+                .filter(status -> status.minDifference < budgetDifference && budgetDifference <= status.maxDifference)
                 .findFirst()
-                .orElse(FAIL);
-    }
-
-    public static int calculatePercentage(int budget, int expense) {
-        return Math.round(((budget - expense) * 100 / budget));
+                .orElse(BAD);
     }
 }

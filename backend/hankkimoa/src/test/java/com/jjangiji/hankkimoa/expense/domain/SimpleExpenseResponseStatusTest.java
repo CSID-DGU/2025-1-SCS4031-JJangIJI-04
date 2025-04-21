@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 
-class ExpenseDailyStatusTest {
+class SimpleExpenseResponseStatusTest {
 
     private final LocalDate startDate = LocalDate.of(2025, 4, 1);
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L,
@@ -22,9 +22,9 @@ class ExpenseDailyStatusTest {
         // 예산: 10000원, 기간: 10일 → 하루 예산: 10000
         Expense expense = new Expense(expenseSavingGoal, restaurant, "은화수식당", "돈가스", 8500, "냠냠굿", startDate, 5);
         ExpenseByDate expenseByDate = new ExpenseByDate(startDate, List.of(expense));
-        ExpenseDailyStatus status = ExpenseDailyStatus.convert(expenseSavingGoal, expenseByDate);
+        ExpenseStatus status = ExpenseStatus.convert(expenseSavingGoal, expenseByDate);
 
-        Assertions.assertThat(status).isEqualTo(ExpenseDailyStatus.GOOD);
+        Assertions.assertThat(status).isEqualTo(ExpenseStatus.GOOD);
     }
 
     @DisplayName("데일리 지출 상태 변환 성공 : BAD")
@@ -32,8 +32,8 @@ class ExpenseDailyStatusTest {
     void convertBAD() {
         Expense expense = new Expense(expenseSavingGoal, restaurant, "은화수식당", "돈가스", 11_000, "냠냠굿", startDate, 5);
         ExpenseByDate expenseByDate = new ExpenseByDate(startDate, List.of(expense));
-        ExpenseDailyStatus status = ExpenseDailyStatus.convert(expenseSavingGoal, expenseByDate);
+        ExpenseStatus status = ExpenseStatus.convert(expenseSavingGoal, expenseByDate);
 
-        Assertions.assertThat(status).isEqualTo(ExpenseDailyStatus.BAD);
+        Assertions.assertThat(status).isEqualTo(ExpenseStatus.BAD);
     }
 }

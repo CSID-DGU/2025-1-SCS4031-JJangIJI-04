@@ -12,6 +12,6 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     database: h2
     database-platform: org.hibernate.dialect.H2Dialect

@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -43,5 +45,23 @@ public class ExpenseSavingGoal extends BaseEntity {
         this.budget = budget;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public int calculateRemainingBudget(List<Expense> expenses) {
+        int expenseSum = calculateUsedExpenses(expenses);
+        return budget - expenseSum;
+    }
+
+    public int calculateUsedExpenses(List<Expense> expenses) {
+        return expenses.stream()
+                .mapToInt(Expense::getExpense).sum();
+    }
+
+    public int calculatePercentage(List<Expense> expenses) {
+        return Math.round(((budget - calculateUsedExpenses(expenses)) * 100 / budget));
+    }
+
+    public int getDays() {
+        return Period.between(startDate, endDate).plusDays(1).getDays();
     }
 }

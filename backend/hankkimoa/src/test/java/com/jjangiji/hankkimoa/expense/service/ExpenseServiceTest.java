@@ -1,12 +1,13 @@
 package com.jjangiji.hankkimoa.expense.service;
 
-import com.jjangiji.hankkimoa.IntegrationTest;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
+import com.jjangiji.hankkimoa.expense.service.dto.DateExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 class ExpenseServiceTest extends IntegrationTest {
@@ -68,6 +70,45 @@ class ExpenseServiceTest extends IntegrationTest {
 
         // then
         Assertions.assertThat(expenseId).isNotNull();
+    }
+
+    @DisplayName("데일리 지출 내역 조회 성공")
+    @Test
+    void readDateExpenses() {
+        // given
+        LocalDate now = LocalDate.now();
+        ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
+                new ExpenseSavingGoal(70_000, now, LocalDate.now().plusDays(7)));
+        Expense expense1 = new Expense(expenseSavingGoal, null, "학식", "라면", 5_000, "오늘은 대충 떼워야지", now.minusDays(1), 4);
+        Expense expense2 = new Expense(expenseSavingGoal, null, "닭한마리", "닭한마리", 10_000, "오랜만에 닭한마리", now, 5);
+        expenseSavingGoalRepository.save(expenseSavingGoal);
+        expenseRepository.saveAll(List.of(expense1, expense2));
+
+        // when
+        DateExpenseResponse dateExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+
+        // then
+        Assertions.assertThat(dateExpenseResponse.dailyExpenseStatus()).hasSize(2);
+        Assertions.assertThat(dateExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(dateExpenseResponse.expenses()).hasSize(1);
+    }
+
+    @DisplayName("데일리 지출 내역 조회 성공 : 지출이 존재하지 않는 경우")
+    @Test
+    void readDateExpenses_withNoExpenses() {
+        // given
+        LocalDate now = LocalDate.now();
+        ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
+                new ExpenseSavingGoal(70_000, now, LocalDate.now().plusDays(7)));
+        expenseSavingGoalRepository.save(expenseSavingGoal);
+
+        // when
+        DateExpenseResponse dateExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+
+        // then
+        Assertions.assertThat(dateExpenseResponse.dailyExpenseStatus()).isEmpty();
+        Assertions.assertThat(dateExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(dateExpenseResponse.expenses()).isEmpty();
     }
 
     @DisplayName("지출 내역 삭제 성공")

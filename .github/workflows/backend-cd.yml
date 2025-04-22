@@ -66,4 +66,4 @@ jobs:
             docker ps -a --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/hankkimoa_back" -q | xargs -r docker rm -f
             docker rmi ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
-            docker run -d --name hankkimoa_back -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
+            docker run -d --name hankkimoa_back -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back

@@ -11,11 +11,13 @@ public class ExpenseByDate {
 
     private final LocalDate expenseDate;
     private final List<Expense> expenses;
+    private final ExpenseStatus expenseStatus;
 
     public ExpenseByDate(LocalDate expenseDate, List<Expense> expenses) {
         validateExpenseByDate(expenseDate, expenses);
         this.expenseDate = expenseDate;
         this.expenses = expenses;
+        this.expenseStatus = toExpenseStatus();
     }
 
     private void validateExpenseByDate(LocalDate expenseDate, List<Expense> expenses) {
@@ -24,9 +26,19 @@ public class ExpenseByDate {
         }
     }
 
+    private ExpenseStatus toExpenseStatus() {
+        return ExpenseStatus.convert(
+                getExpenseSavingGoal(),
+                calculateTotalExpense());
+    }
+
     public int calculateTotalExpense() {
         return expenses.stream()
                 .mapToInt(Expense::getExpense)
                 .sum();
+    }
+
+    public ExpenseSavingGoal getExpenseSavingGoal() {
+        return expenses.get(0).getExpenseSavingGoal();
     }
 }

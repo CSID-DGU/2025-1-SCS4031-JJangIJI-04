@@ -19,8 +19,8 @@ public enum ExpenseStatus {
         this.maxDifference = maxDifference;
     }
 
-    public static ExpenseStatus convert(ExpenseSavingGoal expenseSavingGoal, ExpenseByDate expenseByDate) {
-        int budgetDifference = (expenseSavingGoal.getBudget() / expenseSavingGoal.getDays()) - expenseByDate.calculateTotalExpense();
+    public static ExpenseStatus convert(ExpenseSavingGoal expenseSavingGoal, int totalExpense) {
+        int budgetDifference = (expenseSavingGoal.getBudget() / expenseSavingGoal.getDays()) - totalExpense;
         return Arrays.stream(values())
                 .filter(status -> status.minDifference < budgetDifference && budgetDifference <= status.maxDifference)
                 .findFirst()

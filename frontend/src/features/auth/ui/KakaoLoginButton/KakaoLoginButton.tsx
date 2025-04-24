@@ -1,8 +1,16 @@
 import styled from 'styled-components';
 
 export const KakaoLoginButton = () => {
+  const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
+  const REDIRECT_URI = 'http://localhost:5173/oauth/callback/kakao'; // 배포 시 변경
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  const handleLogin = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
   return (
-    <ButtonWrapper>
+    <ButtonWrapper onClick={handleLogin}>
       <ButtonImage
         src="/images/kakao-login-button.png"
         alt="카카오 계정으로 로그인"

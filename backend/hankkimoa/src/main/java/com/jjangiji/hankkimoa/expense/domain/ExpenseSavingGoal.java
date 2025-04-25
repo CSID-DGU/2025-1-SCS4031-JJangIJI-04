@@ -47,6 +47,10 @@ public class ExpenseSavingGoal extends BaseEntity {
         this.endDate = endDate;
     }
 
+    public int getDailyRecommendExpense() {
+        return budget / getDays();
+    }
+
     public int calculateRemainingBudget(List<Expense> expenses) {
         int expenseSum = calculateUsedExpenses(expenses);
         return budget - expenseSum;

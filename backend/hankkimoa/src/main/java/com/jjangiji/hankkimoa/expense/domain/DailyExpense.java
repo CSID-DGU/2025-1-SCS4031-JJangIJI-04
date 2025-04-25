@@ -7,17 +7,15 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class ExpenseByDate {
+public class DailyExpense {
 
     private final LocalDate expenseDate;
     private final List<Expense> expenses;
-    private final ExpenseStatus expenseStatus;
 
-    public ExpenseByDate(LocalDate expenseDate, List<Expense> expenses) {
+    public DailyExpense(LocalDate expenseDate, List<Expense> expenses) {
         validateExpenseByDate(expenseDate, expenses);
         this.expenseDate = expenseDate;
         this.expenses = expenses;
-        this.expenseStatus = toExpenseStatus();
     }
 
     private void validateExpenseByDate(LocalDate expenseDate, List<Expense> expenses) {
@@ -26,19 +24,21 @@ public class ExpenseByDate {
         }
     }
 
-    private ExpenseStatus toExpenseStatus() {
+    public ExpenseStatus getExpenseStatus() {
         return ExpenseStatus.convert(
-                getExpenseSavingGoal(),
+                getDailyRecommendExpense(),
                 calculateTotalExpense());
+    }
+
+    private int getDailyRecommendExpense() {
+        return expenses.get(0)
+                .getExpenseSavingGoal()
+                .getDailyRecommendExpense();
     }
 
     public int calculateTotalExpense() {
         return expenses.stream()
                 .mapToInt(Expense::getExpense)
                 .sum();
-    }
-
-    public ExpenseSavingGoal getExpenseSavingGoal() {
-        return expenses.get(0).getExpenseSavingGoal();
     }
 }

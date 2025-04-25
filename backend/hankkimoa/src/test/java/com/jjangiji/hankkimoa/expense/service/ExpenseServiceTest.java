@@ -7,9 +7,9 @@ import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.DateExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.MonthExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import org.assertj.core.api.Assertions;
@@ -88,12 +88,12 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        DateExpenseResponse dateExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
 
         // then
-        Assertions.assertThat(dateExpenseResponse.dailyExpenseStatus()).hasSize(2);
-        Assertions.assertThat(dateExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dateExpenseResponse.expenses()).hasSize(1);
+        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).hasSize(2);
+        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(dailyExpenseResponse.expenses()).hasSize(1);
     }
 
     @DisplayName("데일리 지출 내역 조회 성공 : 지출이 존재하지 않는 경우")
@@ -105,12 +105,12 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseSavingGoalRepository.save(expenseSavingGoal);
 
         // when
-        DateExpenseResponse dateExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
 
         // then
-        Assertions.assertThat(dateExpenseResponse.dailyExpenseStatus()).isEmpty();
-        Assertions.assertThat(dateExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dateExpenseResponse.expenses()).isEmpty();
+        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).isEmpty();
+        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(dailyExpenseResponse.expenses()).isEmpty();
     }
 
     @DisplayName("지출 한달 내역 조회 성공")
@@ -128,12 +128,12 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        MonthExpenseResponse monthExpenseResponse = expenseService.readMonthExpenses(sevenBefore, now);
+        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthExpenses(sevenBefore, now);
 
         // then
-        Assertions.assertThat(monthExpenseResponse.dailyExpenseStatus()).hasSize(2);
-        Assertions.assertThat(monthExpenseResponse.dailyExpenseOverBudgetCount()).isEqualTo(1);
-        Assertions.assertThat(monthExpenseResponse.monthlyExpenseRecordCount()).isEqualTo(2);
+        Assertions.assertThat(monthlyExpenseResponse.dailyExpenseStatus()).hasSize(2);
+        Assertions.assertThat(monthlyExpenseResponse.dailyExpenseOverBudgetCount()).isEqualTo(1);
+        Assertions.assertThat(monthlyExpenseResponse.monthlyExpenseRecordCount()).isEqualTo(2);
     }
 
     @DisplayName("지출 내역 삭제 성공")

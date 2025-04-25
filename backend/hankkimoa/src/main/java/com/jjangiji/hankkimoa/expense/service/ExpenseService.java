@@ -4,14 +4,14 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.expense.domain.ExpensesByDate;
+import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.DateExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.MonthExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.SavingGoalStatusResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.SimpleExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -56,21 +56,21 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public DateExpenseResponse readDateExpenses(Long savingGoalId, LocalDate date) {
+    public DailyExpenseResponse readDateExpenses(Long savingGoalId, LocalDate date) {
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(savingGoalId);
 
-        List<Expense> dailyExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
-        ExpensesByDate expenseByDates = new ExpensesByDate(dailyExpenses);
-        List<Expense> dateExpenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
+        List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
+        List<Expense> dailyExpense = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
 
-        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(expenseByDates);
-        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, dailyExpenses);
-        List<ExpenseResponse> expenseResponses = toExpenseResponses(dateExpenses);
-        return new DateExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
+        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
+        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, expenses);
+        List<ExpenseResponse> expenseResponses = toExpenseResponses(dailyExpense);
+        return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
     }
 
-    private List<SimpleExpenseResponse> toSimpleExpenseResponses(ExpensesByDate expenseByDates) {
-        return expenseByDates.getExpenseByDates().stream()
+    private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
+        return expenseByDates.getDailyExpenses().stream()
                 .map(expenseByDate -> new SimpleExpenseResponse(
                         expenseByDate.getExpenseDate(),
                         expenseByDate.calculateTotalExpense(),
@@ -97,16 +97,16 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public MonthExpenseResponse readMonthExpenses(LocalDate startDate, LocalDate endDate) {
+    public MonthlyExpenseResponse readMonthExpenses(LocalDate startDate, LocalDate endDate) {
         validateDates(startDate, endDate);
         List<Expense> expenses = expenseRepository.findAllByExpenseDateBetweenOrderByExpenseDateAsc(startDate, endDate);
-        ExpensesByDate expensesByDate = new ExpensesByDate(expenses);
+        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
 
-        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(expensesByDate);
-        int monthlyExpenseRecordCount = expensesByDate.getSize();
-        int dailyExpenseOverBudgetCount = expensesByDate.getExpenseOverBudgetCount();
+        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
+        int monthlyExpenseRecordCount = dailyExpenses.getSize();
+        int dailyExpenseOverBudgetCount = dailyExpenses.getExpenseOverBudgetCount();
 
-        return new MonthExpenseResponse(simpleExpenseResponses, monthlyExpenseRecordCount, dailyExpenseOverBudgetCount);
+        return new MonthlyExpenseResponse(simpleExpenseResponses, monthlyExpenseRecordCount, dailyExpenseOverBudgetCount);
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {

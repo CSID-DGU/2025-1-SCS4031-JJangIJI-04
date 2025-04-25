@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 
-class ExpensesByDateTest {
+class DailyExpensesTest {
 
     private final LocalDate now = LocalDate.now();
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, 70_000, now, now.plusDays(6));
@@ -20,10 +20,10 @@ class ExpensesByDateTest {
         Expense expense1 = new Expense(expenseSavingGoal, restaurant, "은화수식당", "돈가스", 10_000, "냠냠굿", now.minusDays(1), 5);
         Expense expense2 = new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5);
 
-        ExpensesByDate expensesByDate = new ExpensesByDate(List.of(expense1, expense2));
+        DailyExpenses dailyExpenses = new DailyExpenses(List.of(expense1, expense2));
 
         // when
-        int count = expensesByDate.getExpenseOverBudgetCount();
+        int count = dailyExpenses.getExpenseOverBudgetCount();
 
         // then
         Assertions.assertThat(count).isEqualTo(1);

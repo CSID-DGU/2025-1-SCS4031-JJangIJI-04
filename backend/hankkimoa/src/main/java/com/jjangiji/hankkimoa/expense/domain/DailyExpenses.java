@@ -6,25 +6,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class ExpensesByDate {
+public class DailyExpenses {
 
-    private final List<ExpenseByDate> expenseByDates;
+    private final List<DailyExpense> dailyExpenses;
 
-    public ExpensesByDate(List<Expense> expenses) {
-        this.expenseByDates = expenses.stream()
+    public DailyExpenses(List<Expense> expenses) {
+        this.dailyExpenses = expenses.stream()
                 .collect(Collectors.groupingBy(Expense::getExpenseDate, LinkedHashMap::new, Collectors.toList()))
                 .entrySet().stream()
-                .map(entry -> new ExpenseByDate(entry.getKey(), entry.getValue()))
+                .map(entry -> new DailyExpense(entry.getKey(), entry.getValue()))
                 .toList();
     }
 
     public int getSize() {
-        return expenseByDates.size();
+        return dailyExpenses.size();
     }
 
     public int getExpenseOverBudgetCount() {
-        return (int) expenseByDates.stream()
-                .filter(expenseByDate -> expenseByDate.getExpenseStatus().equals(ExpenseStatus.BAD))
+        return (int) dailyExpenses.stream()
+                .filter(dailyExpense -> dailyExpense.getExpenseStatus().equals(ExpenseStatus.BAD))
                 .count();
     }
 }

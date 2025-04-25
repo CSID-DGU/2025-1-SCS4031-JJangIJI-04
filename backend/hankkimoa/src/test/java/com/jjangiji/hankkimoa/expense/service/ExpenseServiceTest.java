@@ -78,7 +78,7 @@ class ExpenseServiceTest extends IntegrationTest {
 
     @DisplayName("데일리 지출 내역 조회 성공")
     @Test
-    void readDateExpenses() {
+    void readDailyExpenses() {
         // given
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
                 new ExpenseSavingGoal(70_000, now, sevenDayAfter));
@@ -88,7 +88,7 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
 
         // then
         Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).hasSize(2);
@@ -98,14 +98,14 @@ class ExpenseServiceTest extends IntegrationTest {
 
     @DisplayName("데일리 지출 내역 조회 성공 : 지출이 존재하지 않는 경우")
     @Test
-    void readDateExpenses_withNoExpenses() {
+    void readDailyExpenses_withNoExpenses() {
         // given
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
                 new ExpenseSavingGoal(70_000, now, sevenDayAfter));
         expenseSavingGoalRepository.save(expenseSavingGoal);
 
         // when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDateExpenses(expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
 
         // then
         Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).isEmpty();
@@ -115,7 +115,7 @@ class ExpenseServiceTest extends IntegrationTest {
 
     @DisplayName("지출 한달 내역 조회 성공")
     @Test
-    void readMonthExpenses() {
+    void readMonthlyExpenses() {
         // given
         LocalDate sevenBefore = now.minusDays(7);
         ExpenseSavingGoal expenseSavingGoal1 = expenseSavingGoalRepository.save(
@@ -128,7 +128,7 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthExpenses(sevenBefore, now);
+        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthlyExpenses(1L, sevenBefore, now);
 
         // then
         Assertions.assertThat(monthlyExpenseResponse.dailyExpenseStatus()).hasSize(2);

@@ -56,7 +56,7 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public DailyExpenseResponse readDateExpenses(Long savingGoalId, LocalDate date) {
+    public DailyExpenseResponse readDailyExpenses(Long userId, Long savingGoalId, LocalDate date) {
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(savingGoalId);
 
         List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
@@ -67,6 +67,10 @@ public class ExpenseService {
         SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, expenses);
         List<ExpenseResponse> expenseResponses = toExpenseResponses(dailyExpense);
         return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
+    }
+
+    private void validateExpenseIsPublic() {
+        // TODO 접근 가능 여부 확인
     }
 
     private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
@@ -97,7 +101,7 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public MonthlyExpenseResponse readMonthExpenses(LocalDate startDate, LocalDate endDate) {
+    public MonthlyExpenseResponse readMonthlyExpenses(Long userId, LocalDate startDate, LocalDate endDate) {
         validateDates(startDate, endDate);
         List<Expense> expenses = expenseRepository.findAllByExpenseDateBetweenOrderByExpenseDateAsc(startDate, endDate);
         DailyExpenses dailyExpenses = new DailyExpenses(expenses);

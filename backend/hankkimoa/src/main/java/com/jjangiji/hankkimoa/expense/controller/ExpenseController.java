@@ -27,19 +27,20 @@ public class ExpenseController {
         return ResponseEntity.created(URI.create("/expenses/" + expenseId)).build();
     }
 
-    @GetMapping("/api/expenses")
-    public ResponseEntity<MonthlyExpenseResponse> readMonthExpenses( // TODO 타유저 정보도 볼 수 있게
-                                                                     @RequestParam("from") LocalDate from,
-                                                                     @RequestParam("to") LocalDate to) {
-        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthExpenses(from, to);
+    @GetMapping("/api/users/{userId}/expenses")
+    public ResponseEntity<MonthlyExpenseResponse> readMonthlyExpenses(@PathVariable("userId") Long userId,
+                                                                      @RequestParam("from") LocalDate from,
+                                                                      @RequestParam("to") LocalDate to) {
+        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthlyExpenses(userId, from, to);
         return ResponseEntity.ok(monthlyExpenseResponse);
     }
 
-    @GetMapping("/api/saving-goals/{savingGoalId}/expenses")
-    public ResponseEntity<DailyExpenseResponse> readDateExpenses(
+    @GetMapping("/api/users/{userId}/saving-goals/{savingGoalId}/expenses")
+    public ResponseEntity<DailyExpenseResponse> readDailyExpenses(
+            @PathVariable("userId") Long userId,
             @PathVariable Long savingGoalId,
             @RequestParam LocalDate date) {
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDateExpenses(savingGoalId, date);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(userId, savingGoalId, date);
         return ResponseEntity.ok(dailyExpenseResponse);
     }
 

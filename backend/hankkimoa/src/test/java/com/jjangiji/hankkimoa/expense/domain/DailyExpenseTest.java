@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 
-class ExpenseByDateTest {
+class DailyExpenseTest {
 
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, 80_000, LocalDate.now(), LocalDate.now().plusDays(7));
     private final Restaurant restaurant = new Restaurant(1L, "한끼식당");
@@ -23,7 +23,7 @@ class ExpenseByDateTest {
         Expense expense2 = new Expense(expenseSavingGoal, restaurant, "왕순이김밥", "김밥", 5_000, "가성비굿", now, 5);
 
         // when & then
-        Assertions.assertThatCode(() -> new ExpenseByDate(now, List.of(expense1, expense2)))
+        Assertions.assertThatCode(() -> new DailyExpense(now, List.of(expense1, expense2)))
                 .isInstanceOf(HankkiMoaException.class)
                 .hasMessage(ExceptionCode.EXPENSE_DATE_NOT_SAME.getMessage());
     }
@@ -34,10 +34,10 @@ class ExpenseByDateTest {
         // given
         Expense expense1 = new Expense(expenseSavingGoal, restaurant, "은화수식당", "돈가스", 10_000, "냠냠굿", now, 5);
         Expense expense2 = new Expense(expenseSavingGoal, restaurant, "왕순이김밥", "김밥", 5_000, "가성비굿", now, 5);
-        ExpenseByDate expenseByDate = new ExpenseByDate(now, List.of(expense1, expense2));
+        DailyExpense dailyExpense = new DailyExpense(now, List.of(expense1, expense2));
 
         // when
-        int result = expenseByDate.calculateTotalExpense();
+        int result = dailyExpense.calculateTotalExpense();
 
         // then
         Assertions.assertThat(result).isEqualTo(15_000);

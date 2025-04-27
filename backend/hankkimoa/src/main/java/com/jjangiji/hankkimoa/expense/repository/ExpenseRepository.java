@@ -10,4 +10,5 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findAllByExpenseDateOrderByCreatedAtDesc(LocalDate date);
     List<Expense> findAllByExpenseSavingGoalOrderByExpenseDateAsc(ExpenseSavingGoal expenseSavingGoal);
+    List<Expense> findAllByExpenseDateBetweenOrderByExpenseDateAsc(LocalDate startDate, LocalDate endDate);
 }

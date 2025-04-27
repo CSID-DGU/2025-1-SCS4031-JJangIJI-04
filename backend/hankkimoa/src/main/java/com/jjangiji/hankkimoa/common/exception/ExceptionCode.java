@@ -15,7 +15,7 @@ public enum ExceptionCode {
     // 지출
     EXPENSE_NOT_FOUND(HttpStatus.BAD_REQUEST, "지출이 존재하지 않습니다."),
     EXPENSE_DATE_NOT_SAME(HttpStatus.INTERNAL_SERVER_ERROR, "지출일이 일치하지 않습니다."),
-    EXPENSE_DATE_INVALID(HttpStatus.BAD_REQUEST, "지출일은 미래일 수 없습니다."),
+    EXPENSE_DATE_INVALID(HttpStatus.BAD_REQUEST, "지출일이 올바르지 않습니다."),
     RATING_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "평점은 0 ~ 5점 사이값이어야 합니다."),
     MEMO_INVALID_LENGTH(HttpStatus.BAD_REQUEST, "메모는 100자를 초과할 수 없습니다."),
 

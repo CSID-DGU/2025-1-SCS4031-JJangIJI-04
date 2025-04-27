@@ -1,8 +1,9 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
-import com.jjangiji.hankkimoa.expense.service.dto.DateExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,22 +21,30 @@ public class ExpenseController {
 
     private final ExpenseService expenseService;
 
-    @PostMapping("/expenses")
+    @PostMapping("/api/expenses")
     public ResponseEntity<Void> createExpense(@RequestBody ExpenseCreateRequest request) {
         Long expenseId = expenseService.createExpense(request);
         return ResponseEntity.created(URI.create("/expenses/" + expenseId)).build();
     }
 
-    @GetMapping("/saving-goals/{savingGoalId}/expenses")
-    public ResponseEntity<DateExpenseResponse> getDailyExpenses(
-            @PathVariable Long savingGoalId,
-            @RequestParam LocalDate date) {
-        DateExpenseResponse dateExpenseResponse = expenseService.readDateExpenses(savingGoalId, date);
-        return ResponseEntity.ok()
-                .body(dateExpenseResponse);
+    @GetMapping("/api/users/{userId}/expenses")
+    public ResponseEntity<MonthlyExpenseResponse> readMonthlyExpenses(@PathVariable("userId") Long userId,
+                                                                      @RequestParam("from") LocalDate from,
+                                                                      @RequestParam("to") LocalDate to) {
+        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthlyExpenses(userId, from, to);
+        return ResponseEntity.ok(monthlyExpenseResponse);
     }
 
-    @PostMapping("/expenses/{expenseId}")
+    @GetMapping("/api/users/{userId}/saving-goals/{savingGoalId}/expenses")
+    public ResponseEntity<DailyExpenseResponse> readDailyExpenses(
+            @PathVariable("userId") Long userId,
+            @PathVariable Long savingGoalId,
+            @RequestParam LocalDate date) {
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(userId, savingGoalId, date);
+        return ResponseEntity.ok(dailyExpenseResponse);
+    }
+
+    @PostMapping("/api/expenses/{expenseId}")
     public ResponseEntity<Void> deleteExpense(@PathVariable("expenseId") Long expenseId) {
         expenseService.deleteExpense(expenseId);
         return ResponseEntity.noContent().build();

@@ -3,15 +3,15 @@ package com.jjangiji.hankkimoa.expense.service;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
-import com.jjangiji.hankkimoa.expense.domain.ExpenseByDate;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.expense.domain.ExpenseStatus;
+import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.DateExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.ExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.SavingGoalStatusResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.SimpleExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -20,9 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -57,34 +55,30 @@ public class ExpenseService {
                         ExceptionCode.RESTAURANT_NOT_FOUND));
     }
 
-    @Transactional
-    public DateExpenseResponse readDateExpenses(Long savingGoalId, LocalDate date) {
+    @Transactional(readOnly = true)
+    public DailyExpenseResponse readDailyExpenses(Long userId, Long savingGoalId, LocalDate date) {
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(savingGoalId);
 
-        List<Expense> dailyExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
-        List<ExpenseByDate> expenseByDates = toExpenseByDate(dailyExpenses);
-        List<Expense> dateExpenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
+        List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
+        List<Expense> dailyExpense = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
 
-        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(expenseSavingGoal, expenseByDates);
-        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, dailyExpenses);
-        List<ExpenseResponse> expenseResponses = toExpenseResponses(dateExpenses);
-        return new DateExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
+        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
+        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, expenses);
+        List<ExpenseResponse> expenseResponses = toExpenseResponses(dailyExpense);
+        return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
     }
 
-    private List<ExpenseByDate> toExpenseByDate(List<Expense> dailyExpenses) {
-        return dailyExpenses.stream()
-                .collect(Collectors.groupingBy(Expense::getExpenseDate, LinkedHashMap::new, Collectors.toList()))
-                .entrySet().stream()
-                .map(entry -> new ExpenseByDate(entry.getKey(), entry.getValue()))
-                .toList();
+    private void validateExpenseIsPublic() {
+        // TODO 접근 가능 여부 확인
     }
 
-    private List<SimpleExpenseResponse> toSimpleExpenseResponses(ExpenseSavingGoal expenseSavingGoal, List<ExpenseByDate> expenseByDates) {
-        return expenseByDates.stream()
+    private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
+        return expenseByDates.getDailyExpenses().stream()
                 .map(expenseByDate -> new SimpleExpenseResponse(
                         expenseByDate.getExpenseDate(),
                         expenseByDate.calculateTotalExpense(),
-                        ExpenseStatus.convert(expenseSavingGoal, expenseByDate).name()))
+                        expenseByDate.getExpenseStatus().name()))
                 .toList();
     }
 
@@ -104,6 +98,25 @@ public class ExpenseService {
                         expense.getRestaurantName(), expense.getMenuName(),
                         expense.getExpense(), expense.getMemo()))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public MonthlyExpenseResponse readMonthlyExpenses(Long userId, LocalDate startDate, LocalDate endDate) {
+        validateDates(startDate, endDate);
+        List<Expense> expenses = expenseRepository.findAllByExpenseDateBetweenOrderByExpenseDateAsc(startDate, endDate);
+        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
+
+        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
+        int monthlyExpenseRecordCount = dailyExpenses.getSize();
+        int dailyExpenseOverBudgetCount = dailyExpenses.getExpenseOverBudgetCount();
+
+        return new MonthlyExpenseResponse(simpleExpenseResponses, monthlyExpenseRecordCount, dailyExpenseOverBudgetCount);
+    }
+
+    private void validateDates(LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            throw new HankkiMoaException(ExceptionCode.EXPENSE_DATE_INVALID);
+        }
     }
 
     @Transactional

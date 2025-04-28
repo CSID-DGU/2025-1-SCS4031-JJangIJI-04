@@ -1,12 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 export const PrivateRoute = () => {
-  // TODO: 실제 인증 상태 체크 로직 추후 추가 필요
-  const isAuthenticated = false; // 임시로 false로 설정 ( 인증 불가 상태면 랜딩페이지로 리다이렉트) useKakaoAuth();  // 커스텀 훅으로 구현예정
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  const isAuthenticated = !!accessToken; //accessToken이 있으면 로그인된 상태로 판단
 
   if (!isAuthenticated) {
-    return <Navigate to="/landing" replace />;
+    return <Navigate to="/landing" replace />; //랜딩페이지로 리다이렉트
   }
 
-  return <Outlet />;
+  return <Outlet />; //하위 라우트 렌더링
 };
+

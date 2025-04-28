@@ -1,6 +1,7 @@
 // app/routes/index.tsx
 import { createBrowserRouter } from 'react-router-dom';
 import { LandingPage } from '@/pages/Landing/LandingPage';
+import OAuthCallbackPage from '@/pages/OAuthCallbackPage/OAuthCallbackPage';
 //import { Layout } from '@/shared/layouts/Layout';
 //import { PrivateRoute } from '@/app/routes/PrivateRoute';
 
@@ -13,6 +14,10 @@ export const router = createBrowserRouter([
   {
     path: '/landing',
     element: <LandingPage />,
+  },
+  {
+    path: '/oauth/callback/kakao',
+    element: <OAuthCallbackPage />,
   },
 
   // Private Routes (로그인 필요)

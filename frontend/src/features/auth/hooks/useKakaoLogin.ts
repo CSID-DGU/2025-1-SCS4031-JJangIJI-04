@@ -1,11 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { requestKakaoLogin } from '@/features/auth/api/authApi';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
-
-interface KakaoLoginResponse {
-  accessToken: string;
-  isSignedUp: boolean;
-}
+import { KakaoLoginResponse } from '@/features/auth/types/auth';
 
 export const useKakaoLogin = () => {
   const setAccessToken = useAuthStore((state) => state.setAccessToken);

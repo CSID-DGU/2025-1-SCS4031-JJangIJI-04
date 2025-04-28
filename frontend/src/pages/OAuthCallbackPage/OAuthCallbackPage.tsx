@@ -20,7 +20,10 @@ const OAuthCallbackPage = () => {
             navigate('/signup/extra'); //첫 로그인 시, 추가 정보 입력 페이지로 이동
           }
         },
-        onError: () => alert('로그인 실패'),
+        onError: () => {
+          alert('로그인에 실패하였습니다. 다시 시도해주세요.');
+          navigate('/landing');
+        },
       });
     }
   }, [loginWithKakao, navigate, setAccessToken]);

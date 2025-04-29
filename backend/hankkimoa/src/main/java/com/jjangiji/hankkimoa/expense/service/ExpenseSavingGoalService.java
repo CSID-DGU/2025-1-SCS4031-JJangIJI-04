@@ -4,7 +4,8 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalCreateResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,13 @@ public class ExpenseSavingGoalService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long createExpenseSavingGoal(Long userId, ExpenseSavingGoalRequest request) {
+    public ExpenseSavingGoalCreateResponse createExpenseSavingGoal(Long userId, ExpenseSavingGoalCreateRequest request) {
         User user = readUser(userId);
         ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(user, request.budget(), request.startDate(), request.endDate());
         validateExpenseSavingGoalExist(user, expenseSavingGoal);
 
-        return expenseSavingGoalRepository.save(expenseSavingGoal).getId();
+        ExpenseSavingGoal savedExpenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoal);
+        return new ExpenseSavingGoalCreateResponse(savedExpenseSavingGoal.getId());
     }
 
     private User readUser(Long id) {

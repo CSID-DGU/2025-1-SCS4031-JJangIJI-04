@@ -5,6 +5,8 @@ import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +17,7 @@ import java.util.List;
 
 class ExpenseRepositoryTest extends RepositoryTest {
 
+    private User user;
     private ExpenseSavingGoal expenseSavingGoal;
     private ExpenseSavingGoal expenseSavingGoal2;
     private Restaurant restaurant;
@@ -27,11 +30,14 @@ class ExpenseRepositoryTest extends RepositoryTest {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private ExpenseRepository expenseRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
-        expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
-        expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(100_000, LocalDate.now(), LocalDate.now().plusDays(7)));
+        user = userRepository.save(new User("한끼", "hankki"));
+        expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
+        expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 100_000, LocalDate.now(), LocalDate.now().plusDays(7)));
         restaurant  = restaurantRepository.save(new Restaurant("한끼식당"));
     }
 

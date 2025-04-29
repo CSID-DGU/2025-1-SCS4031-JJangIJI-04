@@ -17,7 +17,7 @@ public class Member {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -27,4 +27,9 @@ public class Member {
     private SocialType socialType;
 
     private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
 }

@@ -1,8 +1,10 @@
 package com.jjangiji.hankkimoa.expense.service;
 
+import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
+import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalCreateRequest;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -42,10 +44,23 @@ class ExpenseSavingGoalTest extends IntegrationTest {
     @Test
     void createExpenseSavingGoal() {
         // given
-        ExpenseSavingGoalRequest request = new ExpenseSavingGoalRequest(100_000, now, sevenDayAfter);
+        ExpenseSavingGoalCreateRequest request = new ExpenseSavingGoalCreateRequest(100_000, now, sevenDayAfter);
 
         // when & then
         Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request))
                 .doesNotThrowAnyException();;
+    }
+
+    @DisplayName("지출 목표 금액 추가 실패 : 이미 지출이 존재할 때")
+    @Test
+    void failWhenExpenseSavingGoalAlreadyExist() {
+        // given
+        ExpenseSavingGoalCreateRequest request = new ExpenseSavingGoalCreateRequest(100_000, now, sevenDayAfter);
+        expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request);
+
+        // when & then
+        Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request))
+                .isInstanceOf(HankkiMoaException.class)
+                .hasMessage(ExceptionCode.EXPENSE_SAVING_GOAL_ALREADY_EXIST.getMessage());
     }
 }

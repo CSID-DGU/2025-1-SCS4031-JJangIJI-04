@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.expense.domain;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
+import com.jjangiji.hankkimoa.user.domain.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,9 @@ import java.util.List;
 
 class DailyExpensesTest {
 
+    private final User user = new User("한끼", "hankki");
     private final LocalDate now = LocalDate.now();
-    private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, 70_000, now, now.plusDays(6));
+    private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user,70_000, now, now.plusDays(6));
     private final Restaurant restaurant = new Restaurant(1L, "한끼식당");
 
     @DisplayName("지출 초과 횟수 조회 성공")

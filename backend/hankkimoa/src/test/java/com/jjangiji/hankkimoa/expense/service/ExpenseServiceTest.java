@@ -12,8 +12,11 @@ import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +34,24 @@ class ExpenseServiceTest extends IntegrationTest {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private ExpenseSavingGoalRepository expenseSavingGoalRepository;
+    @Autowired
+    private UserRepository userRepository;
 
+    private User user;
     private final LocalDate now = LocalDate.now();
     private final LocalDate sevenDayAfter = now.plusDays(6);
+
+    @BeforeEach
+    void setUp() {
+        user = userRepository.save(new User("한끼", "hankki"));
+    }
 
     @AfterEach
     void tearDown() {
         expenseRepository.deleteAllInBatch();
         restaurantRepository.deleteAllInBatch();
         expenseSavingGoalRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @DisplayName("지출 내역 생성 성공")
@@ -48,7 +60,7 @@ class ExpenseServiceTest extends IntegrationTest {
         // given
         Restaurant restaurantrestaurant = restaurantRepository.save(new Restaurant("한끼식당"));
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(70_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
 
         ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), restaurantrestaurant.getId(),
                 "한끼식당", "순두부찌개", 7000, "든든하게 먹음!", LocalDate.now(), 5);
@@ -64,7 +76,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void createExpenseWhenRestaurantNull() {
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(80_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 80_000, now, sevenDayAfter));
 
         ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
@@ -81,7 +93,7 @@ class ExpenseServiceTest extends IntegrationTest {
     void readDailyExpenses() {
         // given
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(70_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
         Expense expense1 = new Expense(expenseSavingGoal, null, "학식", "라면", 5_000, "오늘은 대충 떼워야지", now.minusDays(1), 4);
         Expense expense2 = new Expense(expenseSavingGoal, null, "닭한마리", "닭한마리", 10_000, "오랜만에 닭한마리", now, 5);
         expenseSavingGoalRepository.save(expenseSavingGoal);
@@ -101,7 +113,7 @@ class ExpenseServiceTest extends IntegrationTest {
     void readDailyExpenses_withNoExpenses() {
         // given
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(70_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
         expenseSavingGoalRepository.save(expenseSavingGoal);
 
         // when
@@ -119,9 +131,9 @@ class ExpenseServiceTest extends IntegrationTest {
         // given
         LocalDate sevenBefore = now.minusDays(7);
         ExpenseSavingGoal expenseSavingGoal1 = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(140_000, sevenBefore, now));
+                new ExpenseSavingGoal(user, 140_000, sevenBefore, now));
         ExpenseSavingGoal expenseSavingGoal2 = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(70_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
         Expense expense1 = new Expense(expenseSavingGoal1, null, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", sevenBefore, 5);
         Expense expense2 = new Expense(expenseSavingGoal2, null, "닭한마리", "닭한마리", 12_000, "오랜만에 닭한마리", now, 5);
         expenseSavingGoalRepository.saveAll(List.of(expenseSavingGoal1, expenseSavingGoal2));
@@ -141,7 +153,7 @@ class ExpenseServiceTest extends IntegrationTest {
     void deleteExpense() {
         // given
         ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(80_000, now, sevenDayAfter));
+                new ExpenseSavingGoal(user, 80_000, now, sevenDayAfter));
         ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
         Long expenseId = expenseService.createExpense(request);

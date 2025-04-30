@@ -6,14 +6,17 @@ import { useAuthStore } from '@/features/auth/store/useAuthStore';
 const OAuthCallbackPage = () => {
   const navigate = useNavigate();
   const { mutate: loginWithKakao, isPending, isError } = useKakaoLogin();
-  const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const { setAccessToken, setNickname, setProfileImage } = useAuthStore();
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
     if (code) {
       loginWithKakao(code, {
-        onSuccess: ({ accessToken, isSignedUp }) => {
-          setAccessToken(accessToken);
+        onSuccess: ({ accessToken, isSignedUp, nickname, imageUrl }) => {
+          setAccessToken(accessToken);        
+          setNickname(nickname);
+          setProfileImage(imageUrl); 
+
           if (isSignedUp) {
             navigate('/main'); //로그인 처리 되었을 경우 이동 경로
           } else {
@@ -26,7 +29,7 @@ const OAuthCallbackPage = () => {
         },
       });
     }
-  }, [loginWithKakao, navigate, setAccessToken]);
+  }, [loginWithKakao, navigate, setAccessToken, setNickname, setProfileImage]);
 
   if (isPending) return <p>로그인 처리 중입니다...</p>; //추후 로딩스피너로 변경
   if (isError) return <p>로그인 에러가 발생했습니다.</p>;

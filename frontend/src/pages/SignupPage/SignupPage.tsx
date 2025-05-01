@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { InputField } from '@/shared/ui/InputField';
+import styled from 'styled-components';
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const nicknameFromStore = useAuthStore((s) => s.nickname);
   const [nickname, setNickname] = useState('');
   const [nicknameValid, setNicknameValid] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    // 카카오에서 받아온 nickname을 초기값으로 설정
     if (nicknameFromStore) {
       setNickname(nicknameFromStore);
     }
@@ -18,63 +20,91 @@ const SignupPage = () => {
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNickname(value);
-    setNicknameValid(value.length <= 10);
-  };
 
-  const handleSubmit = () => {
-    if (!nicknameValid || nickname.trim() === '') {
-      alert('닉네임을 확인해주세요.');
+    // 빈 값 체크
+    if (value.trim() === '') {
+      setNicknameValid(false);
+      setErrorMessage('닉네임을 입력해주세요.');
       return;
     }
 
-    // TODO: 카테고리 정보와 함께 API 요청할 예정
-    console.log('닉네임 제출:', nickname);
+    // 공백 포함 체크
+    if (/\s/.test(value)) {
+      setNicknameValid(false);
+      setErrorMessage('닉네임에는 공백을 포함할 수 없습니다.');
+      return;
+    }
+
+    // 길이 체크 (영어, 한글 모두 동일하게)
+    const length = [...value].length;
+    if (length > 10) { 
+      setNicknameValid(false);
+      setErrorMessage('닉네임은 10자 이내여야 합니다.');
+      return;
+    }
+
+    // 모든 검사 통과
+    setNicknameValid(true);
+    setErrorMessage('사용 가능한 닉네임입니다.');
+};
+
+  const handleSubmit = () => {
+    const trimmed = nickname.trim();
+    if (!nicknameValid || trimmed === '' || /\s/.test(trimmed)) {
+      alert('닉네임을 확인해주세요. 공백은 사용할 수 없습니다.');
+      return;
+    }
+
+    console.log('닉네임 제출:', trimmed);
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <h2 style={{ fontSize: '18px', fontWeight: 600 }}>사용하실 닉네임을 입력해주세요</h2>
+    <Container>
+      <Title>사용하실 닉네임을 입력해주세요</Title>
 
-      <input
-        type="text"
+      <InputField
         value={nickname}
         onChange={handleNicknameChange}
-        placeholder="닉네임"
-        maxLength={10}
-        style={{
-          width: '100%',
-          padding: '12px',
-          fontSize: '16px',
-          border: '1px solid #ddd',
-          borderRadius: '8px',
-          marginTop: '12px',
-        }}
+        placeholder="최대 10글자까지, 공백은 허용되지 않습니다."
+        maxLength={18}
+        error={errorMessage}
+        isValid={nicknameValid}
       />
 
-      <p style={{ fontSize: '14px', marginTop: '4px', color: nicknameValid ? 'green' : 'red' }}>
-        {nicknameValid ? '사용 가능한 닉네임입니다.' : '10자 이내로 입력해주세요.'}
-      </p>
+      <Spacer />
 
-      {/* 이 아래에 카테고리 선택 UI */}
-
-      <button
-        onClick={handleSubmit}
-        style={{
-          marginTop: '40px',
-          width: '100%',
-          padding: '14px',
-          backgroundColor: '#FF7A00',
-          color: '#fff',
-          fontWeight: 'bold',
-          fontSize: '16px',
-          border: 'none',
-          borderRadius: '8px',
-        }}
-      >
-        한끼모아 시작하기
-      </button>
-    </div>
+      <SubmitButton onClick={handleSubmit}>한끼모아 시작하기</SubmitButton>
+    </Container>
   );
 };
 
 export default SignupPage;
+
+const Container = styled.div`
+  padding: 24px;
+  padding-top: 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Title = styled.h2`
+  font-size: 18px;
+  font-weight: 600;
+`;
+
+const Spacer = styled.div`
+  flex-grow: 1;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 14px;
+  background-color: #FF7A00;
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 40px;
+`;

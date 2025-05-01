@@ -48,12 +48,19 @@ const Container = styled.div`
 const Main = styled.main<MainProps>`
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; 
   padding: var(--page-padding);
   padding-top: calc(var(--safe-area-top) + var(--page-padding));
   padding-bottom: ${(props) =>
     props.$hasFooter
       ? `calc(var(--footer-height) + var(--safe-area-bottom) + var(--page-padding))`
       : `calc(var(--safe-area-bottom) + var(--page-padding))`};
+  
+  // 스크롤바 숨김 추가
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Footer = styled.footer`

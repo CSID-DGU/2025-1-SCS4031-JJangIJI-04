@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { InputField } from '@/shared/ui/InputField';
 import styled from 'styled-components';
+import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
+import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ const SignupPage = () => {
   const [nickname, setNickname] = useState('');
   const [nicknameValid, setNicknameValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     if (nicknameFromStore) {
@@ -71,7 +74,13 @@ const SignupPage = () => {
         isValid={nicknameValid}
       />
 
-      <Spacer />
+      <FullWidthDivider />
+
+      <Title>선호하는 음식 카테고리를 선택해 주세요</Title>
+      <CategorySelector
+        selected={selectedCategories}
+        onChange={setSelectedCategories}
+      />  
 
       <SubmitButton onClick={handleSubmit}>한끼모아 시작하기</SubmitButton>
     </Container>
@@ -93,14 +102,10 @@ const Title = styled.h2`
   font-weight: 600;
 `;
 
-const Spacer = styled.div`
-  flex-grow: 1;
-`;
-
 const SubmitButton = styled.button`
   width: 100%;
   padding: 14px;
-  background-color: #FF7A00;
+  background-color: #FF6701;
   color: #fff;
   font-weight: bold;
   font-size: 16px;

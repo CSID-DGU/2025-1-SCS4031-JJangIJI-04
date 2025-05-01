@@ -43,12 +43,17 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100%;
     background-color: var(--background-color);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     font-family: 'Noto Sans KR', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     word-break: keep-all;
     letter-spacing: -0.3px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   body {
@@ -83,6 +88,11 @@ export const GlobalStyle = createGlobalStyle`
       padding: var(--page-padding);
       padding-top: calc(var(--safe-area-top) + var(--page-padding));
       padding-bottom: calc(var(--footer-height) + var(--safe-area-bottom) + var(--page-padding));  // 네비게이션   영역만큼 여백
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+    }
   }
   
     /* 하단 네비게이션 */

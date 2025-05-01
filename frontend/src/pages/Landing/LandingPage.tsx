@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { KakaoLoginButton } from '@/features/auth/ui/KakaoLoginButton/KakaoLoginButton';
 
-export const LandingPage = () => {
+const LandingPage = () => {
   return (
     <Container>
       <TopSection>
@@ -27,12 +27,14 @@ export const LandingPage = () => {
   );
 };
 
+export default LandingPage;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
   padding: var(--page-padding);
 `;
 

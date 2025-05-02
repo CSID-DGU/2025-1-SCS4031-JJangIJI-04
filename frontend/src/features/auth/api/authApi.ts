@@ -10,7 +10,13 @@ export const requestKakaoLogin = async (code: string): Promise<KakaoLoginRespons
     accessToken,
     isSignedUp,
     nickname,
-    imageUrl: image_url, //snake_case → camelCase로 변환
+    imageUrl: image_url, // snake_case → camelCase로 변환
   };
 };
 
+export const requestSignup = async (data: {
+  nickname: string;
+  category: string[];
+}): Promise<void> => {
+  await api.post('/auth/signup', data);
+};

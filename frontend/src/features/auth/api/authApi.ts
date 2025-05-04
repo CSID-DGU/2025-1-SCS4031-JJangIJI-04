@@ -1,5 +1,5 @@
 import api from '@/lib/axios';
-import { KakaoLoginResponse } from '@/features/auth/types/auth';
+import { SignupRequest, KakaoLoginResponse } from '@/features/auth/types/auth';
 
 export const requestKakaoLogin = async (code: string): Promise<KakaoLoginResponse> => {
   const res = await api.post('/auth/kakao', { code });
@@ -14,9 +14,6 @@ export const requestKakaoLogin = async (code: string): Promise<KakaoLoginRespons
   };
 };
 
-export const requestSignup = async (data: {
-  nickname: string;
-  category: string[];
-}): Promise<void> => {
+export const requestSignup = async (data: SignupRequest): Promise<void> => {
   await api.post('/auth/signup', data);
 };

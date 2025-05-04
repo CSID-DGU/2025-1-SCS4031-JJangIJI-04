@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.member.domain;
+package com.jjangiji.hankkimoa.user.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,25 +11,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Member {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String nickname;
+    private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Role role = Role.USER;
 
-    @Enumerated(EnumType.STRING)
-    private SocialType socialType;
+    @Column(nullable = false)
+    private String nickname;
 
-    private String socialId;
+    @Column(nullable = false)
+    private String image_url;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
+
+    private boolean is_expense_open = false;
+
+    private boolean registered = false;
 
 }

@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) //csrf비활성화
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a->a.requestMatchers("/api/auth/kakao/login", "/oauth2/**").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(a->a.requestMatchers("/api/auth/kakao/**", "/oauth2/**", "/login/oauth2/code/kakao").permitAll().anyRequest().authenticated())
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

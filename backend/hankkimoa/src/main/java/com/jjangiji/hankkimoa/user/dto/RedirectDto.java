@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.member.dto;
+package com.jjangiji.hankkimoa.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -25,6 +25,7 @@ import java.util.List;
 public abstract class JwtTokenFilter extends GenericFilter {
     @Value("${jwt.secret}")
     private String secretKey;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -32,12 +33,18 @@ public abstract class JwtTokenFilter extends GenericFilter {
         HttpServletResponse httpServletResponse = (HttpServletResponse)response;
         String token = httpServletRequest.getHeader("Authorization");
         try {
-
-            if(token !=null){
+            if(token!=null){
                 if(!token.substring(0, 7).equals("Bearer ")){
                     throw new AuthenticationServiceException("Bearer 형식 아닙니다.");
                 }
                 String jwtToken = token.substring(7);
+                // 토큰 만료 검증 (JwtTokenProvider의 메서드 사용)
+                if(jwtTokenProvider.isExpired(jwtToken)) {
+                    httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    httpServletResponse.setContentType("application/json");
+                    httpServletResponse.getWriter().write("token expired");
+                    return; // 추가 필터 처리 중단
+                }
                 Claims claims = Jwts.parserBuilder()
                         .setSigningKey(secretKey)
                         .build()

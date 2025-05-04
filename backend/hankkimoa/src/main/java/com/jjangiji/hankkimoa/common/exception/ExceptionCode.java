@@ -19,6 +19,7 @@ public enum ExceptionCode {
     RATING_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "평점은 0 ~ 5점 사이값이어야 합니다."),
     MEMO_INVALID_LENGTH(HttpStatus.BAD_REQUEST, "메모는 100자를 초과할 수 없습니다."),
     EMOJI_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이모지가 이미 존재합니다."),
+    EMOJI_NOT_FOUND(HttpStatus.BAD_REQUEST, "이모지가 존재하지 않습니다"),
 
     // 지출 목표 금액
     EXPENSE_SAVING_GOAL_NOT_FOUND(HttpStatus.BAD_REQUEST, "지출 목표 금액이 존재하지 않습니다."),

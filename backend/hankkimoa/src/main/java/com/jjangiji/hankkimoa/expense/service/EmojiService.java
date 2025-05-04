@@ -6,6 +6,7 @@ import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiDeleteRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiCreateResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,16 @@ public class EmojiService {
         if (expenseEmojiRepository.existsExpenseEmojiByExpenseAndUserAndEmojiId(expense, user, emojiId)) {
             throw new HankkiMoaException(ExceptionCode.EMOJI_ALREADY_EXIST);
         }
+    }
+
+    @Transactional
+    public void deleteExpense(EmojiDeleteRequest request) {
+        ExpenseEmoji expenseEmoji = readExpenseEmoji(request.expenseEmojiId());
+        expenseEmojiRepository.deleteById(expenseEmoji.getId());
+    }
+
+    private ExpenseEmoji readExpenseEmoji(Long id) {
+        return expenseEmojiRepository.findById(id)
+                .orElseThrow(() -> new HankkiMoaException(ExceptionCode.EMOJI_NOT_FOUND));
     }
 }

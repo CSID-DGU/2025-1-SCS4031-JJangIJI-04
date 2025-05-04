@@ -1,38 +1,44 @@
-// app/routes/index.tsx
 import { createBrowserRouter } from 'react-router-dom';
-import { LandingPage } from '@/pages/Landing/LandingPage';
+import { Layout } from '@/shared/layouts/Layout';
+import { PrivateRoute } from '@/app/routes/PrivateRoute';
+
+import LandingPage from '@/pages/Landing/LandingPage';
 import OAuthCallbackPage from '@/pages/OAuthCallbackPage/OAuthCallbackPage';
-//import { Layout } from '@/shared/layouts/Layout';
-//import { PrivateRoute } from '@/app/routes/PrivateRoute';
+import SignupPage from '@/pages/SignupPage/SignupPage';
+// import MainPage from '@/pages/MainPage/MainPage';
 
 export const router = createBrowserRouter([
-  // Public Routes
+  //Footer 없는 공개 페이지
   {
     path: '/',
-    element: <LandingPage />,
-  },
-  {
-    path: '/landing',
-    element: <LandingPage />,
-  },
-  {
-    path: '/oauth/callback/kakao',
-    element: <OAuthCallbackPage />,
+    element: <Layout hasFooter={false} />,
+    children: [
+      { index: true, element: <LandingPage /> },
+      { path: 'landing', element: <LandingPage /> },
+      { path: 'oauth/callback/kakao', element: <OAuthCallbackPage /> },
+    ],
   },
 
-  // Private Routes (로그인 필요)
-  /*
+  //Footer 없는 인증 필요 페이지
   {
     element: <PrivateRoute />,
     children: [
       {
-        element: <Layout />,
-        children: [
-          {
-            path: '/main',
-            element: <MainPage />,
-          },
-        ],
+        path: 'signup',
+        element: <Layout hasFooter={false} />,
+        children: [{ index: true, element: <SignupPage /> }],
+      },
+    ],
+  },
+
+  /*Footer 있는 인증 필요 페이지 (예: main)
+  {
+    element: <PrivateRoute />,
+    children: [
+      {
+        path: 'main',
+        element: <Layout hasFooter={true} />,
+        children: [{ index: true, element: <MainPage /> }],
       },
     ],
   },

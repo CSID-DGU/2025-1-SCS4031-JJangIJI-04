@@ -8,6 +8,7 @@ import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
+import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.user.domain.User;
@@ -66,7 +67,8 @@ class EmojiServiceTest extends IntegrationTest {
     @Test
     void createEmoji() {
         // given & when & then
-        Assertions.assertThatCode(() -> emojiService.createEmoji(user, expense.getId(), 1))
+        EmojiCreateRequest request = new EmojiCreateRequest(expense.getId(), 1);
+        Assertions.assertThatCode(() -> emojiService.createEmoji(user, request))
                 .doesNotThrowAnyException();
     }
 
@@ -74,10 +76,11 @@ class EmojiServiceTest extends IntegrationTest {
     @Test
     void failWhenEmojiAlreadyExist() {
         // given
-        emojiService.createEmoji(user, expense.getId(), 1);
+        EmojiCreateRequest request = new EmojiCreateRequest(expense.getId(), 1);
+        emojiService.createEmoji(user, request);
 
         // when & then
-        Assertions.assertThatCode(() -> emojiService.createEmoji(user, expense.getId(), 1))
+        Assertions.assertThatCode(() -> emojiService.createEmoji(user, request))
                 .isInstanceOf(HankkiMoaException.class)
                 .hasMessage(ExceptionCode.EMOJI_ALREADY_EXIST.getMessage());
     }

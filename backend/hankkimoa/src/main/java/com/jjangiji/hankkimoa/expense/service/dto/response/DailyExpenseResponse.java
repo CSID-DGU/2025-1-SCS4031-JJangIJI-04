@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.expense.service.dto;
+package com.jjangiji.hankkimoa.expense.service.dto.response;
 
 import java.util.List;
 

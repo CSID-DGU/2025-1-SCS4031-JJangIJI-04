@@ -1,8 +1,8 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
 import com.jjangiji.hankkimoa.expense.service.ExpenseSavingGoalService;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseSavingGoalCreateResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseSavingGoalCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseSavingGoalCreateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

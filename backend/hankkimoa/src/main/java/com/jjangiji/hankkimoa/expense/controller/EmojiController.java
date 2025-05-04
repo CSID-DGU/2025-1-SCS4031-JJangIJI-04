@@ -1,0 +1,24 @@
+package com.jjangiji.hankkimoa.expense.controller;
+
+import com.jjangiji.hankkimoa.expense.service.EmojiService;
+import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiCreateResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RequiredArgsConstructor
+@RestController
+public class EmojiController {
+
+    private final EmojiService emojiService;
+
+    @PostMapping("/api/expenses/emojis")
+    public ResponseEntity<EmojiCreateResponse> createEmoji(@RequestBody EmojiCreateRequest request) {
+        // todo 유저 매핑
+        EmojiCreateResponse response = emojiService.createEmoji(null, request);
+        return ResponseEntity.ok(response);
+    }
+}

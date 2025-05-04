@@ -1,9 +1,9 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
-import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

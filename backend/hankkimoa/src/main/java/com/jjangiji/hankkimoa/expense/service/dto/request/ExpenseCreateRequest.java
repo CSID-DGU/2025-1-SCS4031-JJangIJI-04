@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.expense.service.dto;
+package com.jjangiji.hankkimoa.expense.service.dto.request;
 
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;

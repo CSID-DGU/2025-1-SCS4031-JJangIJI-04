@@ -5,6 +5,8 @@ import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
+import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiCreateResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,13 @@ public class EmojiService {
     private final ExpenseEmojiRepository expenseEmojiRepository;
 
     @Transactional
-    public Long createEmoji(User user, Long expenseId, Integer emojiId) {
-        Expense expense = expenseMapper.readExpense(expenseId);
-        validateExpenseEmojiExist(user, expense, emojiId);
+    public EmojiCreateResponse createEmoji(User user, EmojiCreateRequest request) {
+        Expense expense = expenseMapper.readExpense(request.expenseId());
+        validateExpenseEmojiExist(user, expense, request.emojiId());
 
-        ExpenseEmoji expenseEmoji = new ExpenseEmoji(user, expense, emojiId);
-        return expenseEmojiRepository.save(expenseEmoji).getId();
+        ExpenseEmoji expenseEmoji = new ExpenseEmoji(user, expense, request.emojiId());
+        ExpenseEmoji savedExpenseEmoji = expenseEmojiRepository.save(expenseEmoji);
+        return new EmojiCreateResponse(savedExpenseEmoji.getId());
     }
 
     private void validateExpenseEmojiExist(User user, Expense expense, Integer emojiId) {

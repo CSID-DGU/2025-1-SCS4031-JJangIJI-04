@@ -13,16 +13,6 @@ export const RestaurantsPage = () => {
         </Subtitle>
       </Header>
       <Divider />
-      {/* <ListWrapper>
-        {restaurants.map((restaurant, index) => (
-          <RestaurantListItem
-            key={restaurant.id}
-            restaurant={restaurant}
-            index={index}
-            onToggleBookmark={toggleBookmark}
-          />
-        ))}
-      </ListWrapper> */}
       <RestaurantListItem />
     </PageWrapper>
   );
@@ -54,11 +44,4 @@ const Divider = styled.hr`
   border: none;
   border-top: 1px solid #808080;
   margin: 20px px;
-`;
-
-const ListWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 36px;
-  gap: 28px;
 `;

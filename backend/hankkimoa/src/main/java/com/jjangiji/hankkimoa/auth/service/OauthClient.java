@@ -23,8 +23,8 @@ public class OauthClient {
 
     public OauthInfoApiResponse requestOauthInfo(OauthLoginRequest request) {
         OauthTokenApiResponse oauthTokenApiResponse = requestToken(request);
-
         String userInfoRequestUri = oauthRequestProperties.getUserInfoRequestUri();
+
         String headerName = "Authorization";
         String headerValue = "Bearer " + oauthTokenApiResponse.access_token();
 

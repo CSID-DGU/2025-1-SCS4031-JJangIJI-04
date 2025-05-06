@@ -3,6 +3,8 @@ package com.jjangiji.hankkimoa.expense.domain;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
+import com.jjangiji.hankkimoa.user.domain.LoginType;
+import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +14,7 @@ import java.util.List;
 
 class DailyExpenseTest {
 
-    private final User user = new User("한끼", "hankki");
+    private final User user = new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER);
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7));
     private final Restaurant restaurant = new Restaurant(1L, "한끼식당");
     private final LocalDate now = LocalDate.now();

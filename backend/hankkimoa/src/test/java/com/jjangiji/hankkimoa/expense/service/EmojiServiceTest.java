@@ -11,6 +11,8 @@ import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.user.domain.LoginType;
+import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -45,7 +47,7 @@ class EmojiServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("한끼", "hankki"));
+        user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         restaurant = restaurantRepository.save(new Restaurant("한끼식당"));
         expenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoalRepository.save(
                 new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter)));

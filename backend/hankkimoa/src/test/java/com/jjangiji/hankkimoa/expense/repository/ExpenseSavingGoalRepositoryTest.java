@@ -3,6 +3,8 @@ package com.jjangiji.hankkimoa.expense.repository;
 
 import com.jjangiji.hankkimoa.config.RepositoryTest;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
+import com.jjangiji.hankkimoa.user.domain.LoginType;
+import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -23,7 +25,7 @@ class ExpenseSavingGoalRepositoryTest extends RepositoryTest {
     @Test
     void findLastByUser() {
         // given
-        User user = new User("한끼", "hankki");
+        User user = new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER);
         User savedUser = userRepository.save(user);
 
         ExpenseSavingGoal expenseSavingGoal1 = expenseSavingGoalRepository.save(

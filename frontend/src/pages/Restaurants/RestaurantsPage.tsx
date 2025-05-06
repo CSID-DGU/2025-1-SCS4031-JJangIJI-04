@@ -14,6 +14,7 @@ export const RestaurantsPage = () => {
       </Header>
       <Divider />
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       {/* <ListWrapper>
         {restaurants.map((restaurant, index) => (
@@ -26,6 +27,8 @@ export const RestaurantsPage = () => {
         ))}
       </ListWrapper> */}
 >>>>>>> dd0d93a (feat: 식당 페이지 구현)
+=======
+>>>>>>> dee571e (style: 불필요한 코드 제거)
       <RestaurantListItem />
     </PageWrapper>
   );
@@ -59,6 +62,7 @@ const Divider = styled.hr`
   margin: 20px px;
 `;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 const ListWrapper = styled.div`
@@ -68,3 +72,5 @@ const ListWrapper = styled.div`
   gap: 28px;
 `;
 >>>>>>> dd0d93a (feat: 식당 페이지 구현)
+=======
+>>>>>>> dee571e (style: 불필요한 코드 제거)

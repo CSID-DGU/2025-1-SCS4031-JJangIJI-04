@@ -18,11 +18,20 @@ export const GlobalStyle = createGlobalStyle`
     --safe-area-top: env(safe-area-inset-top, 0px); 
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 
+
+     /* Extra Small Sizes (for badges, hints, etc.) */
+    --font-size-3xs: 7px;   /* 🟠 최소 텍스트 (배지, 툴팁 등) */
+    --font-size-2xs: 9px;   /* 🟡 서브텍스트, 설명 */
+    
     /* 폰트 사이즈 */
+    --font-size-4xs: 7px; 
+    --font-size-3xs: 9px; 
+    --font-size-2xs: 10px; 
     --font-size-xs: 12px;
     --font-size-sm: 14px;
     --font-size-md: 16px;
     --font-size-lg: 18px;
+    --font-size-2lg: 20px;
     --font-size-xl: 50px;
   }
 

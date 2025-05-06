@@ -1,0 +1,33 @@
+interface BookmarkIconProps {
+  active?: boolean;
+  size?: number;
+}
+
+export const BookmarkIcon = ({
+  active = false,
+  size = 24,
+}: BookmarkIconProps) => {
+  const fillColor = active ? '#F97316' : '#808080';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_213_2013)">
+        <path
+          d="M15.8333 15L17.5 15.8333V2.50001C17.5 1.58334 16.75 0.833344 15.8333 0.833344H7.49167C6.575 0.833344 5.83333 1.58334 5.83333 2.50001H14.1667C15.0833 2.50001 15.8333 3.25001 15.8333 4.16668V15ZM12.5 4.16668H4.16667C3.25 4.16668 2.5 4.91668 2.5 5.83334V19.1667L8.33333 16.6667L14.1667 19.1667V5.83334C14.1667 4.91668 13.4167 4.16668 12.5 4.16668Z"
+          fill={fillColor}
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_213_2013">
+          <rect width="20" height="20" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};

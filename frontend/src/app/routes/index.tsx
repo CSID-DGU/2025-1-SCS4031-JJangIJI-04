@@ -5,7 +5,7 @@ import { PrivateRoute } from '@/app/routes/PrivateRoute';
 import LandingPage from '@/pages/Landing/LandingPage';
 import OAuthCallbackPage from '@/pages/OAuthCallbackPage/OAuthCallbackPage';
 import SignupPage from '@/pages/SignupPage/SignupPage';
-// import MainPage from '@/pages/MainPage/MainPage';
+import MainPage from '@/pages/MainPage/MainPage';
 
 export const router = createBrowserRouter([
   //Footer 없는 공개 페이지
@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  /*Footer 있는 인증 필요 페이지 (예: main)
+  //Footer 있는 인증 필요 페이지 (예: main)
   {
     element: <PrivateRoute />,
     children: [
@@ -42,5 +42,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  */
 ]);

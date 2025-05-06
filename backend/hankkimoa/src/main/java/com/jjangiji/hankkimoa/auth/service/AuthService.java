@@ -23,8 +23,7 @@ public class AuthService {
     @Transactional
     public AuthTokenResponse oauthLogin(OauthLoginRequest request) {
         OauthInfoApiResponse oauthInfo = oauthClient.requestOauthInfo(request);
-        System.out.println("====test====");
-        System.out.println(oauthInfo.kakao_account());
+
         User user = userRepository.findByEmail(oauthInfo.kakao_account().email())
                 .orElseGet(() -> userRepository.save(oauthInfo.toUserEntity()));
 

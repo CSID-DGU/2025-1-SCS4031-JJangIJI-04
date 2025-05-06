@@ -8,12 +8,12 @@ import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.DailyExpenseResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.ExpenseResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.MonthlyExpenseResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.SavingGoalStatusResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.SimpleExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.SavingGoalStatusResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.SimpleExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,7 @@ import java.util.List;
 @Service
 public class ExpenseService {
 
+    private final ExpenseMapper expenseMapper;
     private final RestaurantRepository restaurantRepository;
     private final ExpenseSavingGoalRepository expenseSavingGoalRepository;
     private final ExpenseRepository expenseRepository;
@@ -121,13 +122,7 @@ public class ExpenseService {
 
     @Transactional
     public void deleteExpense(Long expenseId) {
-        Expense expense = readExpense(expenseId);
+        Expense expense = expenseMapper.readExpense(expenseId);
         expenseRepository.deleteById(expense.getId());
-    }
-
-    private Expense readExpense(Long id) {
-        return expenseRepository.findById(id)
-                .orElseThrow(() -> new HankkiMoaException(
-                        ExceptionCode.EXPENSE_NOT_FOUND));
     }
 }

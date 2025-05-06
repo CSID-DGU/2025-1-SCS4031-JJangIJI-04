@@ -12,7 +12,7 @@ import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 export const router = createBrowserRouter([
   // 카카오 콜백 페이지 별도
   {
-    path: '/oauth/callback/kakao', 
+    path: '/oauth/callback/kakao',
     element: <OAuthCallbackPage />,
   },
 
@@ -30,43 +30,73 @@ export const router = createBrowserRouter([
   {
     path: 'signup',
     element: <Layout hasFooter={false} />,
-    children: [{ 
-      index: true, 
-      element: <PrivateRoute><SignupPage /></PrivateRoute> 
-    }],
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <SignupPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
   {
     path: 'restaurants/:id',
     element: <Layout hasFooter={false} />,
-    children: [{ 
-      index: true, 
-      element: <PrivateRoute><RestaurantDetailPage /></PrivateRoute> 
-    }],
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <RestaurantDetailPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
   {
     path: 'weeklygoal',
     element: <Layout hasFooter={false} />,
-    children: [{ 
-      index: true, 
-      element: <PrivateRoute><WeeklyGoalPage /></PrivateRoute> 
-    }],
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <WeeklyGoalPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
 
   //Footer 있는 인증 필요 페이지
   {
     path: 'main',
     element: <Layout hasFooter={true} />,
-    children: [{ 
-      index: true, 
-      element: <PrivateRoute><MainPage /></PrivateRoute> 
-    }],
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <MainPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
   {
     path: 'restaurants',
     element: <Layout hasFooter={true} />,
-    children: [{ 
-      index: true, 
-      element: <PrivateRoute><RestaurantsPage /></PrivateRoute> 
-    }],
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <RestaurantsPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
   },
 ]);

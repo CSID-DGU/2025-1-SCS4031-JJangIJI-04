@@ -13,6 +13,19 @@ export const RestaurantsPage = () => {
         </Subtitle>
       </Header>
       <Divider />
+<<<<<<< HEAD
+=======
+      {/* <ListWrapper>
+        {restaurants.map((restaurant, index) => (
+          <RestaurantListItem
+            key={restaurant.id}
+            restaurant={restaurant}
+            index={index}
+            onToggleBookmark={toggleBookmark}
+          />
+        ))}
+      </ListWrapper> */}
+>>>>>>> dd0d93a (feat: 식당 페이지 구현)
       <RestaurantListItem />
     </PageWrapper>
   );
@@ -45,3 +58,13 @@ const Divider = styled.hr`
   border-top: 1px solid #808080;
   margin: 20px px;
 `;
+<<<<<<< HEAD
+=======
+
+const ListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 36px;
+  gap: 28px;
+`;
+>>>>>>> dd0d93a (feat: 식당 페이지 구현)

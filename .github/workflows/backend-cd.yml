@@ -41,9 +41,11 @@ jobs:
       - name: application.yml 작성
         env:
           APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
+          APPLICATION_TEST_YML: ${{ secrets.APPLICATION_TEST_YML }}
 
         run: |
           echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
+          echo "${APPLICATION_TEST_YML}" > src/test/resources/application-test.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build

@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.auth.service;
+package com.jjangiji.hankkimoa.auth.service.oauth;
 
 import com.jjangiji.hankkimoa.auth.service.dto.response.OauthInfoApiResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.request.OauthLoginRequest;

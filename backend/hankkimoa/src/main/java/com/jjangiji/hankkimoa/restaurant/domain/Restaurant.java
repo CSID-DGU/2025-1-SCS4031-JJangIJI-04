@@ -2,9 +2,11 @@ package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,18 +23,20 @@ public class Restaurant extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // todo 다른 필드 매핑
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
 
     @NotNull(message = "이름이 NULL일 수 없습니다.")
     private String name;
 
-    public Restaurant(Long id, String name) {
-        this.id = id;
+    public Restaurant(Category category, String name) {
+        this.category = category;
         this.name = name;
     }
 
-    public Restaurant(String name) {
-        this.name = name;
+    public Restaurant(Long id, Category category, String name) {
+        this(category, name);
+        this.id = id;
     }
 
     @Override

@@ -34,15 +34,15 @@ jobs:
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew
 
-      - name: application.yml 작성
+      - name: Write application.yml
         env:
           APPLICATION_YML: ${{ secrets.APPLICATION_YML }}
           APPLICATION_TEST_YML: ${{ secrets.APPLICATION_TEST_YML }}
-
+      
         run: |
           mkdir -p src/main/resources
           mkdir -p src/test/resources
-          echo "${APPLICATION_YML}" > backend/hankkimoa/src/main/resources/application.yml
+          echo "${APPLICATION_YML}" > src/test/resources/application.yml
           echo "${APPLICATION_TEST_YML}" > src/test/resources/application-test.yml
 
       - name: Build with Gradle

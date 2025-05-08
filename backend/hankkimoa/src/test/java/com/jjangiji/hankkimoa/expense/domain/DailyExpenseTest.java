@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.expense.domain;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -16,7 +17,7 @@ class DailyExpenseTest {
 
     private final User user = new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER);
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7));
-    private final Restaurant restaurant = new Restaurant(1L, "한끼식당");
+    private final Restaurant restaurant = new Restaurant(1L, new Category("한식"), "한끼식당", "12345");
     private final LocalDate now = LocalDate.now();
 
     @DisplayName("지출일 생성 실패 : 지출일이 서로 일치하지 않을 때")

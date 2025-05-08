@@ -9,7 +9,9 @@ import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
+import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -32,6 +34,8 @@ class EmojiServiceTest extends IntegrationTest {
     @Autowired
     private RestaurantRepository restaurantRepository;
     @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
     private ExpenseSavingGoalRepository expenseSavingGoalRepository;
     @Autowired
     private UserRepository userRepository;
@@ -48,7 +52,8 @@ class EmojiServiceTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-        restaurant = restaurantRepository.save(new Restaurant("한끼식당"));
+        Category category = categoryRepository.save(new Category("한식"));
+        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345"));
         expenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoalRepository.save(
                 new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter)));
         expense = expenseRepository.save(new Expense(expenseSavingGoal, restaurant,

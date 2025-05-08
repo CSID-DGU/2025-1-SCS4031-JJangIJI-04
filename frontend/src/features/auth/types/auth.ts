@@ -13,5 +13,5 @@ export interface UserInfo {
   userId: string;
   nickname: string;
   imageUrl: string;
-  categories: string[] | null; 
+  category: string[] | null; 
 }

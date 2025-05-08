@@ -27,7 +27,7 @@ const OAuthCallbackPage = () => {
         },
       });
     }
-  }, [loginWithKakao, navigate]);
+  }, [navigate]);
 
   if (isPending) return <LoadingSpinner />;
   if (isError) return <p>로그인 에러가 발생했습니다.</p>;

@@ -22,6 +22,9 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+//    @Column(nullable = false) todo 나중에 삭제
+    private String email;
+
     @Column(nullable = false)
     private String email;
 

@@ -20,7 +20,8 @@ bin/
 ### IntelliJ IDEA ###
 src/main/resources/*.yml
 src/test/resources/*.yml
-.idea
+.idea/
+.DS_Store
 *.iws
 *.iml
 *.ipr

@@ -45,7 +45,7 @@ const InputWrapper = styled.div`
 
 const StyledInput = styled.input`
   width: 100%;
-  padding: 8px 0;
+  padding: 12px 0;
   font-size: 16px;
   border: none;
   border-bottom: 1px solid #808080;
@@ -61,8 +61,7 @@ const StyledInput = styled.input`
 const ClearButton = styled.button`
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 8px;
   background: transparent;
   border: none;
   font-size: 18px;
@@ -74,7 +73,6 @@ const ClearButton = styled.button`
     width: 20px;
     height: 20px;
     vertical-align: middle;
-    transform: translateY(-6px);
   }
 
   &:hover {

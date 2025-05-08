@@ -26,7 +26,6 @@ import java.util.List;
 @Service
 public class ExpenseService {
 
-    private final ExpenseMapper expenseMapper;
     private final RestaurantRepository restaurantRepository;
     private final ExpenseSavingGoalRepository expenseSavingGoalRepository;
     private final ExpenseRepository expenseRepository;
@@ -122,7 +121,13 @@ public class ExpenseService {
 
     @Transactional
     public void deleteExpense(Long expenseId) {
-        Expense expense = expenseMapper.readExpense(expenseId);
+        Expense expense = readExpense(expenseId);
         expenseRepository.deleteById(expense.getId());
+    }
+
+    private Expense readExpense(Long id) {
+        return expenseRepository.findById(id)
+                .orElseThrow(() -> new HankkiMoaException(
+                        ExceptionCode.EXPENSE_NOT_FOUND));
     }
 }

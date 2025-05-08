@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.auth.controller;
 
 import com.jjangiji.hankkimoa.auth.controller.cookie.CookieProvider;
 import com.jjangiji.hankkimoa.auth.service.AuthService;
+import com.jjangiji.hankkimoa.auth.service.dto.response.AuthResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.request.OauthLoginRequest;
 import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ public class AuthController {
     private final CookieProvider cookieProvider;
 
     @PostMapping("/api/auth/kakao")
-    public ResponseEntity<Void> oauthLogin(@Valid @RequestBody OauthLoginRequest request) {
+    public ResponseEntity<AuthResponse> oauthLogin(@Valid @RequestBody OauthLoginRequest request) {
         AuthTokenResponse response = authService.oauthLogin(request);
 
         ResponseCookie accessTokenCookie = cookieProvider.createAccessTokenCookie(response.accessToken());
@@ -30,6 +31,6 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .build();
+                .body(new AuthResponse(response.nickname(), response.imageUrl()));
     }
 }

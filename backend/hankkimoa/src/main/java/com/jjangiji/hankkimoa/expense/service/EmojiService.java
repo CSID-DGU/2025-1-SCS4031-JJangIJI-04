@@ -5,6 +5,7 @@ import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
+import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiDeleteRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiCreateResponse;
@@ -17,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class EmojiService {
 
-    private final ExpenseMapper expenseMapper;
+    private final ExpenseRepository expenseRepository;
     private final ExpenseEmojiRepository expenseEmojiRepository;
 
     @Transactional
     public EmojiCreateResponse createEmoji(User user, EmojiCreateRequest request) {
-        Expense expense = expenseMapper.readExpense(request.expenseId());
+        Expense expense = readExpense(request.expenseId());
         validateExpenseEmojiExist(user, expense, request.emojiId());
 
         ExpenseEmoji expenseEmoji = new ExpenseEmoji(user, expense, request.emojiId());
@@ -45,5 +46,11 @@ public class EmojiService {
     private ExpenseEmoji readExpenseEmoji(Long id) {
         return expenseEmojiRepository.findById(id)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.EMOJI_NOT_FOUND));
+    }
+
+    private Expense readExpense(Long id) {
+        return expenseRepository.findById(id)
+                .orElseThrow(() -> new HankkiMoaException(
+                        ExceptionCode.EXPENSE_NOT_FOUND));
     }
 }

@@ -5,6 +5,7 @@ import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.OauthInfoApiResponse;
 import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenProvider;
 import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenResolver;
+import com.jjangiji.hankkimoa.auth.service.oauth.OauthClient;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,6 @@ public class AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-        return AuthTokenResponse.of(accessToken, refreshToken);
+        return new AuthTokenResponse(user.getNickname(), user.getImageUrl(), accessToken, refreshToken);
     }
 }

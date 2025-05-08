@@ -11,7 +11,9 @@ const OAuthCallbackPage = () => {
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
-    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const redirectUri = window.location.hostname.startsWith('www.') 
+      ? import.meta.env.VITE_KAKAO_REDIRECT_URI_WWW 
+      : import.meta.env.VITE_KAKAO_REDIRECT_URI;
     
     if (code) {
       loginWithKakao({ 
@@ -21,7 +23,8 @@ const OAuthCallbackPage = () => {
         onSuccess: () => {
           checkCompletion();
         },
-        onError: () => {
+        onError: (error) => {
+          console.error('로그인 실패', error);
           alert('로그인에 실패하였습니다. 다시 시도해주세요.');
           navigate('/landing');
         },

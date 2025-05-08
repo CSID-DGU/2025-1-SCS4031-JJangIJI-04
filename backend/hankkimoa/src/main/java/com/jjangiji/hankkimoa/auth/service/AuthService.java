@@ -30,6 +30,6 @@ public class AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-        return AuthTokenResponse.of(accessToken, refreshToken);
+        return new AuthTokenResponse(user.getNickname(), user.getImageUrl(), accessToken, refreshToken);
     }
 }

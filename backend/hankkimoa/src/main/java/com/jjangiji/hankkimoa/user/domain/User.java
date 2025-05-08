@@ -39,9 +39,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private Category category;
-
     private boolean isExpenseOpen = true;
 
     public User(Long id, String email, String nickname) {

@@ -1,6 +1,5 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
-import com.jjangiji.hankkimoa.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,11 +12,20 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Category extends BaseEntity {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
 
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public Category(Long id, String name) {
+        this(name);
+        this.id = id;
+    }
 }

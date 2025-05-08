@@ -2,12 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useKakaoLogin } from '@/features/auth/hooks/useKakaoLogin';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
-import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
 
 const OAuthCallbackPage = () => {
   const navigate = useNavigate();
   const { mutate: loginWithKakao, isPending, isError } = useKakaoLogin();
-  const checkCompletion = useCheckUserCompletion();
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
@@ -21,7 +19,6 @@ const OAuthCallbackPage = () => {
         redirectUri
       }, {
         onSuccess: () => {
-          checkCompletion();
         },
         onError: (error) => {
           console.error('로그인 실패', error);
@@ -30,7 +27,7 @@ const OAuthCallbackPage = () => {
         },
       });
     }
-  }, [loginWithKakao, navigate, checkCompletion]);
+  }, [loginWithKakao, navigate]);
 
   if (isPending) return <LoadingSpinner />;
   if (isError) return <p>로그인 에러가 발생했습니다.</p>;

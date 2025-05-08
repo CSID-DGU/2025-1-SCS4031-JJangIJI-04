@@ -3,6 +3,8 @@ package com.jjangiji.hankkimoa.common.handler;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.ExceptionResponse;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.common.exception.OauthException;
+import com.jjangiji.hankkimoa.common.exception.OauthExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -76,5 +78,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(response);
+    }
+
+    @ExceptionHandler(OauthException.class)
+    public ResponseEntity<OauthExceptionResponse> handleOauthException(OauthException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getResponse());
     }
 }

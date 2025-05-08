@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { getUserInfo } from '@/features/auth/api/authApi';
+import { useAuthStore } from '../store/useAuthStore';
 
 export const useCheckUserCompletion = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export const useCheckUserCompletion = () => {
     } catch (error) {
       console.error('유저 정보 확인 중 에러 발생:', error);
       // 에러 발생 시 랜딩 페이지로
+      useAuthStore.getState().clearAuth();
       navigate('/landing');
     }
   };

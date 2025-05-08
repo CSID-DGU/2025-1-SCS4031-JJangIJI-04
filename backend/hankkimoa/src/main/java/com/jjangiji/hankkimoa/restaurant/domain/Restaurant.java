@@ -29,13 +29,17 @@ public class Restaurant extends BaseEntity {
     @NotNull(message = "이름이 NULL일 수 없습니다.")
     private String name;
 
-    public Restaurant(Category category, String name) {
+    @NotNull(message = "고유ID는 NULL일 수 없습니다.")
+    private String uniqueId;
+
+    public Restaurant(Category category, String name, String uniqueId) {
         this.category = category;
         this.name = name;
+        this.uniqueId = uniqueId;
     }
 
-    public Restaurant(Long id, Category category, String name) {
-        this(category, name);
+    public Restaurant(Long id, Category category, String name, String uniqueId) {
+        this(category, name, uniqueId);
         this.id = id;
     }
 

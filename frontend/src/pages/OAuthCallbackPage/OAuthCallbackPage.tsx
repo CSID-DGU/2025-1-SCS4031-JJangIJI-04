@@ -11,7 +11,7 @@ const OAuthCallbackPage = () => {
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
-    const redirectUri = 'http://localhost:5173/oauth/callback/kakao';
+    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
     
     if (code) {
       loginWithKakao({ 

@@ -22,7 +22,7 @@ public class Menu extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "식당이름이 NULL일 수 없습니다.")
+    @NotNull(message = "메뉴이름이 NULL일 수 없습니다.")
     private String name;
 
     private int price;

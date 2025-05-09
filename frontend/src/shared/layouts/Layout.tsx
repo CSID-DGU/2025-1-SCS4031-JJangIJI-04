@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { useAuthInit } from '@/features/auth/hooks/useAuthInit';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
+import { BottomNavBar } from '@/widgets/BottomNavBar';
 
 interface LayoutProps {
   children?: ReactNode;
@@ -29,7 +30,7 @@ export const Layout = ({ hasFooter = true }: LayoutProps) => {
       </Main>
       {hasFooter && (
         <Footer>
-          <nav>{/* 추후 footer import */}</nav>
+          <BottomNavBar />
         </Footer>
       )}
     </Container>
@@ -67,8 +68,10 @@ const Main = styled.main<MainProps>`
 const Footer = styled.footer`
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--max-width);
+  min-width: var(--min-width);
   height: calc(var(--footer-height) + var(--safe-area-bottom));
   padding-bottom: var(--safe-area-bottom);
   background: var(--content-background);

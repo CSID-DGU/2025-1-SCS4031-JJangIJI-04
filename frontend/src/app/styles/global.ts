@@ -12,7 +12,7 @@ export const GlobalStyle = createGlobalStyle`
     --max-height: 844px;
     --page-padding: 16px;
     --min-width: 320px;
-    --footer-height: 64px;     
+    --footer-height: 56px;     
     
     /* Safe 구역 */
     --safe-area-top: env(safe-area-inset-top, 0px); 

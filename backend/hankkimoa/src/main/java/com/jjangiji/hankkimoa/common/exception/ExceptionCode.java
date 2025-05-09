@@ -24,8 +24,10 @@ public enum ExceptionCode {
     // 지출 목표 금액
     EXPENSE_SAVING_GOAL_NOT_FOUND(HttpStatus.BAD_REQUEST, "지출 목표 금액이 존재하지 않습니다."),
     EXPENSE_SAVING_GOAL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "지출 목표 금액이 이미 존재합니다."),
+
     // 식당
     RESTAURANT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당이 존재하지 않습니다."),
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "카테고리가 존재하지 않습니다"),
 
     // 돈
     MONEY_NEGATIVE(HttpStatus.BAD_REQUEST, "금액은 음수값을 가질 수 없습니다."),

@@ -1,18 +1,22 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
+import { useEffect } from 'react';
 
 export const PrivateRoute = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
+  const checkCompletion = useCheckUserCompletion();
 
-  const isAuthenticated = !!accessToken; //accessToken이 있으면 로그인된 상태로 판단
+  useEffect(() => {
+    if (accessToken) {
+      checkCompletion();
+    }
+  }, [accessToken, checkCompletion]);
 
-  // 🧪 테스트용 우회 (주석 해제 시 무조건 로그인된 것처럼 동작함)
-  //const isAuthenticated = true;
-
-  if (!isAuthenticated) {
-    return <Navigate to="/landing" replace />; //랜딩페이지로 리다이렉트
+  if (!accessToken) {
+    return <Navigate to="/landing" replace />;
   }
 
-  return <Outlet />; //하위 라우트 렌더링
+  return <Outlet />; 
 };
 

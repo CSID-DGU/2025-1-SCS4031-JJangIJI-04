@@ -2,8 +2,10 @@ import styled from 'styled-components';
 
 export const KakaoLoginButton = () => {
   const REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
-  const REDIRECT_URI = 'http://localhost:5173/oauth/callback/kakao'; // 배포 시 변경
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+  const REDIRECT_URI_WWW = import.meta.env.VITE_KAKAO_REDIRECT_URI_WWW;
+
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${window.location.hostname.startsWith('www.') ? REDIRECT_URI_WWW : REDIRECT_URI}&response_type=code`;
 
   const handleLogin = () => {
     window.location.href = KAKAO_AUTH_URL;

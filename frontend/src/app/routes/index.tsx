@@ -4,9 +4,10 @@ import { PrivateRoute } from '@/app/routes/PrivateRoute';
 import LandingPage from '@/pages/Landing/LandingPage';
 import OAuthCallbackPage from '@/pages/OAuthCallbackPage/OAuthCallbackPage';
 import SignupPage from '@/pages/SignupPage/SignupPage';
-// import MainPage from '@/pages/MainPage/MainPage';
 import { RestaurantsPage } from '@/pages/Restaurants/RestaurantsPage';
 import { RestaurantDetailPage } from '@/pages/Restaurants/RestaurantDetailPage';
+import MainPage from '@/pages/MainPage/MainPage';
+import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 
 export const router = createBrowserRouter([
   //Footer 없는 공개 페이지
@@ -45,10 +46,15 @@ export const router = createBrowserRouter([
         element: <Layout hasFooter={false} />,
         children: [{ index: true, element: <RestaurantDetailPage /> }],
       },
+      {
+        path: 'weeklygoal',
+        element: <Layout hasFooter={false} />,
+        children: [{ index: true, element: <WeeklyGoalPage /> }],
+      },
     ],
   },
 
-  /*Footer 있는 인증 필요 페이지 (예: main)
+  //Footer 있는 인증 필요 페이지 (예: main)
   {
     element: <PrivateRoute />,
     children: [
@@ -59,5 +65,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  */
 ]);

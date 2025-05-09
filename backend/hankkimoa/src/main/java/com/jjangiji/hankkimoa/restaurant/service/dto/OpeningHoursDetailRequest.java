@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.restaurant.service;
+package com.jjangiji.hankkimoa.restaurant.service.dto;
 
 import java.time.LocalTime;
 

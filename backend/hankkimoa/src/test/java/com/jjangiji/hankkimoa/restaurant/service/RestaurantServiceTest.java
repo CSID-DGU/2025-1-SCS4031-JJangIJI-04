@@ -5,10 +5,14 @@ import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.restaurant.service.dto.MenuRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 
 class RestaurantServiceTest extends IntegrationTest {
 
@@ -30,23 +34,24 @@ class RestaurantServiceTest extends IntegrationTest {
     @Test
     void createRestaurants() {
         // given
-        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100"));
-
-        // 새로운 값 id : 110
-        // 이전에 있던 값 id : 100
-
-        // 일단 식당 정보 모두 가져옴
-
-        // 그리고 id 값 존재하면 update
-        // 없으면 추가
+        Restaurant restaurant1 = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100"));
+        Restaurant restaurant2 = new Restaurant(category, "한끼식당2", "110");
 
         // when
-//        new RestaurantCreateRequest(restaurant.getUniqueId(), restaurant.getName(),
-//                restaurant.getCategory().getName(),
-//                null, null, null);
+        MenuRequest menuRequest = new MenuRequest(true, "돈가스", null, 13000, null);
+        RestaurantCreateRequest request1 = new RestaurantCreateRequest(restaurant1.getUniqueId(),
+                restaurant1.getName(),
+                restaurant1.getCategory().getName(),
+                null, null, null, List.of(menuRequest));
+        RestaurantCreateRequest request2 = new RestaurantCreateRequest(restaurant2.getUniqueId(),
+                restaurant2.getName(),
+                restaurant2.getCategory().getName(),
+                null, null, null, List.of(menuRequest));
+
+        restaurantService.createRestaurants(List.of(request1, request2));
 
         // then
-        // 1개 추가 확인
-
+        int size = restaurantRepository.findAll().size();
+        Assertions.assertThat(size).isEqualTo(2);
     }
 }

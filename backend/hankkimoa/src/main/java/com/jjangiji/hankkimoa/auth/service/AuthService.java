@@ -56,6 +56,10 @@ public class AuthService {
     }
 
     private List<Category> readCategories(List<Integer> categories) {
+        if (categories == null || categories.isEmpty()) {
+            throw new HankkiMoaException(ExceptionCode.CATEGORY_NOT_FOUND);
+        }
+
         List<Category> result = categoryRepository.findAllById(categories);
         if (result.size() != categories.size()) {
             throw new HankkiMoaException(ExceptionCode.CATEGORY_NOT_FOUND);

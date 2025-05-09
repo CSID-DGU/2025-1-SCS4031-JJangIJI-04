@@ -27,7 +27,7 @@ public enum ExceptionCode {
 
     // 식당
     RESTAURANT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당이 존재하지 않습니다."),
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "카테고리가 존재하지 않습니다"),
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "카테고리가 존재하지 않습니다."),
 
     // 돈
     MONEY_NEGATIVE(HttpStatus.BAD_REQUEST, "금액은 음수값을 가질 수 없습니다."),

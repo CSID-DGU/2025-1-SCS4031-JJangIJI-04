@@ -4,7 +4,6 @@ import com.jjangiji.hankkimoa.auth.service.dto.request.OauthLoginRequest;
 import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.OauthInfoApiResponse;
 import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenProvider;
-import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenResolver;
 import com.jjangiji.hankkimoa.auth.service.oauth.OauthClient;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
@@ -19,7 +18,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final OauthClient oauthClient;
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtTokenResolver jwtTokenResolver;
 
     @Transactional
     public AuthTokenResponse oauthLogin(OauthLoginRequest request) {

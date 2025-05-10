@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -30,15 +31,16 @@ public class Menu extends BaseEntity {
     @NotNull(message = "메뉴이름이 NULL일 수 없습니다.")
     private String name;
 
-    private int price;
+    private Integer price;
 
+    @Column(length = 1000)
     private String imageUrl;
 
     private boolean isMain;
 
     private String introduce;
 
-    public Menu(Restaurant restaurant, String name, int price, String imageUrl, boolean isMain, String introduce) {
+    public Menu(Restaurant restaurant, String name, Integer price, String imageUrl, boolean isMain, String introduce) {
         this.restaurant = restaurant;
         this.name = name;
         this.price = price;
@@ -47,7 +49,7 @@ public class Menu extends BaseEntity {
         this.introduce = introduce;
     }
 
-    public Menu(Long id, Restaurant restaurant, String name, int price, String imageUrl, boolean isMain, String introduce) {
+    public Menu(Long id, Restaurant restaurant, String name, Integer price, String imageUrl, boolean isMain, String introduce) {
         this(restaurant, name, price, imageUrl, isMain, introduce);
         this.id = id;
     }

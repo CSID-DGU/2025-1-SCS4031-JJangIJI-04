@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ public class RestaurantImage extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 
+    @Column(length = 1000)
     private String imageUrl;
 
     public RestaurantImage(Restaurant restaurant, String imageUrl) {

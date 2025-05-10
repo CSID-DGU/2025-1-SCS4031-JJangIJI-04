@@ -49,10 +49,11 @@ const Container = styled.div`
 
 const Main = styled.main<MainProps>`
   flex: 1;
+  min-height: calc(var(--max-height) - var(--footer-height) - var(--safe-area-bottom));
   overflow-y: auto;
-  overflow-x: hidden; 
+  overflow-x: hidden;
   padding: var(--page-padding);
-  padding-top: calc(var(--safe-area-top) + var(--page-padding));
+  padding-top: calc(var(--safe-area-top) + 4px);
   padding-bottom: ${(props) =>
     props.$hasFooter
       ? `calc(var(--footer-height) + var(--safe-area-bottom) + var(--page-padding))`

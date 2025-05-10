@@ -68,11 +68,12 @@ export const GlobalStyle = createGlobalStyle`
   body {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
 
   #root {
     width: var(--max-width);
+    min-height: 100vh;
     height: var(--max-height);
     background-color: var(--content-background);
     position: relative;

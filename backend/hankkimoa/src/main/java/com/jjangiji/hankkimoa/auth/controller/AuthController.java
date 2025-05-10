@@ -1,10 +1,14 @@
 package com.jjangiji.hankkimoa.auth.controller;
 
+import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.auth.controller.cookie.CookieProvider;
 import com.jjangiji.hankkimoa.auth.service.AuthService;
-import com.jjangiji.hankkimoa.auth.service.dto.response.AuthResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.request.OauthLoginRequest;
+import com.jjangiji.hankkimoa.auth.service.dto.request.SignupRequest;
+import com.jjangiji.hankkimoa.auth.service.dto.response.AuthResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
+import com.jjangiji.hankkimoa.auth.service.dto.response.SignupResponse;
+import com.jjangiji.hankkimoa.user.domain.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -32,5 +36,11 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(new AuthResponse(response.nickname(), response.imageUrl()));
+    }
+
+    @PostMapping("/api/auth/signup")
+    public ResponseEntity<SignupResponse> signup(@AuthRequiredPrincipal User user, @RequestBody SignupRequest request) {
+        SignupResponse response = authService.signup(user, request);
+        return ResponseEntity.ok(response);
     }
 }

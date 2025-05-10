@@ -28,7 +28,7 @@ public class RestaurantService {
 
     @Transactional
     public void createRestaurants(List<RestaurantCreateRequest> requests) {
-        restaurantRepository.deleteAll();
+        restaurantRepository.deleteAll(); // todo 리팩토링 ⚒️
 
         for (RestaurantCreateRequest request : requests) {
             if (request.menus() == null) continue;
@@ -77,7 +77,7 @@ public class RestaurantService {
     private void saveRestaurantAddress(Restaurant restaurant, RestaurantCreateRequest request){
         if (request.address() == null) return;
 
-        RestaurantAddress restaurantAddress = new RestaurantAddress(restaurant, 0, 0, request.address());
+        RestaurantAddress restaurantAddress = new RestaurantAddress(restaurant, 0, 0, request.address()); // todo 리팩토링
         restaurantAddressRepository.save(restaurantAddress);
     }
 }

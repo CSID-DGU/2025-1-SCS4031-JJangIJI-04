@@ -17,7 +17,6 @@ public class RestaurantController {
 
     @PostMapping("/api/restaurants")
     public ResponseEntity<Void> createRestaurants(@RequestBody List<RestaurantCreateRequest> request) {
-        System.out.println(".... ????");
         restaurantService.createRestaurants(request);
         return ResponseEntity.noContent().build();
     }

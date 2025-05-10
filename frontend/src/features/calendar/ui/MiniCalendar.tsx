@@ -37,8 +37,8 @@ export const MiniCalendar = ({ dailyStatusList, onExpand }: Props) => {
           const dayData = statusMap[dateStr];
           const Icon = getIconByStatus(isFuture ? undefined : dayData?.status);
           const amountText = dayData?.totalExpense
-          ? formatExpenseAmount(dayData.totalExpense)
-          : '-';
+            ? formatExpenseAmount(dayData.totalExpense)
+            : '-';
 
           return (
             <Day key={dateStr}>
@@ -69,13 +69,11 @@ function getIconByStatus(status?: 'GOOD' | 'NOT_BAD' | 'BAD') {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
-  padding: 12px 24px 14px;      
+  justify-content: space-between;
+  padding: 12px 24px 14px;
   height: auto;
   min-height: 110px;
   background-color: #fff;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   max-width: 390px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -131,7 +129,7 @@ const Face = styled.div<{ $isToday: boolean }>`
   ${({ $isToday }) =>
     $isToday &&
     `
-    border: 2px solid #FD6918;
+    border: 2.5px solid #FD6918;
   `}
 
   svg {
@@ -142,7 +140,7 @@ const Face = styled.div<{ $isToday: boolean }>`
 
 const Amount = styled.div`
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   color: #202632;
   margin-top: 1px;
 `;

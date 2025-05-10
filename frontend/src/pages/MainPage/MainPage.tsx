@@ -1,5 +1,5 @@
-import { MiniCalendar } from '@/features/calendar/ui/MiniCalendar';
 import styled from 'styled-components';
+import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 
 const MainPage = () => {
@@ -9,16 +9,9 @@ const MainPage = () => {
     { date: '2025-05-07', totalExpense: 188000, status: 'BAD' },
   ];
 
-  const handleExpand = () => {
-    console.log('전체 달력 열기!');
-  };
-
   return (
     <Container>
-      <FullWidthWrapper>
-        <MiniCalendar dailyStatusList={dummyData} onExpand={handleExpand} />
-      </FullWidthWrapper>
-
+      <ExpandableCalendar dailyStatusList={dummyData} />
       {/* 이후: 게이지 영역, 지출 목록 등 붙일 자리 */}
     </Container>
   );
@@ -31,15 +24,6 @@ const Container = styled.div`
   min-height: 100vh;
   width: 100%;
   padding: 24px;
+  padding-top: var(--safe-area-top);
   box-sizing: border-box;
-`;
-
-const FullWidthWrapper = styled.div`
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  margin-top: -12px;
 `;

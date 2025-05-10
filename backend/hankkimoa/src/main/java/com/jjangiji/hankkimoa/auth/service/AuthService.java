@@ -6,6 +6,7 @@ import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.OauthInfoApiResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.SignupResponse;
 import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenProvider;
+import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenResolver;
 import com.jjangiji.hankkimoa.auth.service.oauth.OauthClient;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
@@ -29,6 +30,7 @@ public class AuthService {
     private final UserCategoryRepository userCategoryRepository;
     private final OauthClient oauthClient;
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenResolver jwtTokenResolver;
 
     @Transactional
     public AuthTokenResponse oauthLogin(OauthLoginRequest request) {
@@ -66,5 +68,17 @@ public class AuthService {
         }
 
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public String refreshToken(String refreshToken) {
+        AuthUser authUser = jwtTokenResolver.resolveRefreshToken(refreshToken);
+        User user = readUser(authUser.id());
+        return jwtTokenProvider.createAccessToken(user);
+    }
+
+    private User readUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new HankkiMoaException(ExceptionCode.USER_NOT_FOUND));
     }
 }

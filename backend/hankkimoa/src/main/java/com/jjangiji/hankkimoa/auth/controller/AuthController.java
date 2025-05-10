@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.auth.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.auth.controller.cookie.CookieProvider;
+import com.jjangiji.hankkimoa.auth.controller.cookie.CookieResolver;
 import com.jjangiji.hankkimoa.auth.service.AuthService;
 import com.jjangiji.hankkimoa.auth.service.dto.request.OauthLoginRequest;
 import com.jjangiji.hankkimoa.auth.service.dto.request.SignupRequest;
@@ -9,6 +10,7 @@ import com.jjangiji.hankkimoa.auth.service.dto.response.AuthResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.AuthTokenResponse;
 import com.jjangiji.hankkimoa.auth.service.dto.response.SignupResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final CookieProvider cookieProvider;
+    private final CookieResolver cookieResolver;
 
     @PostMapping("/api/auth/kakao")
     public ResponseEntity<AuthResponse> oauthLogin(@Valid @RequestBody OauthLoginRequest request) {
@@ -42,5 +45,18 @@ public class AuthController {
     public ResponseEntity<SignupResponse> signup(@AuthRequiredPrincipal User user, @RequestBody SignupRequest request) {
         SignupResponse response = authService.signup(user, request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/api/auth/refresh")
+    public ResponseEntity<Void> refreshToken(HttpServletRequest httpServletRequest) {
+        cookieResolver.checkLoginRequired(httpServletRequest);
+
+        String refreshToken = cookieResolver.extractRefreshToken(httpServletRequest);
+        String accessToken = authService.refreshToken(refreshToken);
+
+        ResponseCookie accessTokenCookie = cookieProvider.createAccessTokenCookie(accessToken);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                .build();
     }
 }

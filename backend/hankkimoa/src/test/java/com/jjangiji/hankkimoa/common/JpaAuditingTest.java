@@ -1,5 +1,6 @@
 package com.jjangiji.hankkimoa.common;
 
+import com.jjangiji.hankkimoa.config.CommonTest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,15 +8,12 @@ import jakarta.persistence.Id;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class JpaAuditingTest {
+class JpaAuditingTest implements CommonTest {
 
     @Autowired
     private TestRepository testRepository;

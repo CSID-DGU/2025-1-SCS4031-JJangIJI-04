@@ -72,7 +72,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   #root {
-    width: var(--max-width);
+    width: 100%;                         
+    max-width: var(--max-width);        
     min-height: 100vh;
     height: var(--max-height);
     background-color: var(--content-background);

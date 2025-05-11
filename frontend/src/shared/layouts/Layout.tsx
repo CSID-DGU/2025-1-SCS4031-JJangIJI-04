@@ -38,7 +38,8 @@ export const Layout = ({ hasFooter = true }: LayoutProps) => {
 };
 
 const Container = styled.div`
-  width: var(--max-width);
+  width: 100%;                          
+  max-width: var(--max-width);         
   height: var(--max-height);
   overflow: hidden;
   background-color: var(--content-background);

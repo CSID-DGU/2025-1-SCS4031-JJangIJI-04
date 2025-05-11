@@ -8,7 +8,7 @@ export const PrivateRoute = () => {
   const checkCompletion = useCheckUserCompletion();
 
   //로컬 테스트 시에는 주석 달고 진행
-  /*useEffect(() => {
+  useEffect(() => {
     if (accessToken) {
       checkCompletion();
     }
@@ -16,7 +16,7 @@ export const PrivateRoute = () => {
 
   if (!accessToken) {
     return <Navigate to="/landing" replace />;
-  }*/
+  }
 
   return <Outlet />; 
 };

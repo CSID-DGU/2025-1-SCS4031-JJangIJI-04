@@ -33,9 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ExceptionResponse> handleRuntimeException(HttpServletRequest request, RuntimeException ex) {
-        log.error("INTERNAL SERVER ERROR : ", ex);
-
+    public ResponseEntity<ExceptionResponse> handleRuntimeException(HttpServletRequest request, RuntimeException exception) {
+        log.error("INTERNAL SERVER ERROR : ", exception);
         ExceptionResponse response = new ExceptionResponse(
                 request.getMethod(),
                 request.getRequestURI(),

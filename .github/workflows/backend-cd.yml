@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p src/main/resources
           mkdir -p src/test/resources
-          echo "${APPLICATION_YML}" > src/test/resources/application.yml
+          echo "${APPLICATION_YML}" > src/main/resources/application.yml
           echo "${APPLICATION_TEST_YML}" > src/test/resources/application-test.yml
 
       - name: Build with Gradle

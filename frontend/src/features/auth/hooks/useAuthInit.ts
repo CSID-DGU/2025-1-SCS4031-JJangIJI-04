@@ -10,9 +10,9 @@ export const useAuthInit = () => {
       try {
         const token = await requestRefreshToken();
         setAccessToken(token);
+        setInitializing(false);
       } catch {
         clearAuth();
-      } finally {
         setInitializing(false);
       }
     };

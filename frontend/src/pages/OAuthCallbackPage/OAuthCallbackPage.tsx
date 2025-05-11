@@ -20,7 +20,9 @@ const OAuthCallbackPage = () => {
       }, {
         onSuccess: () => {
           //추후 GET API 완료되면 제거
-          navigate('/signup');
+          setTimeout(() => {
+            navigate('/signup');
+          }, 0);
         },
         onError: (error) => {
           console.error('로그인 실패', error);

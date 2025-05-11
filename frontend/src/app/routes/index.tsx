@@ -12,7 +12,8 @@ import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 export const router = createBrowserRouter([
   // 카카오 콜백 페이지 별도
   {
-  path: '/oauth/callback/kakao', element: <OAuthCallbackPage />,
+    path: '/oauth/callback/kakao', 
+    element: <OAuthCallbackPage />,
   },
 
   //Footer 없는 공개 페이지
@@ -27,40 +28,45 @@ export const router = createBrowserRouter([
 
   //Footer 없는 인증 필요 페이지
   {
-    element: <PrivateRoute />,
-    children: [
-      {
-        path: 'signup',
-        element: <Layout hasFooter={false} />,
-        children: [{ index: true, element: <SignupPage /> }],
-      },
-      {
-        path: 'restaurants/:id',
-        element: <Layout hasFooter={false} />,
-        children: [{ index: true, element: <RestaurantDetailPage /> }],
-      },
-      {
-        path: 'weeklygoal',
-        element: <Layout hasFooter={false} />,
-        children: [{ index: true, element: <WeeklyGoalPage /> }],
-      },
-    ],
+    path: 'signup',
+    element: <Layout hasFooter={false} />,
+    children: [{ 
+      index: true, 
+      element: <PrivateRoute><SignupPage /></PrivateRoute> 
+    }],
+  },
+  {
+    path: 'restaurants/:id',
+    element: <Layout hasFooter={false} />,
+    children: [{ 
+      index: true, 
+      element: <PrivateRoute><RestaurantDetailPage /></PrivateRoute> 
+    }],
+  },
+  {
+    path: 'weeklygoal',
+    element: <Layout hasFooter={false} />,
+    children: [{ 
+      index: true, 
+      element: <PrivateRoute><WeeklyGoalPage /></PrivateRoute> 
+    }],
   },
 
   //Footer 있는 인증 필요 페이지
   {
-    element: <PrivateRoute />,
-    children: [
-      {
-        path: 'main',
-        element: <Layout hasFooter={true} />,
-        children: [{ index: true, element: <MainPage /> }],
-      },
-      {
-        path: 'restaurants',
-        element: <Layout hasFooter={true} />,
-        children: [{ index: true, element: <RestaurantsPage /> }],
-      },
-    ],
+    path: 'main',
+    element: <Layout hasFooter={true} />,
+    children: [{ 
+      index: true, 
+      element: <PrivateRoute><MainPage /></PrivateRoute> 
+    }],
+  },
+  {
+    path: 'restaurants',
+    element: <Layout hasFooter={true} />,
+    children: [{ 
+      index: true, 
+      element: <PrivateRoute><RestaurantsPage /></PrivateRoute> 
+    }],
   },
 ]);

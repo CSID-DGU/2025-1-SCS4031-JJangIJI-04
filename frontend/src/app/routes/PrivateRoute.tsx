@@ -1,10 +1,15 @@
 // GET API 완료 되면 주석 해제
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { ReactNode } from 'react';
 //import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
 //import { useEffect } from 'react';
 
-export const PrivateRoute = () => {
+interface PrivateRouteProps {
+  children: ReactNode;  // 추가
+}
+
+export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isInitializing = useAuthStore((state) => state.isInitializing);
   //const checkCompletion = useCheckUserCompletion();
@@ -24,6 +29,6 @@ export const PrivateRoute = () => {
     return <Navigate to="/landing" replace />;
   }
 
-  return <Outlet />; 
+  return children; 
 };
 

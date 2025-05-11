@@ -12,7 +12,7 @@ export const GlobalStyle = createGlobalStyle`
     --max-height: 844px;
     --page-padding: 16px;
     --min-width: 320px;
-    --footer-height: 64px;     
+    --footer-height: 56px;     
     
     /* Safe 구역 */
     --safe-area-top: env(safe-area-inset-top, 0px); 
@@ -68,11 +68,13 @@ export const GlobalStyle = createGlobalStyle`
   body {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
   }
 
   #root {
-    width: var(--max-width);
+    width: 100%;                         
+    max-width: var(--max-width);        
+    min-height: 100vh;
     height: var(--max-height);
     background-color: var(--content-background);
     position: relative;

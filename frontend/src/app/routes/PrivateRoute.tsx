@@ -1,17 +1,19 @@
+// GET API 완료 되면 주석 해제
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
-import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
-import { useEffect } from 'react';
+//import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
+//import { useEffect } from 'react';
 
 export const PrivateRoute = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
-  const checkCompletion = useCheckUserCompletion();
+  //const checkCompletion = useCheckUserCompletion();
 
-  useEffect(() => {
-    if (accessToken) {
-      checkCompletion();
-    }
-  }, [accessToken, checkCompletion]);
+  //로컬 테스트 시에는 주석 달고 진행
+  //useEffect(() => {
+  //  if (accessToken) {
+  //    checkCompletion();
+  //  }
+  //}, [accessToken, checkCompletion]);
 
   if (!accessToken) {
     return <Navigate to="/landing" replace />;

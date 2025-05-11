@@ -21,17 +21,6 @@ export const router = createBrowserRouter([
     ],
   },
 
-  {
-    element: <PrivateRoute />,
-    children: [
-      {
-        path: 'restaurants',
-        element: <Layout hasFooter={true} />,
-        children: [{ index: true, element: <RestaurantsPage /> }],
-      },
-    ],
-  },
-
   //Footer 없는 인증 필요 페이지
   {
     element: <PrivateRoute />,
@@ -54,7 +43,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  //Footer 있는 인증 필요 페이지 (예: main)
+  //Footer 있는 인증 필요 페이지
   {
     element: <PrivateRoute />,
     children: [
@@ -62,6 +51,11 @@ export const router = createBrowserRouter([
         path: 'main',
         element: <Layout hasFooter={true} />,
         children: [{ index: true, element: <MainPage /> }],
+      },
+      {
+        path: 'restaurants',
+        element: <Layout hasFooter={true} />,
+        children: [{ index: true, element: <RestaurantsPage /> }],
       },
     ],
   },

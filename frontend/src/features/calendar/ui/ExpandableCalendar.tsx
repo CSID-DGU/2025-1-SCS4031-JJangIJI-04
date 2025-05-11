@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';  // 추가
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { MiniCalendar } from '@/features/calendar/ui/MiniCalendar';
@@ -34,39 +34,22 @@ export const ExpandableCalendar = ({ dailyStatusList }: Props) => {
     return (
       <Container>
         <motion.div
-          layout  // 레이아웃 변경 자동 애니메이션
-          initial={false}
-          transition={{
-            layout: {
-              duration: 0.6,
-              ease: [0.4, 0, 0.2, 1]  // 부드러운 이징
-            }
+          animate={{ 
+            height: isExpanded ? 650 : 150,
           }}
+          initial={false}
+          transition={{ 
+            duration: 0.5,
+            ease: [0.4, 0, 0.2, 1]
+          }}
+          style={{ overflow: 'hidden' }}
         >
           <Wrapper $isMini={!isExpanded}>
-            <AnimatePresence mode="wait">
-              {!isExpanded ? (
-                <motion.div
-                  key="mini"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <MiniCalendar dailyStatusList={dailyStatusList} onExpand={handleExpand} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="full"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <FullCalendar dailyStatusList={dailyStatusList} onCollapse={handleExpand} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {!isExpanded ? (
+              <MiniCalendar dailyStatusList={dailyStatusList} onExpand={handleExpand} />
+            ) : (
+              <FullCalendar dailyStatusList={dailyStatusList} onCollapse={handleExpand} />
+            )}
           </Wrapper>
         </motion.div>
         <AnimatePresence>
@@ -75,7 +58,7 @@ export const ExpandableCalendar = ({ dailyStatusList }: Props) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.5 }}
             >
               <ModalBackground onClick={handleExpand} />
             </motion.div>
@@ -108,7 +91,6 @@ const ModalBackground = styled.div`
 const Wrapper = styled.div<{ $isMini: boolean }>`
   position: relative;
   background-color: #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
-  overflow: hidden;
 `;

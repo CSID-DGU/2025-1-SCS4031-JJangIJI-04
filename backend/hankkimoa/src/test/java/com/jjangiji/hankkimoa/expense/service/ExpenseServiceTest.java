@@ -7,9 +7,10 @@ import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
@@ -19,7 +20,6 @@ import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,18 +52,10 @@ class ExpenseServiceTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-        Category category = categoryRepository.save(new Category("한식"));
-        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345"));
+        Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
+        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
         expenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoalRepository.save(
                 new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter)));
-    }
-
-    @AfterEach
-    void tearDown() {
-        expenseRepository.deleteAllInBatch();
-        restaurantRepository.deleteAllInBatch();
-        expenseSavingGoalRepository.deleteAllInBatch();
-        userRepository.deleteAllInBatch();
     }
 
     @DisplayName("지출 내역 생성 성공")

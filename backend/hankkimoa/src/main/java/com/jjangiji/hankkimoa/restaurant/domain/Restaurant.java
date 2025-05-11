@@ -32,15 +32,22 @@ public class Restaurant extends BaseEntity {
     @NotNull(message = "고유ID는 NULL일 수 없습니다.")
     private String uniqueId;
 
-    public Restaurant(Category category, String name, String uniqueId) {
+    private Integer menuAverage;
+
+    public Restaurant(Category category, String name, String uniqueId, Integer menuAverage) {
         this.category = category;
         this.name = name;
         this.uniqueId = uniqueId;
+        this.menuAverage = menuAverage;
     }
 
-    public Restaurant(Long id, Category category, String name, String uniqueId) {
-        this(category, name, uniqueId);
+    public Restaurant(Long id, Category category, String name, String uniqueId, Integer menuAverage) {
+        this(category, name, uniqueId, menuAverage);
         this.id = id;
+    }
+
+    public String getCategoryName() {
+        return category.getName().name();
     }
 
     @Override

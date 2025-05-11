@@ -10,6 +10,11 @@ import MainPage from '@/pages/MainPage/MainPage';
 import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 
 export const router = createBrowserRouter([
+  // 카카오 콜백 페이지 별도
+  {
+  path: '/oauth/callback/kakao', element: <OAuthCallbackPage />,
+  },
+
   //Footer 없는 공개 페이지
   {
     path: '/',
@@ -17,7 +22,6 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: 'landing', element: <LandingPage /> },
-      { path: 'oauth/callback/kakao', element: <OAuthCallbackPage /> },
     ],
   },
 

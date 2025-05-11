@@ -25,7 +25,8 @@ api.interceptors.response.use(
     if (
       err.response?.status === 401 &&
       originalRequest &&
-      !(originalRequest as any)._retry
+      !(originalRequest as any)._retry &&
+      !useAuthStore.getState().isRefreshFailed  // 추가: 리프레시 실패 상태 체크
     ) {
       (originalRequest as any)._retry = true;
 
@@ -41,6 +42,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
+        useAuthStore.getState().setRefreshFailed(true);  // 추가: 리프레시 실패 상태 설정
         return Promise.reject(refreshError);
       }
     }

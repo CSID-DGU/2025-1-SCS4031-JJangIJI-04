@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.util.Objects;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -17,37 +18,32 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Restaurant extends BaseEntity {
+public class RestaurantAddress extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Category category;
+    private Restaurant restaurant;
 
-    @NotNull(message = "이름이 NULL일 수 없습니다.")
-    private String name;
+    private double latitude;
 
-    @NotNull(message = "고유ID는 NULL일 수 없습니다.")
-    private String uniqueId;
+    private double longitude;
 
-    private Integer menuAverage;
+    @NotNull(message = "주소가 NULL일 수 없습니다.")
+    private String streetAddress;
 
-    public Restaurant(Category category, String name, String uniqueId, Integer menuAverage) {
-        this.category = category;
-        this.name = name;
-        this.uniqueId = uniqueId;
-        this.menuAverage = menuAverage;
+    public RestaurantAddress(Restaurant restaurant, double latitude, double longitude, String streetAddress) {
+        this.restaurant = restaurant;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.streetAddress = streetAddress;
     }
 
-    public Restaurant(Long id, Category category, String name, String uniqueId, Integer menuAverage) {
-        this(category, name, uniqueId, menuAverage);
+    public RestaurantAddress(Long id, Restaurant restaurant, double latitude, double longitude, String streetAddress) {
+        this(restaurant, latitude, longitude, streetAddress);
         this.id = id;
-    }
-
-    public String getCategoryName() {
-        return category.getName().name();
     }
 
     @Override
@@ -58,7 +54,7 @@ public class Restaurant extends BaseEntity {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Restaurant that = (Restaurant) object;
+        RestaurantAddress that = (RestaurantAddress) object;
         return Objects.equals(id, that.id);
     }
 

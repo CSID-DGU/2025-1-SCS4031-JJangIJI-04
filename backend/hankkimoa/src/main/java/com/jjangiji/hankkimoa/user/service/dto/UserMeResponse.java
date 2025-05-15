@@ -13,17 +13,7 @@ public record UserMeResponse(
         String imageUrl,
         LoginType loginType,
         Role role,
-        List<Category> categories
+        List<CategoryResponse> categories
 ) {
-    public static UserMeResponse from(User user) {
-        return new UserMeResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getNickname(),
-                user.getImageUrl(),
-                user.getLoginType(),
-                user.getRole(),
-                null
-        );
-    }
+
 }

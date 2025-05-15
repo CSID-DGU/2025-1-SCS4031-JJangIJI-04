@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.user.service;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.user.service.dto.CategoryResponse;
 import com.jjangiji.hankkimoa.user.service.dto.UserMeResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.domain.UserCategory;
@@ -21,9 +22,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserMeResponse getMyInfo(User user) {
-        List<Category> categories = userCategoryRepository.findAllByUser(user).stream()
-                .map(UserCategory::getCategory)
-                .collect(Collectors.toList());
+        List<CategoryResponse> categories = userCategoryRepository.findAllByUser(user).stream()
+                .map(userCategory -> new CategoryResponse(userCategory.getCategory().getId(), userCategory.getCategory().getName().name()))
+                .toList();
 
         return new UserMeResponse(user.getId(), user.getEmail(),
                                     user.getNickname(), user.getImageUrl(),

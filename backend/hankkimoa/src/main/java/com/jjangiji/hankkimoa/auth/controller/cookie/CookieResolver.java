@@ -63,4 +63,3 @@ public class CookieResolver {
         return isAccessTokenEmpty(request) && isRefreshTokenEmpty(request);
     }
 }
-

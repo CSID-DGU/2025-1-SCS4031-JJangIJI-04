@@ -3,14 +3,12 @@ package com.jjangiji.hankkimoa.expense.service;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.config.IntegrationTest;
-import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseSavingGoalCreateRequest;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +21,6 @@ class ExpenseSavingGoalTest extends IntegrationTest {
     @Autowired
     private ExpenseSavingGoalService expenseSavingGoalService;
     @Autowired
-    private ExpenseSavingGoalRepository expenseSavingGoalRepository;
-    @Autowired
     private UserRepository userRepository;
 
     private User user;
@@ -34,12 +30,6 @@ class ExpenseSavingGoalTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-    }
-
-    @AfterEach
-    void tearDown() {
-        expenseSavingGoalRepository.deleteAllInBatch();
-        userRepository.deleteAllInBatch();
     }
 
     @DisplayName("지출 목표 금액 추가 성공")

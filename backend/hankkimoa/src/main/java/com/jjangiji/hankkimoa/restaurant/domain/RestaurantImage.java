@@ -1,15 +1,16 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.util.Objects;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -17,37 +18,26 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Restaurant extends BaseEntity {
+public class RestaurantImage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Category category;
+    private Restaurant restaurant;
 
-    @NotNull(message = "이름이 NULL일 수 없습니다.")
-    private String name;
+    @Column(length = 1000)
+    private String imageUrl;
 
-    @NotNull(message = "고유ID는 NULL일 수 없습니다.")
-    private String uniqueId;
-
-    private Integer menuAverage;
-
-    public Restaurant(Category category, String name, String uniqueId, Integer menuAverage) {
-        this.category = category;
-        this.name = name;
-        this.uniqueId = uniqueId;
-        this.menuAverage = menuAverage;
+    public RestaurantImage(Restaurant restaurant, String imageUrl) {
+        this.restaurant = restaurant;
+        this.imageUrl = imageUrl;
     }
 
-    public Restaurant(Long id, Category category, String name, String uniqueId, Integer menuAverage) {
-        this(category, name, uniqueId, menuAverage);
+    public RestaurantImage(Long id, Restaurant restaurant, String imageUrl) {
+        this(restaurant, imageUrl);
         this.id = id;
-    }
-
-    public String getCategoryName() {
-        return category.getName().name();
     }
 
     @Override
@@ -58,7 +48,7 @@ public class Restaurant extends BaseEntity {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Restaurant that = (Restaurant) object;
+        RestaurantImage that = (RestaurantImage) object;
         return Objects.equals(id, that.id);
     }
 

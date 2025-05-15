@@ -1,9 +1,10 @@
-package com.jjangiji.hankkimoa.user;
+package com.jjangiji.hankkimoa.user.service.dto;
 
-import com.jjangiji.hankkimoa.user.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
+import java.util.List;
 
 public record UserMeResponse(
         Long id,
@@ -12,7 +13,7 @@ public record UserMeResponse(
         String imageUrl,
         LoginType loginType,
         Role role,
-        Category category
+        List<Category> categories
 ) {
     public static UserMeResponse from(User user) {
         return new UserMeResponse(
@@ -22,8 +23,7 @@ public record UserMeResponse(
                 user.getImageUrl(),
                 user.getLoginType(),
                 user.getRole(),
-                user.getCategory()
+                null
         );
-
     }
 }

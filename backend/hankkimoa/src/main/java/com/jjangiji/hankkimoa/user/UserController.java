@@ -1,10 +1,10 @@
 package com.jjangiji.hankkimoa.user;
 
-import com.jjangiji.hankkimoa.auth.controller.cookie.CookieExtractor;
-import com.jjangiji.hankkimoa.auth.service.AuthUser;
-import com.jjangiji.hankkimoa.auth.service.jwt.JwtTokenResolver;
-import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
-import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
+import com.jjangiji.hankkimoa.auth.controller.cookie.CookieResolver;
+import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.service.UserService;
+import com.jjangiji.hankkimoa.user.service.dto.UserMeResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
     private final UserService userService;
-    private final JwtTokenResolver jwtTokenResolver;
+    private final CookieResolver cookieResolver;
 
-    @GetMapping("api/users/me")
-    public ResponseEntity<UserMeResponse> getMyInfo(HttpServletRequest request) {
-        String accessToken = CookieExtractor.extractAccessToken(request)
-                .orElseThrow(() -> new HankkiMoaException(ExceptionCode.AUTHENTICATION_TOKEN_EMPTY));
-
-        AuthUser authUser = jwtTokenResolver.resolveAccessToken(accessToken);
-        UserMeResponse response = userService.getMyInfo(authUser.id());
-
+    @GetMapping("/api/users/me")
+    public ResponseEntity<UserMeResponse> getMyInfo(@AuthRequiredPrincipal User user, HttpServletRequest request) {
+        UserMeResponse response = userService.getMyInfo(user);
         return ResponseEntity.ok(response);
     }
 }

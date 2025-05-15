@@ -24,6 +24,7 @@ export const GlobalStyle = createGlobalStyle`
     --font-size-2xs: 9px;   /* 🟡 서브텍스트, 설명 */
     
     /* 폰트 사이즈 */
+    --font-size-5xs: 5px; 
     --font-size-4xs: 7px; 
     --font-size-3xs: 9px; 
     --font-size-2xs: 10px; 

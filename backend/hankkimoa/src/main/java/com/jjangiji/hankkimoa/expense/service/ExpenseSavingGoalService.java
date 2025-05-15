@@ -21,18 +21,12 @@ public class ExpenseSavingGoalService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ExpenseSavingGoalCreateResponse createExpenseSavingGoal(Long userId, ExpenseSavingGoalCreateRequest request) {
-        User user = readUser(userId);
+    public ExpenseSavingGoalCreateResponse createExpenseSavingGoal(User user, ExpenseSavingGoalCreateRequest request) {
         ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(user, request.budget(), request.startDate(), request.endDate());
         validateExpenseSavingGoalExist(user, expenseSavingGoal);
 
         ExpenseSavingGoal savedExpenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoal);
         return new ExpenseSavingGoalCreateResponse(savedExpenseSavingGoal.getId());
-    }
-
-    private User readUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new HankkiMoaException(ExceptionCode.USER_NOT_FOUND));
     }
 
     private void validateExpenseSavingGoalExist(User user, ExpenseSavingGoal expenseSavingGoal) {

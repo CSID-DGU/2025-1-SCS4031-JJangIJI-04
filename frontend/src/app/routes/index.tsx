@@ -8,6 +8,7 @@ import { RestaurantsPage } from '@/pages/Restaurants/RestaurantsPage';
 import { RestaurantDetailPage } from '@/pages/Restaurants/RestaurantDetailPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
+import { CommunityPage } from '@/pages/Community/CommunityPage';
 
 export const router = createBrowserRouter([
   // 카카오 콜백 페이지 별도
@@ -94,6 +95,20 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <RestaurantsPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'community',
+    element: <Layout hasFooter={true} />,
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <CommunityPage />
           </PrivateRoute>
         ),
       },

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosHeaders, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { requestRefreshToken } from '@/features/auth/api/requestRefreshToken';
 
@@ -11,10 +11,10 @@ const api = axios.create({
 api.interceptors.response.use(
   (res) => res,
   async (err: AxiosError) => {
-    const originalRequest = err.config;
+    const originalRequest = err.config as AxiosRequestConfig;
 
     // /auth/refresh 요청에 대해서는 인터셉터 스킵
-    if (originalRequest?.url?.includes('/auth/refresh')) {
+    if (originalRequest?.url === '/auth/refresh') {
       return Promise.reject(err);
     }
 

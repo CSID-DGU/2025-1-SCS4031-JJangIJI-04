@@ -7,26 +7,22 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// 요청 시 accessToken 자동 포함
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = useAuthStore.getState().accessToken;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 // 401 응답 시 자동 refresh + 원래 요청 재시도
 api.interceptors.response.use(
   (res) => res,
   async (err: AxiosError) => {
     const originalRequest = err.config;
 
+    // /auth/refresh 요청에 대해서는 인터셉터 스킵
+    if (originalRequest?.url?.includes('/auth/refresh')) {
+      return Promise.reject(err);
+    }
+
     if (
       err.response?.status === 401 &&
       originalRequest &&
       !(originalRequest as any)._retry &&
-      !useAuthStore.getState().isRefreshFailed  // 추가: 리프레시 실패 상태 체크
+      !useAuthStore.getState().isRefreshFailed
     ) {
       (originalRequest as any)._retry = true;
 
@@ -42,7 +38,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
-        useAuthStore.getState().setRefreshFailed(true);  // 추가: 리프레시 실패 상태 설정
+        useAuthStore.getState().setRefreshFailed(true);
         return Promise.reject(refreshError);
       }
     }

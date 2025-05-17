@@ -26,8 +26,6 @@ export const router = createBrowserRouter([
       { path: 'landing', element: <LandingPage /> },
     ],
   },
-
-  //Footer 없는 인증 필요 페이지
   {
     path: 'signup',
     element: <Layout hasFooter={false} />,
@@ -35,13 +33,13 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <PrivateRoute>
             <SignupPage />
-          </PrivateRoute>
         ),
       },
     ],
   },
+
+  //Footer 없는 인증 필요 페이지
   {
     path: 'restaurants/:id',
     element: <Layout hasFooter={false} />,

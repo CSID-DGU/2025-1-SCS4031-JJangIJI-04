@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { InputField } from '@/shared/ui/InputField';
 import styled from 'styled-components';
@@ -7,12 +8,22 @@ import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { useSignup } from '@/features/auth/mutations/useSignup';
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
   const nicknameFromStore = useAuthStore((s) => s.nickname);
+  const categoriesFromStore = useAuthStore((s) => s.categories);
   const [nickname, setNickname] = useState('');
   const [nicknameValid, setNicknameValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { mutate: signup } = useSignup();
+
+  // 이미 가입된 유저면 /main 으로 강제 이동
+  useEffect(() => {
+    if (Array.isArray(categoriesFromStore) && categoriesFromStore.length > 0) {
+      navigate('/main');
+    }
+  }, [categoriesFromStore, navigate]);
 
   useEffect(() => {
     if (nicknameFromStore) {

@@ -9,7 +9,7 @@ export const useCheckUserCompletion = () => {
     try {
       const userInfo = await getUserInfo();
       
-      if (!userInfo.category || userInfo.category.length === 0) {
+      if (!userInfo.categories || userInfo.categories.length === 0) {
         // 카테고리가 없으면 회원가입 페이지로
         navigate('/signup');
       } else {

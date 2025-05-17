@@ -6,12 +6,12 @@ export interface KakaoLoginResponse {
 
 export interface SignupRequest {
   nickname: string;
-  category: string[];
+  categories: string[];
 }
 
 export interface UserInfo {
   userId: string;
   nickname: string;
   imageUrl: string;
-  category: string[] | null; 
+  categories: string[] | null; 
 }

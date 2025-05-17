@@ -5,20 +5,20 @@ import { useAuthStore } from '@/features/auth/store/useAuthStore';
 export const useCheckUserCompletion = () => {
   const navigate = useNavigate();
 
-  return async () => {
-    console.log('checkUserCompletion 시작');
+  return async (forcedError?: boolean) => {
+    if (forcedError) {
+      console.error('로그인 실패 → /landing');
+      useAuthStore.getState().clearAuth();
+      navigate('/landing');
+      return;
+    }
 
     try {
+      console.log('checkUserCompletion 시작');
       const userInfo = await getUserInfo();
-      console.log('O 받은 유저 정보:', userInfo);
+      console.log('받은 유저 정보:', userInfo);
 
-      if (!Array.isArray(userInfo.categories)) {
-        console.log('! categories가 배열이 아님');
-        navigate('/signup');
-        return;
-      }
-
-      if (userInfo.categories.length === 0) {
+      if (!Array.isArray(userInfo.categories) || userInfo.categories.length === 0) {
         console.log('categories는 빈 배열 → /signup');
         navigate('/signup');
         return;
@@ -27,7 +27,7 @@ export const useCheckUserCompletion = () => {
       console.log('categories 있음 → /main');
       navigate('/main');
     } catch (error) {
-      console.log('catch 실행됨 → /landing');
+      console.error('유저 정보 확인 실패 → /landing');
       useAuthStore.getState().clearAuth();
       navigate('/landing');
     }

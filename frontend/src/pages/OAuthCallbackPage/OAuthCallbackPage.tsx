@@ -17,7 +17,6 @@ const OAuthCallbackPage = () => {
       ? import.meta.env.VITE_KAKAO_REDIRECT_URI_WWW
       : import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
-    // 조건만 검사, navigate는 하지 않음
     if (!code || !redirectUri || usedKakaoCode === code) return;
 
     setUsedKakaoCode(code);
@@ -26,15 +25,15 @@ const OAuthCallbackPage = () => {
       { code, redirectUri },
       {
         onSuccess: async () => {
-          await checkUserCompletion(); // 이 안에서만 navigate 실행
+          await checkUserCompletion(); // 모든 정상 흐름에서 navigate
         },
         onError: () => {
           setUsedKakaoCode(null);
-          // navigate 생략 → 모든 리다이렉트는 checkUserCompletion() 안에서 처리
+          checkUserCompletion(true); // 에러 강제 처리
         },
       }
     );
-  }, [isPending, loginWithKakao, checkUserCompletion, usedKakaoCode, setUsedKakaoCode]);
+  }, [isPending, loginWithKakao, usedKakaoCode, setUsedKakaoCode, checkUserCompletion]);
 
   if (isPending) return <LoadingSpinner />;
 

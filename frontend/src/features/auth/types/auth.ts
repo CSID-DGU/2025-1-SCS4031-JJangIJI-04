@@ -6,7 +6,7 @@ export interface KakaoLoginResponse {
 
 export interface SignupRequest {
   nickname: string;
-  categories: string[];
+  categories: number[];
 }
 
 export interface Category {

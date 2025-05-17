@@ -2,28 +2,28 @@ import styled from 'styled-components';
 
 interface Category {
   label: string;
-  value: string;
+  value: number;
   icon: string;
 }
 
 interface Props {
-  selected: string[];
-  onChange: (next: string[]) => void;
+  selected: number[];
+  onChange: (next: number[]) => void;
 }
 
-const CATEGORY_LIST: Category[] = [
-  { label: '한식', value: '한식', icon: 'korean-food.svg' },
-  { label: '중식', value: '중식', icon: 'chinese-food.svg' },
-  { label: '일식', value: '일식', icon: 'japanese-food.svg' },
-  { label: '양식', value: '양식', icon: 'western-food.svg' },
-  { label: '분식', value: '분식', icon: 'korean-street-food.svg' },
-  { label: '아시안', value: '아시안', icon: 'asian-food.svg' },
-  { label: '멕시칸', value: '멕시칸', icon: 'mexican-food.svg' },
-  { label: '기타', value: '기타', icon: 'other-food.svg' },
+export const CATEGORY_LIST: Category[] = [
+  { label: '한식', value: 1, icon: 'korean-food.svg' },
+  { label: '중식', value: 2, icon: 'chinese-food.svg' },
+  { label: '일식', value: 3, icon: 'japanese-food.svg' },
+  { label: '양식', value: 4, icon: 'western-food.svg' },
+  { label: '분식', value: 5, icon: 'korean-street-food.svg' },
+  { label: '아시안', value: 6, icon: 'asian-food.svg' },
+  { label: '멕시칸', value: 7, icon: 'mexican-food.svg' },
+  { label: '기타', value: 8, icon: 'other-food.svg' },
 ];
 
 export const CategorySelector = ({ selected, onChange }: Props) => {
-  const toggle = (value: string) => {
+  const toggle = (value: number) => {
     if (selected.includes(value)) {
       onChange(selected.filter((v) => v !== value));
     } else {

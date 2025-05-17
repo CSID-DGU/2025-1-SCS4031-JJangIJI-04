@@ -6,17 +6,21 @@ import styled from 'styled-components';
 import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { useSignup } from '@/features/auth/mutations/useSignup';
+import { CATEGORY_LIST } from '@/features/preferences/ui/CategorySelector';
 
 const SignupPage = () => {
   const navigate = useNavigate();
 
+  
   const nicknameFromStore = useAuthStore((s) => s.nickname);
   const categoriesFromStore = useAuthStore((s) => s.categories);
   const [nickname, setNickname] = useState('');
   const [nicknameValid, setNicknameValid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const { mutate: signup } = useSignup();
+  const { setNickname: setNicknameToStore, setCategories } = useAuthStore();
+  
 
   // 이미 가입된 유저면 /main 으로 강제 이동
   useEffect(() => {
@@ -76,10 +80,24 @@ const handleSubmit = () => {
     return;
   }
 
-  signup({
-    nickname: trimmed,
-    categories: selectedCategories,
-  });
+    signup(
+      {
+        nickname: trimmed,
+        categories: selectedCategories,
+      },
+      {
+        onSuccess: () => {
+          setNicknameToStore(trimmed);
+          setCategories(
+            CATEGORY_LIST.filter((cat) => selectedCategories.includes(cat.value)).map((cat) => ({
+              categoryId: cat.value,
+              name: cat.label,
+            }))
+          );
+          navigate('/main');
+        },
+      }
+    );
 };
 
   return (

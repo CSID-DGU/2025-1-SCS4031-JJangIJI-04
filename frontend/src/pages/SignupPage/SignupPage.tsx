@@ -67,7 +67,7 @@ const handleSubmit = () => {
 
   signup({
     nickname: trimmed,
-    category: selectedCategories,
+    categories: selectedCategories,
   });
 };
 

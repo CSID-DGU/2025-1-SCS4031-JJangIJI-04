@@ -13,6 +13,8 @@ interface AuthState {
   profileImage: string | null; // 사용자 프로필 이미지 URL (커뮤니티, 마이페이지 등에 활용)
   isInitializing: boolean;  // 앱 초기 로딩 상태 (refreshToken으로 accessToken 재발급 중인지 여부)
   isRefreshFailed: boolean;  // 리프레시 실패 상태
+  usedKakaoCode: string | null;
+  setUsedKakaoCode: (code: string | null) => void;
   setAccessToken: (token: string) => void;  // accessToken을 메모리에 저장하는 함수
   setNickname: (nickname: string) => void;  // nickname을 저장하는 함수
   setProfileImage: (url: string) => void; // profileImage(URL)를 저장하는 함수
@@ -26,6 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   nickname: null,
   profileImage: null,
   isInitializing: true,
+  usedKakaoCode: null,
+  setUsedKakaoCode: (code) => set({ usedKakaoCode: code }),
   setAccessToken: (token) => set({ accessToken: token }),
   setNickname: (nickname) => set({ nickname }),
   setProfileImage: (url) => set({ profileImage: url }),

@@ -1,9 +1,8 @@
-// GET API 완료 되면 주석 해제
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ReactNode } from 'react';
-//import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
-//import { useEffect } from 'react';
+import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
+import { useEffect } from 'react';
 
 interface PrivateRouteProps {
   children: ReactNode;  // 추가
@@ -12,14 +11,14 @@ interface PrivateRouteProps {
 export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isInitializing = useAuthStore((state) => state.isInitializing);
-  //const checkCompletion = useCheckUserCompletion();
+  const checkCompletion = useCheckUserCompletion();
 
   //로컬 테스트 시에는 주석 달고 진행
-  //useEffect(() => {
-  //  if (accessToken) {
-  //    checkCompletion();
-  //  }
-  //}, [accessToken, checkCompletion]);
+  useEffect(() => {
+    if (accessToken) {
+      checkCompletion();
+    }
+  }, [accessToken, checkCompletion]);
 
   if (isInitializing) {
     return null; // 초기화 중에는 아무것도 렌더링하지 않음

@@ -8,17 +8,18 @@ export const useCheckUserCompletion = () => {
   const checkCompletion = async () => {
     try {
       const userInfo = await getUserInfo();
+      console.log('받은 유저 정보:', userInfo);
+      console.log('categories 확인:', userInfo.categories); 
       
       if (!userInfo.categories || userInfo.categories.length === 0) {
-        // 카테고리가 없으면 회원가입 페이지로
+        console.log('카테고리 없음, 회원가입 페이지로 이동');  
         navigate('/signup');
       } else {
-        // 카테고리가 있으면 메인 페이지로
+        console.log('카테고리 있음, 메인 페이지로 이동');  
         navigate('/main');
       }
     } catch (error) {
       console.error('유저 정보 확인 중 에러 발생:', error);
-      // 에러 발생 시 랜딩 페이지로
       useAuthStore.getState().clearAuth();
       navigate('/landing');
     }

@@ -14,10 +14,10 @@ interface Props {
 export const CATEGORY_LIST: Category[] = [
   { label: '한식', value: 1, icon: 'korean-food.svg' },
   { label: '중식', value: 2, icon: 'chinese-food.svg' },
-  { label: '일식', value: 3, icon: 'japanese-food.svg' },
-  { label: '양식', value: 4, icon: 'western-food.svg' },
-  { label: '분식', value: 5, icon: 'korean-street-food.svg' },
-  { label: '아시안', value: 6, icon: 'asian-food.svg' },
+  { label: '양식', value: 3, icon: 'western-food.svg' },
+  { label: '일식', value: 4, icon: 'japanese-food.svg' },
+  { label: '아시안', value: 5, icon: 'asian-food.svg' },
+  { label: '분식', value: 6, icon: 'korean-street-food.svg' },
   { label: '멕시칸', value: 7, icon: 'mexican-food.svg' },
   { label: '기타', value: 8, icon: 'other-food.svg' },
 ];

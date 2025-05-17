@@ -14,6 +14,7 @@ export const useCheckUserCompletion = () => {
       if (!userInfo.categories || userInfo.categories.length === 0) {
         console.log('카테고리 없음, 회원가입 페이지로 이동');  
         navigate('/signup');
+        return;
       } else {
         console.log('카테고리 있음, 메인 페이지로 이동');  
         navigate('/main');

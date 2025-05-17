@@ -36,9 +36,9 @@ const OAuthCallbackPage = () => {
     loginWithKakao(
       { code, redirectUri },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           window.history.replaceState({}, document.title, '/');
-          checkUserCompletion();
+          await checkUserCompletion();
         },
         onError: (error: Error) => {
           console.error('로그인 실패', error);

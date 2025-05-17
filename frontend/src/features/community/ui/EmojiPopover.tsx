@@ -12,7 +12,7 @@ export const EmojiPopover = ({ onSelect }: EmojiPopoverProps) => {
       <Arrow />
       <EmojiGrid>
         {Object.entries(emojiMap).map(([key, { src, label }]) => (
-          <EmojiButton key={key} onClick={() => onSelect(key as EmojiKey)}>
+          <EmojiButton key={key} onClick={() => onSelect(Number(key) as EmojiKey)}>
             <img src={src} alt={label} title={label} />
           </EmojiButton>
         ))}

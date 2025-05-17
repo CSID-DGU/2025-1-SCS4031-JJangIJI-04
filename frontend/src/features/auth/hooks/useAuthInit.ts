@@ -10,12 +10,14 @@ export const useAuthInit = () => {
       try {
         const token = await requestRefreshToken();
         setAccessToken(token);
-        setInitializing(false);
-        setRefreshFailed(false);  // 추가: 성공 시 실패 상태 초기화
-      } catch {
+        setRefreshFailed(false);
+      } catch (error) {
+        // 에러 발생 시 모든 상태를 초기화
         clearAuth();
+        setRefreshFailed(true);
+      } finally {
+        // 성공/실패 여부와 관계없이 초기화 완료 처리
         setInitializing(false);
-        setRefreshFailed(true);  // 추가: 실패 상태 설정
       }
     };
 

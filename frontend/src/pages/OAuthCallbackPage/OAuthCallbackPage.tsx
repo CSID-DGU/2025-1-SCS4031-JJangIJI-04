@@ -34,6 +34,8 @@ const OAuthCallbackPage = () => {
         } else {
           alert('로그인에 실패하였습니다. 다시 시도해주세요.');
         }
+        // URL에서 코드 제거하고 이동
+        window.history.replaceState({}, '', '/landing');
         navigate('/landing');
       },
     });
@@ -50,4 +52,3 @@ const OAuthCallbackPage = () => {
 };
 
 export default OAuthCallbackPage;
-

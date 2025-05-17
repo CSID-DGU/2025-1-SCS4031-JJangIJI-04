@@ -55,9 +55,10 @@ public class Expense extends BaseEntity {
     @NotNull(message = "평점이 NULL일 수 없습니다.")
     private Integer rating;
 
-    public Expense(ExpenseSavingGoal expenseSavingGoal, Restaurant restaurant, String restaurantName,
-                   String menuName,
-                   Integer expense, String memo, LocalDate expenseDate, Integer rating) {
+    public Expense(ExpenseSavingGoal expenseSavingGoal, Restaurant restaurant,
+                   String restaurantName, String menuName,
+                   Integer expense, String memo,
+                   LocalDate expenseDate, Integer rating) {
         validateMemo(memo);
         validateExpense(expense);
         validateExpenseDate(expenseDate);
@@ -70,6 +71,14 @@ public class Expense extends BaseEntity {
         this.memo = memo;
         this.expenseDate = expenseDate;
         this.rating = rating;
+    }
+
+    public Expense(Long id, ExpenseSavingGoal expenseSavingGoal,
+                   Restaurant restaurant, String restaurantName,
+                   String menuName, Integer expense,
+                   String memo, LocalDate expenseDate, Integer rating) {
+        this(expenseSavingGoal, restaurant, restaurantName, menuName, expense, memo, expenseDate, rating);
+        this.id = id;
     }
 
     private void validateMemo(String memo) {

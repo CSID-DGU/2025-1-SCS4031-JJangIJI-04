@@ -61,21 +61,17 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public DailyExpenseResponse readDailyExpenses(Long userId, Long savingGoalId, LocalDate date) {
+        // todo 접근 가능 여부 확인
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(savingGoalId);
-
-        List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
-        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
+        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+        DailyExpenses dailyExpenses = new DailyExpenses(savingGoalExpenses);
 
         List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
-        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, expenses);
+        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, dailyExpenses);
 
-        List<Expense> dailyExpense = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
-        List<ExpenseResponse> expenseResponses = toExpenseResponses(dailyExpense);
+        List<Expense> todayExpenses = dailyExpenses.getExpensesDescending(date);
+        List<ExpenseResponse> expenseResponses = toExpenseResponses(todayExpenses);
         return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
-    }
-
-    private void validateExpenseIsPublic() {
-        // TODO 접근 가능 여부 확인
     }
 
     private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
@@ -87,11 +83,13 @@ public class ExpenseService {
                 .toList();
     }
 
-    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, List<Expense> dailyExpenses) {
-        int usedPercentage = expenseSavingGoal.calculatePercentage(dailyExpenses);
+    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, DailyExpenses dailyExpenses) {
+        List<Expense> expenses = dailyExpenses.getExpenses();
+
+        int usedPercentage = expenseSavingGoal.calculatePercentage(expenses);
         return new SavingGoalStatusResponse(
                 expenseSavingGoal.getBudget(),
-                expenseSavingGoal.calculateRemainingBudget(dailyExpenses),
+                expenseSavingGoal.calculateRemainingBudget(expenses),
                 usedPercentage,
                 SavingGoalStatus.convert(usedPercentage).getMessage()
         );
@@ -103,7 +101,8 @@ public class ExpenseService {
         for (Expense expense : dateExpenses) {
             List<EmojiResponse> expenseEmojis = expenseEmojiRepository.countExpenseEmojisByExpenseId(expense.getId());
 
-            responses.add(new ExpenseResponse(expense.getRestaurantName(), expense.getMenuName(),
+            responses.add(new ExpenseResponse(
+                    expense.getRestaurantName(), expense.getMenuName(),
                     expense.getExpense(), expense.getMemo(), expenseEmojis));
         }
 

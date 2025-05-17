@@ -49,46 +49,6 @@ class ExpenseRepositoryTest extends RepositoryTest {
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
     }
 
-    @DisplayName("오늘 지출 목록 조회 성공")
-    @Test
-    void findAllByExpenseDate() {
-        // given
-        Expense expense1 = new Expense(expenseSavingGoal, restaurant,
-                "한끼식당", "순두부", 8_000,
-                "든든하게 먹음!", now, 5);
-        Expense expense2 = new Expense(expenseSavingGoal, restaurant,
-                "한끼식당", "순두부", 8_000,
-                "든든하게 먹음!", before, 5);
-        expenseRepository.saveAll(List.of(expense1, expense2));
-
-        // when
-        List<Expense> expenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(now);
-
-        // then
-        Assertions.assertThat(expenses).containsOnly(expense1);
-    }
-
-    @DisplayName("오늘 지출 목록 조회 성공 : 최신순 정렬")
-    @Test
-    void findAllByExpenseDateOrderByCreatedAtDesc() {
-        // given
-        Expense expense1 = new Expense(expenseSavingGoal, restaurant,
-                "한끼식당", "순두부", 8_000,
-                "든든하게 먹음!", now, 5);
-        expenseRepository.save(expense1);
-        Expense expense2 = new Expense(expenseSavingGoal, restaurant,
-                "한끼식당", "순두부", 8_000,
-                "든든하게 먹음!", now, 5);
-        expenseRepository.save(expense2);
-
-        // when
-        List<Expense> expenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(now);
-
-        // then
-        Assertions.assertThat(expenses.get(0).getCreatedAt())
-                .isAfter(expenses.get(1).getCreatedAt());
-    }
-
     @DisplayName("지출 절약 목표 금액 내의 지출 전부 조회")
     @Test
     void findAllByExpenseSavingGoalOrder() {

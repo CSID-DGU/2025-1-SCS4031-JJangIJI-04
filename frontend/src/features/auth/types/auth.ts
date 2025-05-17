@@ -9,9 +9,18 @@ export interface SignupRequest {
   categories: string[];
 }
 
+export interface Category {
+  categoryId: number;
+  name: string;
+}
+
 export interface UserInfo {
-  userId: string;
+  id: string;
+  email: string;
   nickname: string;
   imageUrl: string;
-  categories: string[] | null; 
+  loginType: string;
+  role: string;
+  isExpenseOpen: string;
+  categories: Category[];
 }

@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useKakaoLogin } from '@/features/auth/hooks/useKakaoLogin';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
+import { useCheckUserCompletion } from '@/features/auth/hooks/useCheckUserCompletion';
 
 const OAuthCallbackPage = () => {
   const navigate = useNavigate();
   const { mutate: loginWithKakao, isPending, isError } = useKakaoLogin();
-
+  const checkUserCompletion = useCheckUserCompletion();
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');
     const redirectUri = window.location.hostname.startsWith('www.') 
@@ -19,10 +20,7 @@ const OAuthCallbackPage = () => {
         redirectUri
       }, {
         onSuccess: () => {
-          //추후 GET API 완료되면 제거
-          setTimeout(() => {
-            navigate('/signup');
-          }, 0);
+          checkUserCompletion();
         },
         onError: (error) => {
           console.error('로그인 실패', error);

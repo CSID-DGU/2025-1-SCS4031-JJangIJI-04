@@ -6,17 +6,28 @@ export const useCheckUserCompletion = () => {
   const navigate = useNavigate();
 
   return async () => {
+    console.log('checkUserCompletion 시작');
+
     try {
       const userInfo = await getUserInfo();
+      console.log('O 받은 유저 정보:', userInfo);
 
-      if (!Array.isArray(userInfo.categories) || userInfo.categories.length === 0) {
-        navigate('/signup'); // 여기서만 라우팅
+      if (!Array.isArray(userInfo.categories)) {
+        console.log('! categories가 배열이 아님');
+        navigate('/signup');
         return;
       }
 
+      if (userInfo.categories.length === 0) {
+        console.log('categories는 빈 배열 → /signup');
+        navigate('/signup');
+        return;
+      }
+
+      console.log('categories 있음 → /main');
       navigate('/main');
     } catch (error) {
-      console.error('유저 정보 확인 실패:', error);
+      console.log('catch 실행됨 → /landing');
       useAuthStore.getState().clearAuth();
       navigate('/landing');
     }

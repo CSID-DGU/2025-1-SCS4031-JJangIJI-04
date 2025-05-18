@@ -40,7 +40,7 @@ export const Layout = ({ hasFooter = true }: LayoutProps) => {
 const Container = styled.div`
   width: 100%;                          
   max-width: var(--max-width);         
-  height: var(--max-height);
+  height: 100vh;
   overflow: hidden;
   background-color: var(--content-background);
   position: relative;
@@ -50,8 +50,8 @@ const Container = styled.div`
 
 const Main = styled.main<MainProps>`
   flex: 1;
-  min-height: calc(var(--max-height) - var(--footer-height) - var(--safe-area-bottom));
-  overflow-y: auto;
+  /*min-height: calc(var(--max-height) - var(--footer-height) - var(--safe-area-bottom));*/
+  overflow-y: visible;
   overflow-x: hidden;
   padding: var(--page-padding);
   padding-top: calc(var(--safe-area-top) + 4px);

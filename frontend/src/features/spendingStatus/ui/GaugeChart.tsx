@@ -18,14 +18,14 @@ export const GaugeChart = ({ total, spent }: GaugeChartProps) => {
   const getMessage = (percentLeft: number) => {
     if (percentLeft > 60) return '잘 절약하고 있어요! 앞으로도 화이팅!';
     if (percentLeft > 30) return '조금 만 더 노력해볼까요? 오늘도 힘내세요!';
-    if (percentLeft > 0) return '절약 금액이 얼마 남지 않았어요! 오늘은 가성비 맛집을 찾아보는게 어떨까요?';
-    return '이번 주는 달성에 실패했습니다. 다음 주에는 성공하기를 바래요!';
+    if (percentLeft > 0) return '절약 금액이 얼마 남지 않았어요!\n오늘은 가성비 맛집을 찾아보는 게 어떨까요?';
+    return '이번 주는 달성에 실패했습니다.\n다음 주에는 성공하기를 바래요!';
   };
 
   return (
     <Wrapper>
-      <Title>이번 주에 외식비로 사용할 수 있는 금액은</Title>
-      <Remaining>{(total - spent).toLocaleString()}원 남았어요!</Remaining>
+      <Title>이번 주 목표 금액은</Title>
+      <GoalAmount>{total.toLocaleString()}원 이에요!</GoalAmount>
 
       <ChartWrapper>
         <ChartInner>
@@ -49,6 +49,9 @@ export const GaugeChart = ({ total, spent }: GaugeChartProps) => {
         </ChartInner>
       </ChartWrapper>
 
+      <SubTitle>이번 주 사용 가능한 외식비는</SubTitle>
+      <Remaining>{(total - spent).toLocaleString()}원 남았어요!</Remaining>
+
       <Message>{getMessage(percentLeft)}</Message>
     </Wrapper>
   );
@@ -64,10 +67,10 @@ const Title = styled.div`
   color: #555;
 `;
 
-const Remaining = styled.div`
+const GoalAmount = styled.div`
   font-size: 20px;
   font-weight: bold;
-  margin: 6px 0 -20px;
+  margin: 6px 0 -12px;
 `;
 
 const ChartWrapper = styled.div`
@@ -95,10 +98,23 @@ const Percent = styled.div`
   color: #000;
 `;
 
+const SubTitle = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: #808080;
+  margin-top: 16px;
+`;
+
+const Remaining = styled.div`
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  margin-top: 4px;
+`;
+
 const Message = styled.div`
-  margin-top: 40px;
+  margin-top: 32px;
   font-size: 14px;
   color: #777;
   white-space: pre-line;
 `;
-

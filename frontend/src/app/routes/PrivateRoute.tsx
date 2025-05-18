@@ -15,7 +15,7 @@ export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   }
 
   if (!accessToken) {
-    //return <Navigate to="/landing" replace />;
+    return <Navigate to="/landing" replace />;
   }
 
   return children; 

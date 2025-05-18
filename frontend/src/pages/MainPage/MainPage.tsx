@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
@@ -11,6 +12,7 @@ import FileIcon from '@/assets/icons/file.svg?react';
 
 const MainPage = () => {
   const getToday = () => format(new Date(), 'yyyy-MM-dd');
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(getToday());
 
   const dummyData: DailyExpenseStatus[] = [
@@ -59,7 +61,8 @@ const MainPage = () => {
   const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const selectedExpense = dummyExpenses.find((e) => e.date === selectedDate);
   const records = selectedExpense?.records ?? [];
-
+  const hasRecords = records.length > 0;
+  
   return (
     <Container>
       <ExpandableCalendar dailyStatusList={dummyData} onDateSelect={setSelectedDate} selectedDate={selectedDate} />
@@ -69,19 +72,27 @@ const MainPage = () => {
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
         <TitleText>{nickname}님의 외식비 지출 내역 {records.length}건</TitleText>
-          {records.length === 0 && (
-          <NoDataBlock>
-            <FileIconWrapper>
-              <FileIcon />
-            </FileIconWrapper>
-          <NoDataText>아직 지출 기록이 없어요</NoDataText>
-        </NoDataBlock>
+
+        {!hasRecords && (
+          <>
+            <NoDataBlock>
+              <FileIconWrapper>
+                <FileIcon />
+              </FileIconWrapper>
+              <NoDataText>아직 지출 기록이 없어요</NoDataText>
+            </NoDataBlock>
+            <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
+          </>
         )}
       </CenteredTextBlock>
-
-      {records.map((record) => (
-        <ExpenseCard key={record.id} {...record} />
-      ))}
+      {hasRecords && (
+        <>
+          {records.map((record) => (
+            <ExpenseCard key={record.id} {...record} />
+          ))}
+          <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
+        </>
+      )}
     </Container>
   );
 };
@@ -121,7 +132,7 @@ const NoDataBlock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 24px;  // 텍스트와의 여백
+  margin-top: 24px;
   gap: 8px;
 `;
 
@@ -138,4 +149,28 @@ const NoDataText = styled.div`
   font-size: 13px;
   color: #808080;
   font-weight: 700;
+`;
+
+const AddButton = styled.button`
+  display: block;
+  margin: 32px auto 24px;
+  padding: 10px 20px; 
+  background-color: #fd6918;
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+
+  &:hover {
+    background-color: #e85c0e;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 `;

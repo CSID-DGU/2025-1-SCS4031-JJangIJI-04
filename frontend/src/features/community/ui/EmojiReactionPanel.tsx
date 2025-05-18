@@ -53,8 +53,8 @@ const EmojiItem = styled.div<{ $selected: boolean }>`
 `;
 
 const EmojiImg = styled.img`
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
 `;
 
 const Count = styled.span<{ $selected: boolean }>`

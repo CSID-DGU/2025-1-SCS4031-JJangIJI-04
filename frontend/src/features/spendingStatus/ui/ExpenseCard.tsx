@@ -24,23 +24,25 @@ export const ExpenseCard = ({
     <Card>
       <Content>
         <InfoRow>
-          <StoreIcon />
-          <StoreName>{storeName}</StoreName>
-        </InfoRow>
-
-        <InfoRow>
-          <MenuIcon />
-          <Category>{category}</Category>
-        </InfoRow>
-
-        <InfoRow>
-          <WalletIcon />
-          <Amount>{amount.toLocaleString()}원</Amount>
+          <Item>
+            <StoreIcon />
+            <Text>{storeName}</Text>
+          </Item>
+          <Item>
+            <MenuIcon />
+            <Text>{category}</Text>
+          </Item>
+          <Item>
+            <WalletIcon />
+            <Text>{amount.toLocaleString()}원</Text>
+          </Item>
         </InfoRow>
 
         <Memo>{memo}</Memo>
 
-        <EmojiReactionPanel reactions={reactions} selected={null} />
+        <EmojiWrapper>
+          <EmojiReactionPanel reactions={reactions} selected={null} />
+        </EmojiWrapper>
       </Content>
     </Card>
   );
@@ -52,45 +54,50 @@ const Card = styled.div`
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background-color: #fff;
+  border: 1px solid #E0E0E0;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  flex: 1;
+  gap: 12px;
 `;
 
 const InfoRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const Item = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     flex-shrink: 0;
   }
 `;
 
-const StoreName = styled.div`
-  font-weight: bold;
-  font-size: 16px;
-`;
-
-const Amount = styled.div`
-  font-size: 14px;
-  color: #444;
-`;
-
-const Category = styled.div`
-  font-size: 12px;
-  color: #888;
+const Text = styled.span`
+  font-size: 13px;
+  color: #202632;
+  font-weight: 600;
 `;
 
 const Memo = styled.div`
   font-size: 13px;
   color: #444;
-  margin-top: 8px;
   white-space: pre-line;
+`;
+
+const EmojiWrapper = styled.div`
+  margin-top: auto;
 `;

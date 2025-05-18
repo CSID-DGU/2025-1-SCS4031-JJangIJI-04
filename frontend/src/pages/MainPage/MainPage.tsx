@@ -25,7 +25,7 @@ const MainPage = () => {
         {
           id: 1,
           storeName: '아비꼬',
-          category: '일식',
+          category: '돈까스 카레',
           amount: 8900,
           memo: '돈까스카레 맛있었음',
           reactions: { 1: 2, 3: 1 },
@@ -38,9 +38,17 @@ const MainPage = () => {
         {
           id: 2,
           storeName: '이삭토스트',
-          category: '분식',
+          category: '햄치즈토스트',
           amount: 4500,
-          memo: '딸기잼 토스트',
+          memo: '맛있당',
+          reactions: { 2: 1 },
+        },
+        {
+          id: 3,
+          storeName: '필동면옥',
+          category: '냉면',
+          amount: 15000,
+          memo: '그냥저냥 평냉',
           reactions: { 2: 1 },
         },
       ],

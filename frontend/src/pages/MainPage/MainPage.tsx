@@ -7,6 +7,7 @@ import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
+import FileIcon from '@/assets/icons/file.svg?react';
 
 const MainPage = () => {
   const getToday = () => format(new Date(), 'yyyy-MM-dd');
@@ -68,6 +69,14 @@ const MainPage = () => {
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
         <TitleText>{nickname}님의 외식비 지출 내역 {records.length}건</TitleText>
+          {records.length === 0 && (
+          <NoDataBlock>
+            <FileIconWrapper>
+              <FileIcon />
+            </FileIconWrapper>
+          <NoDataText>아직 지출 기록이 없어요</NoDataText>
+        </NoDataBlock>
+        )}
       </CenteredTextBlock>
 
       {records.map((record) => (
@@ -106,4 +115,27 @@ const TitleText = styled.div`
   font-weight: 700;
   color: #202632;
   margin-bottom: 12px;
+`;
+
+const NoDataBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;  // 텍스트와의 여백
+  gap: 8px;
+`;
+
+const FileIconWrapper = styled.div`
+  margin-top: 12px;
+  svg {
+    width: 50px;
+    height: 50px;
+    opacity: 0.4;
+  }
+`;
+
+const NoDataText = styled.div`
+  font-size: 13px;
+  color: #808080;
+  font-weight: 700;
 `;

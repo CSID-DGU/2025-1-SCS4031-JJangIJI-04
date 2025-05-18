@@ -22,9 +22,10 @@ import { formatExpenseAmount } from '@/lib/number/formatExpenseAmount';
 interface Props {
   dailyStatusList: DailyExpenseStatus[];
   onCollapse?: () => void;
+  onDateSelect?: (dateStr: string) => void;
 }
 
-export const FullCalendar = ({ dailyStatusList, onCollapse }: Props) => {
+export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect }: Props) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const start = startOfMonth(currentDate);
@@ -69,28 +70,29 @@ export const FullCalendar = ({ dailyStatusList, onCollapse }: Props) => {
       <Grid>
         {Array(firstDayIndex).fill(null).map((_, i) => <Empty key={`empty-${i}`} />)}
         {days.map((date) => {
-          const dateStr = format(date, 'yyyy-MM-dd');
-          const dayData = statusMap[dateStr];
-          const isFuture = date > today;
+        const dateStr = format(date, 'yyyy-MM-dd');
+        const dayData = statusMap[dateStr];
+        const isFuture = date > today;
 
-          const icon = getIconByStatus(isFuture ? undefined : dayData?.status);
-          const amount = dayData?.totalExpense;
-          const displayAmount =
-            !isFuture && amount && amount > 0
-              ? formatExpenseAmount(amount)
-              : '-';
+        const icon = getIconByStatus(isFuture ? undefined : dayData?.status);
+        const amount = dayData?.totalExpense;
+        const displayAmount =
+        !isFuture && amount && amount > 0
+          ? formatExpenseAmount(amount)
+        : '-';
 
-          return (
-            <DayCell 
-            key={dateStr} 
+        return (
+          <DayCell
+            key={dateStr}
             $isToday={dateStr === format(today, 'yyyy-MM-dd')}
-            >
-                <div className="date">{format(date, 'd')}</div>
-                <div className="icon">{icon}</div>
-                <div className="amount">{displayAmount}</div>
-            </DayCell>
-          );
-        })}
+            onClick={() => onDateSelect?.(dateStr)}
+          >
+            <div className="date">{format(date, 'd')}</div>
+            <div className="icon">{icon}</div>
+            <div className="amount">{displayAmount}</div>
+          </DayCell>
+        );
+    })}
       </Grid>
       <HandleWrapper>
         <Handle onClick={onCollapse} />

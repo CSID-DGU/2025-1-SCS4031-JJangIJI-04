@@ -7,9 +7,10 @@ import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 
 interface Props {
   dailyStatusList: DailyExpenseStatus[];
+  onDateSelect?: (date: string) => void;
 }
 
-export const ExpandableCalendar = ({ dailyStatusList }: Props) => {
+export const ExpandableCalendar = ({ dailyStatusList, onDateSelect }: Props) => {
     const [isExpanded, setIsExpanded] = useState(false);
   
     const handleExpand = () => {
@@ -46,9 +47,9 @@ export const ExpandableCalendar = ({ dailyStatusList }: Props) => {
         >
           <Wrapper $isMini={!isExpanded}>
             {!isExpanded ? (
-              <MiniCalendar dailyStatusList={dailyStatusList} onExpand={handleExpand} />
+              <MiniCalendar dailyStatusList={dailyStatusList} onExpand={handleExpand} onDateSelect={onDateSelect} />
             ) : (
-              <FullCalendar dailyStatusList={dailyStatusList} onCollapse={handleExpand} />
+              <FullCalendar dailyStatusList={dailyStatusList} onCollapse={handleExpand} onDateSelect={onDateSelect} />
             )}
           </Wrapper>
         </motion.div>

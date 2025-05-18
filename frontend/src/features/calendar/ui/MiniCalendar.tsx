@@ -12,9 +12,10 @@ import BasicIcon from '@/assets/icons/basic-icon.svg?react';
 interface Props {
   dailyStatusList: DailyExpenseStatus[];
   onExpand: () => void;
+  onDateSelect?: (date: string) => void;
 }
 
-export const MiniCalendar = ({ dailyStatusList, onExpand }: Props) => {
+export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect }: Props) => {
   const { startDate, endDate } = getCurrentWeek();
   const weekDates = eachDayOfInterval({
     start: parseISO(startDate),
@@ -41,7 +42,7 @@ export const MiniCalendar = ({ dailyStatusList, onExpand }: Props) => {
             : '-';
 
           return (
-            <Day key={dateStr}>
+            <Day key={dateStr}onClick={() => onDateSelect?.(dateStr)}>
               <Label>{format(date, 'E', { locale: ko })}</Label>
               <DateText>{format(date, 'd')}</DateText>
               <Face $isToday={isToday}><Icon /></Face>

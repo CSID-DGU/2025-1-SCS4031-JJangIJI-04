@@ -1,11 +1,17 @@
 import styled from 'styled-components';
+import { useState } from 'react';
+import { format, parseISO } from 'date-fns';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
-import { DailyExpenseSection } from '@/features/spendingStatus/ui/DailyExpenseSection';
+import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 
 const MainPage = () => {
+  const getToday = () => format(new Date(), 'yyyy-MM-dd');
+  const [selectedDate, setSelectedDate] = useState(getToday());
+
   const dummyData: DailyExpenseStatus[] = [
     { date: '2025-05-05', totalExpense: 8000, status: 'GOOD' },
     { date: '2025-05-06', totalExpense: 13000, status: 'NOT_BAD' },
@@ -14,49 +20,51 @@ const MainPage = () => {
 
   const dummyExpenses = [
     {
-      date: '2025-05-19',
+      date: '2025-05-20',
       records: [
         {
-          storeName: '오이드킨',
-          category: '규동',
-          amount: 12000,
-          memo: '가성비 좋고 맛도 적당한 식당 찾아서 기분 좋다 뱅',
-          reactions: { 1: 4, 2: 2 },
+          id: 1,
+          storeName: '아비꼬',
+          category: '일식',
+          amount: 8900,
+          memo: '돈까스카레 맛있었음',
+          reactions: { 1: 2, 3: 1 },
         },
       ],
     },
     {
-      date: '2025-05-18',
+      date: '2025-05-21',
       records: [
         {
-          storeName: '맘스터치',
-          category: '버거',
-          amount: 8400,
-          memo: '간단히 때움',
-          reactions: { 3: 1 },
-        },
-        {
-          storeName: '스타벅스',
-          category: '카페',
-          amount: 6200,
-          memo: '기분전환하러 커피',
-          reactions: { 1: 1, 4: 1 },
+          id: 2,
+          storeName: '이삭토스트',
+          category: '분식',
+          amount: 4500,
+          memo: '딸기잼 토스트',
+          reactions: { 2: 1 },
         },
       ],
     },
   ];
 
+  const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
+  const selectedExpense = dummyExpenses.find((e) => e.date === selectedDate);
+  const records = selectedExpense?.records ?? [];
+
   return (
     <Container>
-      <ExpandableCalendar dailyStatusList={dummyData} />
+      <ExpandableCalendar dailyStatusList={dummyData} onDateSelect={setSelectedDate} />
       <GaugeChart total={84000} spent={28000} />
       <FullWidthDivider />
-      
-      {dummyExpenses.map((day) => (
-      <DailyExpenseSection key={day.date} {...day} />
-      ))}
 
-      {/* 이후: 게이지 영역, 지출 목록 등 붙일 자리 */}
+      <CenteredTextBlock>
+        <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
+        <TitleText>{nickname}님의 외식비 지출 내역 {records.length}건</TitleText>
+      </CenteredTextBlock>
+
+      {records.map((record) => (
+        <ExpenseCard key={record.id} {...record} />
+      ))}
     </Container>
   );
 };
@@ -70,4 +78,24 @@ const Container = styled.div`
   padding: 24px;
   padding-top: var(--safe-area-top);
   box-sizing: border-box;
+`;
+
+const CenteredTextBlock = styled.div`
+  text-align: center;
+  margin-top: 32px;
+`;
+
+const DateText = styled.h2`
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 32px;
+  margin-bottom: 4px;
+  color: #808080;
+`;
+
+const TitleText = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  color: #202632;
+  margin-bottom: 12px;
 `;

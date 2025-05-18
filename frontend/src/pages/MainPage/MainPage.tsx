@@ -62,7 +62,7 @@ const MainPage = () => {
 
   return (
     <Container>
-      <ExpandableCalendar dailyStatusList={dummyData} onDateSelect={setSelectedDate} />
+      <ExpandableCalendar dailyStatusList={dummyData} onDateSelect={setSelectedDate} selectedDate={selectedDate} />
       <GaugeChart total={84000} spent={28000} />
       <FullWidthDivider />
 

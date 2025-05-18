@@ -8,6 +8,7 @@ import {
   getDay,
   addMonths,
   subMonths,
+  isFuture,
 } from 'date-fns';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 
@@ -23,9 +24,10 @@ interface Props {
   dailyStatusList: DailyExpenseStatus[];
   onCollapse?: () => void;
   onDateSelect?: (dateStr: string) => void;
+  selectedDate?: string;
 }
 
-export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect }: Props) => {
+export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect, selectedDate }: Props) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const start = startOfMonth(currentDate);
@@ -36,7 +38,6 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect }: Prop
   const handlePrevMonth = () => setCurrentDate(prev => subMonths(prev, 1));
   const handleNextMonth = () => setCurrentDate(prev => addMonths(prev, 1));
 
-  const today = new Date();
   const statusMap = Object.fromEntries(
     dailyStatusList.map((d) => [d.date, d])
   );
@@ -56,7 +57,7 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect }: Prop
         <IconButton onClick={handlePrevMonth}>
           <BeforeIcon />
         </IconButton>
-        <MonthText>{format(currentDate, 'yyyy\uB144 M\uC6D4')}</MonthText>
+        <MonthText>{format(currentDate, 'yyyy년 M월')}</MonthText>
         <IconButton onClick={handleNextMonth}>
           <AfterIcon />
         </IconButton>
@@ -70,29 +71,30 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect }: Prop
       <Grid>
         {Array(firstDayIndex).fill(null).map((_, i) => <Empty key={`empty-${i}`} />)}
         {days.map((date) => {
-        const dateStr = format(date, 'yyyy-MM-dd');
-        const dayData = statusMap[dateStr];
-        const isFuture = date > today;
+          const dateStr = format(date, 'yyyy-MM-dd');
+          const isSelected = dateStr === selectedDate;
 
-        const icon = getIconByStatus(isFuture ? undefined : dayData?.status);
-        const amount = dayData?.totalExpense;
-        const displayAmount =
-        !isFuture && amount && amount > 0
-          ? formatExpenseAmount(amount)
-        : '-';
+          const icon = getIconByStatus(
+            isFuture(date) ? undefined : statusMap[dateStr]?.status
+          );
+          const amount = statusMap[dateStr]?.totalExpense;
+          const displayAmount = !isFuture(date) && amount && amount > 0
+            ? formatExpenseAmount(amount)
+            : '-';
 
-        return (
-          <DayCell
-            key={dateStr}
-            $isToday={dateStr === format(today, 'yyyy-MM-dd')}
-            onClick={() => onDateSelect?.(dateStr)}
-          >
-            <div className="date">{format(date, 'd')}</div>
-            <div className="icon">{icon}</div>
-            <div className="amount">{displayAmount}</div>
-          </DayCell>
-        );
-    })}
+          return (
+            <DayCell
+              key={dateStr}
+              onClick={() => onDateSelect?.(dateStr)}
+            >
+              <div className="date">{format(date, 'd')}</div>
+              <IconWrapper $isSelected={isSelected}>
+                {icon}
+              </IconWrapper>
+              <div className="amount">{displayAmount}</div>
+            </DayCell>
+          );
+        })}
       </Grid>
       <HandleWrapper>
         <Handle onClick={onCollapse} />
@@ -177,7 +179,7 @@ const Empty = styled.div`
   height: 72px;
 `;
 
-const DayCell = styled.div<{ $isToday?: boolean }>`
+const DayCell = styled.div`
   height: 72px;
   padding: 6px 4px;
   background: transparent;
@@ -192,39 +194,34 @@ const DayCell = styled.div<{ $isToday?: boolean }>`
     font-weight: bold;
     margin-bottom: 4px;
   }
-  .icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 6px;
-    box-sizing: content-box;
-    margin: 2px 0;
-    position: relative;  // 추가
 
-    ${({ $isToday }) => $isToday && `
-      &::after { 
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border: 2.5px solid #FD6918;
-        border-radius: 50%;
-        transform: scale(0.9);
-      }
-    `}
-
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
   .amount {
     font-size: 10px;
     font-weight: 500;
     color: #202632;
     margin-top: 1px;
+  }
+`;
+
+const IconWrapper = styled.div<{ $isSelected?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  aspect-ratio: 1; 
+  border-radius: 50%;
+  margin: 2px 0;
+  cursor: pointer;
+
+  ${({ $isSelected }) =>
+    $isSelected &&
+    `
+    border: 2.5px solid #FD6918;
+  `}
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 `;
 

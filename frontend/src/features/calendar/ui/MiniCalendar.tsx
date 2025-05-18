@@ -13,9 +13,10 @@ interface Props {
   dailyStatusList: DailyExpenseStatus[];
   onExpand: () => void;
   onDateSelect?: (date: string) => void;
+  selectedDate?: string;
 }
 
-export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect }: Props) => {
+export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect, selectedDate }: Props) => {
   const { startDate, endDate } = getCurrentWeek();
   const weekDates = eachDayOfInterval({
     start: parseISO(startDate),
@@ -33,7 +34,7 @@ export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect }: Props)
         {weekDates.map((date) => {
           const dateStr = format(date, 'yyyy-MM-dd');
           const isFuture = date > today;
-          const isToday = dateStr === format(today, 'yyyy-MM-dd');
+          const isSelected = dateStr === selectedDate;
 
           const dayData = statusMap[dateStr];
           const Icon = getIconByStatus(isFuture ? undefined : dayData?.status);
@@ -42,10 +43,12 @@ export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect }: Props)
             : '-';
 
           return (
-            <Day key={dateStr}onClick={() => onDateSelect?.(dateStr)}>
+            <Day key={dateStr} onClick={() => onDateSelect?.(dateStr)}>
               <Label>{format(date, 'E', { locale: ko })}</Label>
               <DateText>{format(date, 'd')}</DateText>
-              <Face $isToday={isToday}><Icon /></Face>
+              <Face $isSelected={isSelected} onClick={() => onDateSelect?.(dateStr)}>
+                <Icon />
+              </Face>
               <Amount>{amountText}</Amount>
             </Day>
           );
@@ -118,7 +121,9 @@ const DateText = styled.div`
   margin-top: 2px;
 `;
 
-const Face = styled.div<{ $isToday: boolean }>`
+const Face = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== '$isSelected',
+})<{ $isSelected: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -126,9 +131,10 @@ const Face = styled.div<{ $isToday: boolean }>`
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  cursor: pointer;
 
-  ${({ $isToday }) =>
-    $isToday &&
+  ${({ $isSelected }) =>
+    $isSelected &&
     `
     border: 2.5px solid #FD6918;
   `}

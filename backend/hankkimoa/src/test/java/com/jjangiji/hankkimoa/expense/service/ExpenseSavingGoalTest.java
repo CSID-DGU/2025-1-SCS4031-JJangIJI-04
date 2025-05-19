@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 
-
 class ExpenseSavingGoalTest extends IntegrationTest {
 
     @Autowired
@@ -39,7 +38,7 @@ class ExpenseSavingGoalTest extends IntegrationTest {
         ExpenseSavingGoalCreateRequest request = new ExpenseSavingGoalCreateRequest(100_000, now, sevenDayAfter);
 
         // when & then
-        Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request))
+        Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user, request))
                 .doesNotThrowAnyException();;
     }
 
@@ -48,10 +47,10 @@ class ExpenseSavingGoalTest extends IntegrationTest {
     void failWhenExpenseSavingGoalAlreadyExist() {
         // given
         ExpenseSavingGoalCreateRequest request = new ExpenseSavingGoalCreateRequest(100_000, now, sevenDayAfter);
-        expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request);
+        expenseSavingGoalService.createExpenseSavingGoal(user, request);
 
         // when & then
-        Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user.getId(), request))
+        Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user, request))
                 .isInstanceOf(HankkiMoaException.class)
                 .hasMessage(ExceptionCode.EXPENSE_SAVING_GOAL_ALREADY_EXIST.getMessage());
     }

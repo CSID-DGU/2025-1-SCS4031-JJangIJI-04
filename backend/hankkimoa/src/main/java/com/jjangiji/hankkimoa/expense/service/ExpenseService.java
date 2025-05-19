@@ -2,14 +2,16 @@ package com.jjangiji.hankkimoa.expense.service;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
+import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.SavingGoalStatusResponse;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class ExpenseService {
     private final RestaurantRepository restaurantRepository;
     private final ExpenseSavingGoalRepository expenseSavingGoalRepository;
     private final ExpenseRepository expenseRepository;
+    private final ExpenseEmojiRepository expenseEmojiRepository;
 
     @Transactional
     public Long createExpense(ExpenseCreateRequest request) {
@@ -56,21 +60,24 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public DailyExpenseResponse readDailyExpenses(Long userId, Long savingGoalId, LocalDate date) {
-        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(savingGoalId);
-
-        List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
-        DailyExpenses dailyExpenses = new DailyExpenses(expenses);
-        List<Expense> dailyExpense = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(date);
+    public DailyExpenseResponse readDailyExpenses(Long userId, LocalDate date) {
+        // todo 접근 가능 여부 확인
+        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(date);
+        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
+        DailyExpenses dailyExpenses = new DailyExpenses(savingGoalExpenses);
 
         List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
-        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, expenses);
-        List<ExpenseResponse> expenseResponses = toExpenseResponses(dailyExpense);
+        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, dailyExpenses);
+
+        List<Expense> todayExpenses = dailyExpenses.getExpensesDescending(date);
+        List<ExpenseResponse> expenseResponses = toExpenseResponses(todayExpenses);
         return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
     }
 
-    private void validateExpenseIsPublic() {
-        // TODO 접근 가능 여부 확인
+    private ExpenseSavingGoal readExpenseSavingGoal(LocalDate date) {
+        return expenseSavingGoalRepository.findByDate(date)
+                .orElseThrow(() -> new HankkiMoaException(
+                        ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
     }
 
     private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
@@ -82,22 +89,30 @@ public class ExpenseService {
                 .toList();
     }
 
-    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, List<Expense> dailyExpenses) {
-        int usedPercentage = expenseSavingGoal.calculatePercentage(dailyExpenses);
+    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, DailyExpenses dailyExpenses) {
+        List<Expense> expenses = dailyExpenses.getExpenses();
+
+        int usedPercentage = expenseSavingGoal.calculatePercentage(expenses);
         return new SavingGoalStatusResponse(
                 expenseSavingGoal.getBudget(),
-                expenseSavingGoal.calculateRemainingBudget(dailyExpenses),
+                expenseSavingGoal.calculateRemainingBudget(expenses),
                 usedPercentage,
                 SavingGoalStatus.convert(usedPercentage).getMessage()
         );
     }
 
     private List<ExpenseResponse> toExpenseResponses(List<Expense> dateExpenses) {
-        return dateExpenses.stream()
-                .map(expense -> new ExpenseResponse(
-                        expense.getRestaurantName(), expense.getMenuName(),
-                        expense.getExpense(), expense.getMemo()))
-                .toList();
+        List<ExpenseResponse> responses = new ArrayList<>();
+
+        for (Expense expense : dateExpenses) {
+            List<EmojiResponse> expenseEmojis = expenseEmojiRepository.countExpenseEmojisByExpenseId(expense.getId());
+
+            responses.add(new ExpenseResponse(
+                    expense.getRestaurantName(), expense.getMenuName(),
+                    expense.getExpense(), expense.getMemo(), expenseEmojis));
+        }
+
+        return responses;
     }
 
     @Transactional(readOnly = true)

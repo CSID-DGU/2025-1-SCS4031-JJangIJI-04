@@ -1,8 +1,8 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class ExpenseController {
         return ResponseEntity.created(URI.create("/expenses/" + expenseId)).build();
     }
 
-    @GetMapping("/api/users/{userId}/expenses")
+    @GetMapping("/api/users/{userId}/expenses/range")
     public ResponseEntity<MonthlyExpenseResponse> readMonthlyExpenses(@PathVariable("userId") Long userId,
                                                                       @RequestParam("from") LocalDate from,
                                                                       @RequestParam("to") LocalDate to) {
@@ -35,12 +35,11 @@ public class ExpenseController {
         return ResponseEntity.ok(monthlyExpenseResponse);
     }
 
-    @GetMapping("/api/users/{userId}/saving-goals/{savingGoalId}/expenses")
+    @GetMapping("/api/users/{userId}/expenses")
     public ResponseEntity<DailyExpenseResponse> readDailyExpenses(
             @PathVariable("userId") Long userId,
-            @PathVariable Long savingGoalId,
-            @RequestParam LocalDate date) {
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(userId, savingGoalId, date);
+            @RequestParam("date") LocalDate date) {
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(userId, date);
         return ResponseEntity.ok(dailyExpenseResponse);
     }
 

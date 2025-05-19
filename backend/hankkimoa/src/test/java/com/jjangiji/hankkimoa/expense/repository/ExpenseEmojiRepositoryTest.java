@@ -4,8 +4,9 @@ import com.jjangiji.hankkimoa.config.RepositoryTest;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
@@ -19,13 +20,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 class ExpenseEmojiRepositoryTest extends RepositoryTest {
 
-    private User user;
-    private ExpenseSavingGoal expenseSavingGoal;
+    private User user1;
+    private User user2;
+    private ExpenseSavingGoal expenseSavingGoal1;
+    private ExpenseSavingGoal expenseSavingGoal2;
     private Restaurant restaurant;
-    private Expense expense;
+    private Expense expense1;
+    private Expense expense2;
     private final LocalDate now = LocalDate.now();
 
     @Autowired
@@ -43,12 +50,18 @@ class ExpenseEmojiRepositoryTest extends RepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-        expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 80_000,
+        user1 = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
+        user2 = userRepository.save(new User("hankkimoa22@gmail.com", "한끼22", "hankkiImage", LoginType.KAKAO, Role.USER));
+        expenseSavingGoal1 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user1, 80_000,
+                LocalDate.now(), LocalDate.now().plusDays(6)));
+        expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user2, 180_000,
                 LocalDate.now(), LocalDate.now().plusDays(6)));
         Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
-        expense = expenseRepository.save(new Expense(expenseSavingGoal, restaurant,
+        expense1 = expenseRepository.save(new Expense(expenseSavingGoal1, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", now, 5));
+        expense2 = expenseRepository.save(new Expense(expenseSavingGoal2, restaurant,
                 "한끼식당", "순두부", 8_000,
                 "든든하게 먹음!", now, 5));
     }
@@ -57,10 +70,10 @@ class ExpenseEmojiRepositoryTest extends RepositoryTest {
     @Test
     void emojiExist() {
         // given
-        expenseEmojiRepository.save(new ExpenseEmoji(user, expense, 1));
+        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense1, 1));
 
         // when
-        boolean result = expenseEmojiRepository.existsExpenseEmojiByExpenseAndUserAndEmojiId(expense, user, 1);
+        boolean result = expenseEmojiRepository.existsExpenseEmojiByExpenseAndUserAndEmojiId(expense1, user1, 1);
 
         // then
         Assertions.assertThat(result).isTrue();
@@ -70,9 +83,36 @@ class ExpenseEmojiRepositoryTest extends RepositoryTest {
     @Test
     void emojiNotExist() {
         // given & when
-        boolean result = expenseEmojiRepository.existsExpenseEmojiByExpenseAndUserAndEmojiId(expense, user, 1);
+        boolean result = expenseEmojiRepository.existsExpenseEmojiByExpenseAndUserAndEmojiId(expense1, user1, 1);
 
         // then
         Assertions.assertThat(result).isFalse();
+    }
+
+    @DisplayName("지출 내역에 대한 이모지 반환 성공")
+    @Test
+    void countExpenseEmojisByExpenseId() {
+        // given
+        int emojiId1 = 1;
+        int emojiId2 = 2;
+        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense1, emojiId1));
+        expenseEmojiRepository.save(new ExpenseEmoji(user2, expense1, emojiId1));
+        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense1, emojiId2));
+
+        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense2, emojiId1));
+
+        // when
+        List<EmojiResponse> emojiResponses = expenseEmojiRepository.countExpenseEmojisByExpenseId(expense1.getId());
+
+        // then
+        Map<Integer, Integer> emojiCountMap = emojiResponses.stream()
+                .collect(Collectors.toMap(
+                        EmojiResponse::emojiId,
+                        EmojiResponse::count
+                ));
+
+        Assertions.assertThat(emojiCountMap.get(emojiId1)).isEqualTo(2);
+        Assertions.assertThat(emojiCountMap.get(emojiId2)).isEqualTo(1);
+        Assertions.assertThat(emojiResponses).hasSize(2);
     }
 }

@@ -62,7 +62,7 @@ public class ExpenseService {
     @Transactional(readOnly = true)
     public DailyExpenseResponse readDailyExpenses(Long userId, LocalDate date) {
         // todo 접근 가능 여부 확인
-        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(date);
+        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(userId, date);
         List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
         DailyExpenses dailyExpenses = new DailyExpenses(savingGoalExpenses);
 
@@ -74,8 +74,8 @@ public class ExpenseService {
         return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
     }
 
-    private ExpenseSavingGoal readExpenseSavingGoal(LocalDate date) {
-        return expenseSavingGoalRepository.findByDate(date)
+    private ExpenseSavingGoal readExpenseSavingGoal(Long userId, LocalDate date) {
+        return expenseSavingGoalRepository.findByUserAndDate(userId, date)
                 .orElseThrow(() -> new HankkiMoaException(
                         ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
     }
@@ -118,7 +118,7 @@ public class ExpenseService {
     @Transactional(readOnly = true)
     public MonthlyExpenseResponse readMonthlyExpenses(Long userId, LocalDate startDate, LocalDate endDate) {
         validateDates(startDate, endDate);
-        List<Expense> expenses = expenseRepository.findAllByExpenseDateBetweenOrderByExpenseDateAsc(startDate, endDate);
+        List<Expense> expenses = expenseRepository.findAllByExpenseDateOrderByExpenseDateAsc(userId, startDate, endDate);
         DailyExpenses dailyExpenses = new DailyExpenses(expenses);
 
         List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);

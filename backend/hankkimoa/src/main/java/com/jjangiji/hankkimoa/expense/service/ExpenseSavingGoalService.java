@@ -30,7 +30,7 @@ public class ExpenseSavingGoalService {
     }
 
     private void validateExpenseSavingGoalExist(User user, ExpenseSavingGoal expenseSavingGoal) {
-        Optional<ExpenseSavingGoal> optionalExpenseSavingGoal = expenseSavingGoalRepository.findLastByUser(user);
+        Optional<ExpenseSavingGoal> optionalExpenseSavingGoal = expenseSavingGoalRepository.findLastByUser(user.getId());
         if (optionalExpenseSavingGoal.isEmpty()) return;
 
         ExpenseSavingGoal lastExpenseSavingGoal = optionalExpenseSavingGoal.get();

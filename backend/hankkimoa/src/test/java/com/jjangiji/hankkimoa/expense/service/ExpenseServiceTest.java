@@ -95,7 +95,7 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, now);
 
         // then
         Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).hasSize(2);
@@ -107,7 +107,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void readDailyExpenses_withNoExpenses() {
         // given & when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
+        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, now);
 
         // then
         Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).isEmpty();

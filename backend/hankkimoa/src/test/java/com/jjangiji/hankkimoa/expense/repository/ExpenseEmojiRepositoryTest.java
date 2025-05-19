@@ -4,7 +4,6 @@ import com.jjangiji.hankkimoa.config.RepositoryTest;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -20,9 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 class ExpenseEmojiRepositoryTest extends RepositoryTest {
 
@@ -87,32 +83,5 @@ class ExpenseEmojiRepositoryTest extends RepositoryTest {
 
         // then
         Assertions.assertThat(result).isFalse();
-    }
-
-    @DisplayName("지출 내역에 대한 이모지 반환 성공")
-    @Test
-    void countExpenseEmojisByExpenseId() {
-        // given
-        int emojiId1 = 1;
-        int emojiId2 = 2;
-        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense1, emojiId1));
-        expenseEmojiRepository.save(new ExpenseEmoji(user2, expense1, emojiId1));
-        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense1, emojiId2));
-
-        expenseEmojiRepository.save(new ExpenseEmoji(user1, expense2, emojiId1));
-
-        // when
-        List<EmojiResponse> emojiResponses = expenseEmojiRepository.countExpenseEmojisByExpenseId(expense1.getId());
-
-        // then
-        Map<Integer, Integer> emojiCountMap = emojiResponses.stream()
-                .collect(Collectors.toMap(
-                        EmojiResponse::emojiId,
-                        EmojiResponse::count
-                ));
-
-        Assertions.assertThat(emojiCountMap.get(emojiId1)).isEqualTo(2);
-        Assertions.assertThat(emojiCountMap.get(emojiId2)).isEqualTo(1);
-        Assertions.assertThat(emojiResponses).hasSize(2);
     }
 }

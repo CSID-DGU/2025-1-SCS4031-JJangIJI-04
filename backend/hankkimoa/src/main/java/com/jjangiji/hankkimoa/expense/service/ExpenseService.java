@@ -4,6 +4,7 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
+import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
@@ -22,8 +23,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -102,17 +104,25 @@ public class ExpenseService {
     }
 
     private List<ExpenseResponse> toExpenseResponses(List<Expense> dateExpenses) {
-        List<ExpenseResponse> responses = new ArrayList<>();
+        return dateExpenses.stream()
+                .map(expense -> new ExpenseResponse(
+                        expense.getRestaurantName(), expense.getMenuName(),
+                        expense.getExpense(), expense.getMemo(), toEmojiResponses(expense.getEmojis())
+                ))
+                .toList();
+    }
 
-        for (Expense expense : dateExpenses) {
-            List<EmojiResponse> expenseEmojis = expenseEmojiRepository.countExpenseEmojisByExpenseId(expense.getId());
+    private List<EmojiResponse> toEmojiResponses(List<ExpenseEmoji> expenseEmojis) {
+        LinkedHashMap<Integer, Long> emojis = expenseEmojis.stream()
+                .collect(Collectors.groupingBy(
+                        ExpenseEmoji::getEmojiId,
+                        LinkedHashMap::new,
+                        Collectors.counting()
+                ));
 
-            responses.add(new ExpenseResponse(
-                    expense.getRestaurantName(), expense.getMenuName(),
-                    expense.getExpense(), expense.getMemo(), expenseEmojis));
-        }
-
-        return responses;
+        return emojis.entrySet().stream()
+                .map(entry -> new EmojiResponse(entry.getKey(), entry.getValue()))
+                .toList();
     }
 
     @Transactional(readOnly = true)

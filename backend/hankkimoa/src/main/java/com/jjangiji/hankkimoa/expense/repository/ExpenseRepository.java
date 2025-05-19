@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    List<Expense> findAllByExpenseSavingGoalOrderByExpenseDateAsc(ExpenseSavingGoal expenseSavingGoal);
+    @Query("SELECT DISTINCT e FROM Expense e "
+            + "LEFT JOIN FETCH e.emojis "
+            + "WHERE e.expenseSavingGoal = :expenseSavingGoal "
+            + "ORDER BY e.expenseDate ASC ")
+    List<Expense> findAllByExpenseSavingGoalOrderByExpenseDateAsc(@Param("expenseSavingGoal") ExpenseSavingGoal expenseSavingGoal);
 
     @Query("SELECT e FROM Expense e "
             + "JOIN e.expenseSavingGoal esg "

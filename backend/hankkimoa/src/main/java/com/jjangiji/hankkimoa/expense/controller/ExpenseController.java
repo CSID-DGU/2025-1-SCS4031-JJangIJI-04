@@ -1,9 +1,11 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
+import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +24,8 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @PostMapping("/api/expenses")
-    public ResponseEntity<Void> createExpense(@RequestBody ExpenseCreateRequest request) {
-        Long expenseId = expenseService.createExpense(request);
+    public ResponseEntity<Void> createExpense(@AuthRequiredPrincipal User user, @RequestBody ExpenseCreateRequest request) {
+        Long expenseId = expenseService.createExpense(user, request);
         return ResponseEntity.created(URI.create("/expenses/" + expenseId)).build();
     }
 

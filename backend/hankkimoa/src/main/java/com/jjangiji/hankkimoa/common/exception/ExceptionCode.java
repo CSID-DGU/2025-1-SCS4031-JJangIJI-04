@@ -24,6 +24,7 @@ public enum ExceptionCode {
     // 지출 목표 금액
     EXPENSE_SAVING_GOAL_NOT_FOUND(HttpStatus.BAD_REQUEST, "지출 목표 금액이 존재하지 않습니다."),
     EXPENSE_SAVING_GOAL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "지출 목표 금액이 이미 존재합니다."),
+    EXPENSE_SAVING_GOAL_NOT_OWNED(HttpStatus.BAD_REQUEST, "사용자의 지출 목표 금액이 아닙니다."),
 
     // 식당
     RESTAURANT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당이 존재하지 않습니다."),
@@ -47,9 +48,7 @@ public enum ExceptionCode {
     AUTHENTICATION_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     AUTHENTICATION_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "토큰 정보가 올바르지 않습니다."),
     AUTHENTICATION_TOKEN_USER_MISMATCH(HttpStatus.UNAUTHORIZED, "엑세스 토큰과 리프레시 토큰의 소유자가 다릅니다."),
-    AUTHENTICATION_TOKEN_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "토큰 타입이 올바르지 않습니다."),
-
-    ;
+    AUTHENTICATION_TOKEN_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "토큰 타입이 올바르지 않습니다."),;
     private final HttpStatus httpStatus;
     private final String message;
 }

@@ -6,8 +6,7 @@ import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatus;
-import com.jjangiji.hankkimoa.expense.repository.ExpenseEmojiRepository;
+import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatusMessage;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
@@ -16,7 +15,7 @@ import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.SavingGoalStatusResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.response.SimpleExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class ExpenseService {
     private final RestaurantRepository restaurantRepository;
     private final ExpenseSavingGoalRepository expenseSavingGoalRepository;
     private final ExpenseRepository expenseRepository;
-    private final ExpenseEmojiRepository expenseEmojiRepository;
 
     @Transactional
     public Long createExpense(ExpenseCreateRequest request) {
@@ -62,18 +60,15 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public DailyExpenseResponse readDailyExpenses(Long userId, LocalDate date) {
+    public TodayExpenses readTodayExpenses(Long userId, LocalDate date) {
         // todo 접근 가능 여부 확인
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(userId, date);
-        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByExpenseDateAsc(expenseSavingGoal);
-        DailyExpenses dailyExpenses = new DailyExpenses(savingGoalExpenses);
+        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(expenseSavingGoal);
+        List<Expense> todayExpenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(expenseSavingGoal, date);
 
-        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
-        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, dailyExpenses);
-
-        List<Expense> todayExpenses = dailyExpenses.getExpensesDescending(date);
+        SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, savingGoalExpenses);
         List<ExpenseResponse> expenseResponses = toExpenseResponses(todayExpenses);
-        return new DailyExpenseResponse(simpleExpenseResponses, savingGoalStatusResponse, expenseResponses);
+        return new TodayExpenses(savingGoalStatusResponse, expenseResponses);
     }
 
     private ExpenseSavingGoal readExpenseSavingGoal(Long userId, LocalDate date) {
@@ -82,24 +77,21 @@ public class ExpenseService {
                         ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
     }
 
-    private List<SimpleExpenseResponse> toSimpleExpenseResponses(DailyExpenses expenseByDates) {
+    private List<DailyExpenseResponse> toSimpleDailyExpenseResponses(DailyExpenses expenseByDates) {
         return expenseByDates.getDailyExpenses().stream()
-                .map(expenseByDate -> new SimpleExpenseResponse(
+                .map(expenseByDate -> new DailyExpenseResponse(
                         expenseByDate.getExpenseDate(),
                         expenseByDate.calculateTotalExpense(),
                         expenseByDate.getExpenseStatus().name()))
                 .toList();
     }
 
-    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, DailyExpenses dailyExpenses) {
-        List<Expense> expenses = dailyExpenses.getExpenses();
-
-        int usedPercentage = expenseSavingGoal.calculatePercentage(expenses);
+    private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, List<Expense> expenses) {
         return new SavingGoalStatusResponse(
                 expenseSavingGoal.getBudget(),
                 expenseSavingGoal.calculateRemainingBudget(expenses),
-                usedPercentage,
-                SavingGoalStatus.convert(usedPercentage).getMessage()
+                expenseSavingGoal.calculatePercentage(expenses),
+                SavingGoalStatusMessage.convert(expenseSavingGoal.calculatePercentage(expenses)).getMessage()
         );
     }
 
@@ -131,11 +123,11 @@ public class ExpenseService {
         List<Expense> expenses = expenseRepository.findAllByExpenseDateOrderByExpenseDateAsc(userId, startDate, endDate);
         DailyExpenses dailyExpenses = new DailyExpenses(expenses);
 
-        List<SimpleExpenseResponse> simpleExpenseResponses = toSimpleExpenseResponses(dailyExpenses);
+        List<DailyExpenseResponse> dailyExpenseResponse = toSimpleDailyExpenseResponses(dailyExpenses);
         int monthlyExpenseRecordCount = dailyExpenses.getSize();
         int dailyExpenseOverBudgetCount = dailyExpenses.getExpenseOverBudgetCount();
 
-        return new MonthlyExpenseResponse(simpleExpenseResponses, monthlyExpenseRecordCount, dailyExpenseOverBudgetCount);
+        return new MonthlyExpenseResponse(dailyExpenseResponse, monthlyExpenseRecordCount, dailyExpenseOverBudgetCount);
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {

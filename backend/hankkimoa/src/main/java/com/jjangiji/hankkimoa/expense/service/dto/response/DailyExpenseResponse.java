@@ -1,8 +1,6 @@
 package com.jjangiji.hankkimoa.expense.service.dto.response;
 
-import java.util.List;
+import java.time.LocalDate;
 
-public record DailyExpenseResponse(List<SimpleExpenseResponse> dailyExpensesStatus,
-                                   SavingGoalStatusResponse savingGoalStatus,
-                                   List<ExpenseResponse> expenses) {
+public record DailyExpenseResponse(LocalDate date, Integer totalExpense, String status) {
 }

@@ -2,7 +2,7 @@ package com.jjangiji.hankkimoa.expense.controller;
 
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +36,11 @@ public class ExpenseController {
     }
 
     @GetMapping("/api/users/{userId}/expenses")
-    public ResponseEntity<DailyExpenseResponse> readDailyExpenses(
+    public ResponseEntity<TodayExpenses> readTodayExpenses(
             @PathVariable("userId") Long userId,
             @RequestParam("date") LocalDate date) {
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(userId, date);
-        return ResponseEntity.ok(dailyExpenseResponse);
+        TodayExpenses todayExpenses = expenseService.readTodayExpenses(userId, date);
+        return ResponseEntity.ok(todayExpenses);
     }
 
     @PostMapping("/api/expenses/{expenseId}")

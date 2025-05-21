@@ -8,7 +8,7 @@ import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
@@ -87,7 +87,7 @@ class ExpenseServiceTest extends IntegrationTest {
 
     @DisplayName("데일리 지출 내역 조회 성공")
     @Test
-    void readDailyExpenses() {
+    void readTodayExpenses() {
         // given
         Expense expense1 = new Expense(expenseSavingGoal, restaurant, "학식", "라면", 5_000, "오늘은 대충 떼워야지", now.minusDays(1), 4);
         Expense expense2 = new Expense(expenseSavingGoal, restaurant, "닭한마리", "닭한마리", 10_000, "오랜만에 닭한마리", now, 5);
@@ -95,24 +95,22 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(user.getId(), now);
+        TodayExpenses todayExpenses = expenseService.readTodayExpenses(user.getId(), now);
 
         // then
-        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).hasSize(2);
-        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dailyExpenseResponse.expenses()).hasSize(1);
+        Assertions.assertThat(todayExpenses.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(todayExpenses.expenses()).hasSize(1);
     }
 
     @DisplayName("데일리 지출 내역 조회 성공 : 지출이 존재하지 않는 경우")
     @Test
-    void readDailyExpenses_withNoExpenses() {
+    void readTodayExpenses_withNoExpenses() {
         // given & when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(user.getId(), now);
+        TodayExpenses todayExpenses = expenseService.readTodayExpenses(user.getId(), now);
 
         // then
-        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).isEmpty();
-        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dailyExpenseResponse.expenses()).isEmpty();
+        Assertions.assertThat(todayExpenses.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(todayExpenses.expenses()).isEmpty();
     }
 
     @DisplayName("지출 한달 내역 조회 성공")

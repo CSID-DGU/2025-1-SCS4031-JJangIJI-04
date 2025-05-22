@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    List<Expense> findAllByExpenseSavingGoalOrderByExpenseDateAsc(ExpenseSavingGoal expenseSavingGoal);
-
     @Query("SELECT e FROM Expense e "
             + "JOIN e.expenseSavingGoal esg "
             + "WHERE esg.user.id = :userId AND e.expenseDate BETWEEN :startDate AND :endDate "
@@ -19,4 +17,13 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findAllByExpenseDateOrderByExpenseDateAsc(@Param("userId") Long userId,
                                                             @Param("startDate") LocalDate startDate,
                                                             @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT e FROM Expense e "
+            + "LEFT JOIN FETCH e.emojis "
+            + "WHERE e.expenseSavingGoal = :expenseSavingGoal AND e.expenseDate = :expenseDate "
+            + "ORDER BY e.createdAt DESC ")
+    List<Expense> findAllByExpenseDateOrderByCreatedAtDesc(@Param("expenseSavingGoal") ExpenseSavingGoal expenseSavingGoal,
+                                                           @Param("expenseDate") LocalDate expenseDate);
+
+    List<Expense> findAllByExpenseSavingGoal(ExpenseSavingGoal expenseSavingGoal);
 }

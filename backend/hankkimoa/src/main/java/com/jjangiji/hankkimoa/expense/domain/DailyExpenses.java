@@ -37,10 +37,4 @@ public class DailyExpenses {
                 .sorted(Comparator.comparing(Expense::getCreatedAt).reversed())
                 .toList();
     }
-
-    public List<Expense> getExpenses() {
-        return dailyExpenses.stream()
-                .flatMap(dailyExpense -> dailyExpense.getExpenses().stream())
-                .toList();
-    }
 }

@@ -4,16 +4,20 @@ import com.jjangiji.hankkimoa.common.BaseEntity;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -54,6 +58,9 @@ public class Expense extends BaseEntity {
 
     @NotNull(message = "평점이 NULL일 수 없습니다.")
     private Integer rating;
+
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ExpenseEmoji> emojis = new ArrayList<>();
 
     public Expense(ExpenseSavingGoal expenseSavingGoal, Restaurant restaurant,
                    String restaurantName, String menuName,

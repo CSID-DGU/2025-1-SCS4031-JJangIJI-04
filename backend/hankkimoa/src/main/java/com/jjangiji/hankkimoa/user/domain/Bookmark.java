@@ -6,25 +6,16 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.Objects;
 
-@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(
-        name = "bookmarks",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_user_restaurant",
-                columnNames = {"user_id","restaurant_id"}
-        )
-)
+@Table
 public class Bookmark extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
@@ -34,13 +25,9 @@ public class Bookmark extends BaseEntity {
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
     private Restaurant restaurant;
 
-    protected Bookmark(User user, Restaurant restaurant) {
+    public Bookmark(User user, Restaurant restaurant) {
         this.user = user;
         this.restaurant = restaurant;
-    }
-
-    public static Bookmark create(User user, Restaurant restaurant) {
-        return new Bookmark(user, restaurant);
     }
 
     @Override

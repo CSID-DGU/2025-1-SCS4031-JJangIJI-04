@@ -8,24 +8,22 @@ import com.jjangiji.hankkimoa.user.domain.Bookmark;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
 import com.jjangiji.hankkimoa.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
+@RequiredArgsConstructor
 @Service
 public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
-    public BookmarkService(BookmarkRepository bookmarkRepository, RestaurantRepository restaurantRepository, UserRepository userRepository) {
-        this.bookmarkRepository = bookmarkRepository;
-        this.restaurantRepository = restaurantRepository;
-        this.userRepository = userRepository;
-    }
-
-    public void addBookmark(Long userId, Long restaurantId) {
+    public void createBookmark(Long userId, Long restaurantId) {
         if(bookmarkRepository.existsByUserIdAndRestaurantId(userId, restaurantId)) {
             throw new HankkiMoaException(ExceptionCode.BOOKMARK_EXISTS);
         }
@@ -33,11 +31,11 @@ public class BookmarkService {
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.RESTAURANT_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.USER_NOT_FOUND));
-        Bookmark bookmark = Bookmark.create(user, restaurant);
+        Bookmark bookmark = new Bookmark(user, restaurant);
         bookmarkRepository.save(bookmark);
     }
 
-    public void removeBookmark(Long userId, Long restaurantId) {
+    public void deleteBookmark(Long userId, Long restaurantId) {
         Bookmark bookmark = bookmarkRepository.findByUserIdAndRestaurantId(userId, restaurantId)
                 .orElseThrow(()-> new HankkiMoaException(ExceptionCode.BOOKMARK_NOT_FOUND));
         bookmarkRepository.delete(bookmark);

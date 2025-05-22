@@ -8,7 +8,8 @@ import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.CommunityExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
@@ -54,8 +55,7 @@ class ExpenseServiceTest extends IntegrationTest {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
-        expenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoalRepository.save(
-                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter)));
+        expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
     }
 
     @DisplayName("지출 내역 생성 성공")
@@ -66,7 +66,7 @@ class ExpenseServiceTest extends IntegrationTest {
                 "한끼식당", "순두부찌개", 7000, "든든하게 먹음!", LocalDate.now(), 5);
 
         // when
-        Long expenseId = expenseService.createExpense(request);
+        Long expenseId = expenseService.createExpense(user, request);
 
         // then
         Assertions.assertThat(expenseId).isNotNull();
@@ -79,7 +79,7 @@ class ExpenseServiceTest extends IntegrationTest {
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
 
         // when
-        Long expenseId = expenseService.createExpense(request);
+        Long expenseId = expenseService.createExpense(user, request);
 
         // then
         Assertions.assertThat(expenseId).isNotNull();
@@ -87,32 +87,29 @@ class ExpenseServiceTest extends IntegrationTest {
 
     @DisplayName("데일리 지출 내역 조회 성공")
     @Test
-    void readDailyExpenses() {
+    void readTodayExpenses() {
         // given
         Expense expense1 = new Expense(expenseSavingGoal, restaurant, "학식", "라면", 5_000, "오늘은 대충 떼워야지", now.minusDays(1), 4);
         Expense expense2 = new Expense(expenseSavingGoal, restaurant, "닭한마리", "닭한마리", 10_000, "오랜만에 닭한마리", now, 5);
-        expenseSavingGoalRepository.save(expenseSavingGoal);
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
+        TodayExpenses todayExpenses = expenseService.readTodayExpenses(user.getId(), now);
 
         // then
-        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).hasSize(2);
-        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dailyExpenseResponse.expenses()).hasSize(1);
+        Assertions.assertThat(todayExpenses.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(todayExpenses.expenses()).hasSize(1);
     }
 
     @DisplayName("데일리 지출 내역 조회 성공 : 지출이 존재하지 않는 경우")
     @Test
-    void readDailyExpenses_withNoExpenses() {
+    void readTodayExpenses_withNoExpenses() {
         // given & when
-        DailyExpenseResponse dailyExpenseResponse = expenseService.readDailyExpenses(1L, expenseSavingGoal.getId(), now);
+        TodayExpenses todayExpenses = expenseService.readTodayExpenses(user.getId(), now);
 
         // then
-        Assertions.assertThat(dailyExpenseResponse.dailyExpensesStatus()).isEmpty();
-        Assertions.assertThat(dailyExpenseResponse.savingGoalStatus().budget()).isEqualTo(70_000);
-        Assertions.assertThat(dailyExpenseResponse.expenses()).isEmpty();
+        Assertions.assertThat(todayExpenses.savingGoalStatus().budget()).isEqualTo(70_000);
+        Assertions.assertThat(todayExpenses.expenses()).isEmpty();
     }
 
     @DisplayName("지출 한달 내역 조회 성공")
@@ -130,12 +127,30 @@ class ExpenseServiceTest extends IntegrationTest {
         expenseRepository.saveAll(List.of(expense1, expense2));
 
         // when
-        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthlyExpenses(1L, sevenBefore, now);
+        MonthlyExpenseResponse monthlyExpenseResponse = expenseService.readMonthlyExpenses(user.getId(), sevenBefore, now);
 
         // then
         Assertions.assertThat(monthlyExpenseResponse.dailyExpenseStatus()).hasSize(2);
         Assertions.assertThat(monthlyExpenseResponse.dailyExpenseOverBudgetCount()).isEqualTo(1);
         Assertions.assertThat(monthlyExpenseResponse.monthlyExpenseRecordCount()).isEqualTo(2);
+    }
+
+    @DisplayName("커뮤니티 지출 내역 조회")
+    @Test
+    void readCommunityExpenses() {
+        // given
+        expenseRepository.save(new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
+
+        User user2 = userRepository.save(new User("hankkimoa2@gmail.com", "한끼2", "hankkiImage", LoginType.KAKAO, Role.USER));
+        ExpenseSavingGoal user2expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user2, 100_000, now, sevenDayAfter));
+        expenseRepository.save(new Expense(user2expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
+
+        // when
+        List<CommunityExpenseResponse> communityExpenseResponses = expenseService.readCommunityExpenses(10, 0);
+
+        // then
+        Assertions.assertThat(communityExpenseResponses).hasSize(2);
+        Assertions.assertThat(communityExpenseResponses.get(0).userId()).isEqualTo(user2.getId());
     }
 
     @DisplayName("지출 내역 삭제 성공")
@@ -144,7 +159,7 @@ class ExpenseServiceTest extends IntegrationTest {
         // given
         ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
-        Long expenseId = expenseService.createExpense(request);
+        Long expenseId = expenseService.createExpense(user, request);
 
         // when
         expenseService.deleteExpense(expenseId);

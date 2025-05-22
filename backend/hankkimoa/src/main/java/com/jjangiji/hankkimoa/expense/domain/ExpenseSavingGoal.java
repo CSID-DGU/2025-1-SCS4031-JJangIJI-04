@@ -86,6 +86,10 @@ public class ExpenseSavingGoal extends BaseEntity {
         return startDate.isAfter(expenseSavingGoal.endDate);
     }
 
+    public boolean isOwned(User user) {
+        return this.user.equals(user);
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) {

@@ -1,7 +1,7 @@
 package com.jjangiji.hankkimoa.expense.domain;
 
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;

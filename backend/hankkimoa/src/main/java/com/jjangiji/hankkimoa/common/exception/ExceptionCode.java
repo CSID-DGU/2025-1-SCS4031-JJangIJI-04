@@ -24,6 +24,7 @@ public enum ExceptionCode {
     // 지출 목표 금액
     EXPENSE_SAVING_GOAL_NOT_FOUND(HttpStatus.BAD_REQUEST, "지출 목표 금액이 존재하지 않습니다."),
     EXPENSE_SAVING_GOAL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "지출 목표 금액이 이미 존재합니다."),
+    EXPENSE_SAVING_GOAL_NOT_OWNED(HttpStatus.BAD_REQUEST, "사용자의 지출 목표 금액이 아닙니다."),
 
     // 식당
     RESTAURANT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당이 존재하지 않습니다."),
@@ -53,6 +54,7 @@ public enum ExceptionCode {
     BOOKMARK_EXISTS(HttpStatus.BAD_REQUEST, "즐겨찾기에 이미 추가된 식당입니다."),
     BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "즐겨찾기를 찾을 수 없습니다."),
     ;
+  
     private final HttpStatus httpStatus;
     private final String message;
 }

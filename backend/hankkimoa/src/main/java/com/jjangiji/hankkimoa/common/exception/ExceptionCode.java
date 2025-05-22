@@ -49,9 +49,6 @@ public enum ExceptionCode {
     AUTHENTICATION_TOKEN_USER_MISMATCH(HttpStatus.UNAUTHORIZED, "엑세스 토큰과 리프레시 토큰의 소유자가 다릅니다."),
     AUTHENTICATION_TOKEN_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "토큰 타입이 올바르지 않습니다."),
 
-    //북마크
-    BOOKMARK_EXISTS(HttpStatus.BAD_REQUEST, "즐겨찾기에 이미 추가된 식당입니다."),
-    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "즐겨찾기를 찾을 수 없습니다."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

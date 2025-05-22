@@ -3,8 +3,9 @@ package com.jjangiji.hankkimoa.expense.controller;
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.expense.service.ExpenseService;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
-import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
+import com.jjangiji.hankkimoa.expense.service.dto.response.CommunityExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,6 +45,14 @@ public class ExpenseController {
             @RequestParam("date") LocalDate date) {
         TodayExpenses todayExpenses = expenseService.readTodayExpenses(userId, date);
         return ResponseEntity.ok(todayExpenses);
+    }
+
+    @GetMapping("/api/community/expenses")
+    public ResponseEntity<List<CommunityExpenseResponse>> readCommunityExpenses(
+            @RequestParam("page") Integer page,
+            @RequestParam("size") Integer size) {
+        List<CommunityExpenseResponse> communityExpenseResponses = expenseService.readCommunityExpenses(size, page);
+        return ResponseEntity.ok(communityExpenseResponses);
     }
 
     @PostMapping("/api/expenses/{expenseId}")

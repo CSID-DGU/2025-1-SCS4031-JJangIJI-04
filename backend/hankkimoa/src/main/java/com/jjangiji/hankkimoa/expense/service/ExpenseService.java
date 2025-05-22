@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -145,13 +146,15 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommunityExpenseResponse> readCommunityExpenses(Integer limit, Integer page) {
+    public List<CommunityExpenseResponse> readCommunityExpenses(Integer size, Integer page) {
         List<CommunityExpenseResponse> result = new ArrayList<>(); // TODO 리팩토링
 
-        List<ExpenseSavingGoal> expenseSavingGoals = expenseSavingGoalRepository.findAllLastExpenseSavingGoalOrderByCreatedAtDESC(limit, page);
+        List<ExpenseSavingGoal> expenseSavingGoals = expenseSavingGoalRepository.findAllLastExpenseSavingGoalOrderByCreatedAtDESC(size, page);
         for (ExpenseSavingGoal expenseSavingGoal : expenseSavingGoals) {
 
-            List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoalOrderByCreatedAtDesc(expenseSavingGoal);
+            List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(expenseSavingGoal).stream()
+                    .sorted(Comparator.comparing(Expense::getCreatedAt).reversed())
+                    .toList();
             User user = expenseSavingGoal.getUser();
 
             result.add(toCommunityExpenseResponse(user, expenseSavingGoal, savingGoalExpenses));

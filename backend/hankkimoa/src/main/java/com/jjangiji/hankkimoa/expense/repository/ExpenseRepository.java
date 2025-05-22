@@ -26,5 +26,4 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
                                                            @Param("expenseDate") LocalDate expenseDate);
 
     List<Expense> findAllByExpenseSavingGoal(ExpenseSavingGoal expenseSavingGoal);
-    List<Expense> findAllByExpenseSavingGoalOrderByCreatedAtDesc(ExpenseSavingGoal expenseSavingGoal);
 }

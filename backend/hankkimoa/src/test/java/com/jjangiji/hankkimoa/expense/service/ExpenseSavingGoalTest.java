@@ -3,7 +3,12 @@ package com.jjangiji.hankkimoa.expense.service;
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.config.IntegrationTest;
+import com.jjangiji.hankkimoa.expense.domain.Expense;
+import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
+import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
+import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseSavingGoalCreateRequest;
+import com.jjangiji.hankkimoa.expense.service.dto.response.RemainingBudgetResponse;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
@@ -19,6 +24,10 @@ class ExpenseSavingGoalTest extends IntegrationTest {
 
     @Autowired
     private ExpenseSavingGoalService expenseSavingGoalService;
+    @Autowired
+    private ExpenseSavingGoalRepository expenseSavingGoalRepository;
+    @Autowired
+    private ExpenseRepository expenseRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -53,5 +62,21 @@ class ExpenseSavingGoalTest extends IntegrationTest {
         Assertions.assertThatCode(() -> expenseSavingGoalService.createExpenseSavingGoal(user, request))
                 .isInstanceOf(HankkiMoaException.class)
                 .hasMessage(ExceptionCode.EXPENSE_SAVING_GOAL_ALREADY_EXIST.getMessage());
+    }
+
+    @DisplayName("가용 금액 조회 성공")
+    @Test
+    void readRemainingBudget() {
+        // given
+        int budget = 100_000;
+        int expense = 10_000;
+        ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, budget, now, sevenDayAfter));
+        expenseRepository.save(new Expense(expenseSavingGoal, null, "닭한마리", "닭한마리", expense, "오랜만에 닭한마리", now, 5));
+
+        // when
+        RemainingBudgetResponse result = expenseSavingGoalService.readRemainingBudget(user, now);
+
+        // then
+        Assertions.assertThat(result.remainingBudget()).isEqualTo(budget - expense);
     }
 }

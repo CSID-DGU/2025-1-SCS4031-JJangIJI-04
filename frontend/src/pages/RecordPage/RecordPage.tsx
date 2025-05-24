@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import NavigateBeforeIcon from '@/assets/icons/navigate-before.svg?react';
 import { StarRating } from '@/features/record/ui/StarRating';
 import { useGetRemainingBudget } from '@/features/record/api/useGetRemainingBudget';
+import { useAddExpense } from '@/features/record/mutations/useAddExpense';
+import { format } from 'date-fns';
 import DatabaseIcon from '@/assets/icons/database.svg?react';
 import ArrowIcon from '@/assets/icons/circle-point.svg?react';
 
@@ -14,15 +16,14 @@ const RecordPage = () => {
   const [restaurantName, setRestaurantName] = useState('');
   const [amount, setAmount] = useState('');
   const [rating, setRating] = useState(0);
+  const [memo, setMemo] = useState('');
   const navigate = useNavigate();
   const { data: remainingBudget = 0 } = useGetRemainingBudget();
+  const { mutate: addExpense } = useAddExpense();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, '');
-    if (raw === '') {
-      setAmount('');
-      return;
-    }
+    if (raw === '') return setAmount('');
     if (!isNaN(Number(raw))) {
       const formatted = Number(raw).toLocaleString();
       setAmount(formatted);
@@ -31,6 +32,35 @@ const RecordPage = () => {
 
   const numericAmount = Number(amount.replace(/,/g, '') || 0);
   const remainingAfterExpense = remainingBudget - numericAmount;
+
+  const isFormValid =
+    restaurantName.trim() !== '' &&
+    menuName.trim() !== '' &&
+    amount.trim() !== '' &&
+    !isNaN(numericAmount) &&
+    numericAmount > 0 &&
+    rating > 0;
+
+  const handleSubmit = () => {
+    const payload = {
+      restaurantName,
+      menuName,
+      expense: numericAmount,
+      memo,
+      expenseDate: format(new Date(), 'yyyy-MM-dd'),
+      rating,
+    };
+
+    addExpense(payload, {
+      onSuccess: () => {
+        alert('지출내역이 성공적으로 저장되었어요!');
+        navigate('/main');
+      },
+      onError: () => {
+        alert('저장 중 오류가 발생했습니다.');
+      },
+    });
+  };
 
   return (
     <Container>
@@ -83,15 +113,12 @@ const RecordPage = () => {
             <StyledIcon />
             이번주 가용 금액이 다음과 같이 남게 돼요
           </NoticeBox>
-
           <BudgetSummary>
             <BudgetBox>
               <BudgetLabel>현재 가용 금액</BudgetLabel>
               <BudgetValue>{remainingBudget.toLocaleString()}원</BudgetValue>
             </BudgetBox>
-
             <StyledArrow />
-
             <BudgetBox>
               <BudgetLabel>남은 가용 금액</BudgetLabel>
               <BudgetValue $negative={remainingAfterExpense < 0}>
@@ -101,6 +128,25 @@ const RecordPage = () => {
           </BudgetSummary>
         </BudgetResultSection>
       )}
+
+      <FullWidthDivider />
+
+      <LabeledInputWrapper>
+        <LabelWrapper>
+          <Label>한 줄 메모를 남겨주세요</Label>
+          <CharCount>{memo.length} / 100</CharCount>
+        </LabelWrapper>
+        <MemoTextarea
+          placeholder="식사에 대한 평, 음식에 대한 팁 등 자유롭게 적어주세요!"
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+          maxLength={100}
+        />
+      </LabeledInputWrapper>
+
+      <SubmitButton disabled={!isFormValid} onClick={handleSubmit}>
+        입력 완료
+      </SubmitButton>
     </Container>
   );
 };
@@ -185,7 +231,6 @@ const BudgetSummary = styled.div`
 const BudgetBox = styled.div`
   width: 130px;
   height: 72px;
-  flex-shrink: 0;               
   background-color: #fff;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   border-radius: 12px;
@@ -194,19 +239,13 @@ const BudgetBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
-  overflow: hidden; 
+  border: 1px solid #E0E0E0;
 `;
 
 const BudgetLabel = styled.div`
   font-size: 12px;
   color: #666;
   margin-bottom: 4px;
-  white-space: nowrap;
-  text-align: center;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const BudgetValue = styled.div<{ $negative?: boolean }>`
@@ -216,13 +255,55 @@ const BudgetValue = styled.div<{ $negative?: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;  
-  flex-shrink: 1;          
 `;
 
 const StyledArrow = styled(ArrowIcon)`
   width: 20px;
   height: 20px;
   color: #999;
-  flex-shrink: 0;
+`;
+
+const MemoTextarea = styled.textarea`
+  width: 100%;
+  height: 120px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.4;
+`;
+
+const LabelWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CharCount = styled.span`
+  font-size: 12px;
+  color: #999;
+`;
+
+const SubmitButton = styled.button<{ disabled?: boolean }>`
+  width: 100%;
+  height: 40px;
+  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#FF6701')};
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 16px 0;
+  border: none;
+  border-radius: 12px;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: ${({ disabled }) => (disabled ? '#ccc' : '#e55c00')};
+  }
 `;

@@ -9,6 +9,8 @@ export const useAuthInit = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        console.log('전체 쿠키:', document.cookie);  // 전체 쿠키 확인
+        
         //쿠키에서 accessToken 찾기
         const cookieToken = document.cookie
           .split('; ')

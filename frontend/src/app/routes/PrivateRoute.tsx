@@ -10,6 +10,7 @@ export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isInitializing = useAuthStore((state) => state.isInitializing);
 
+  //로컬에서 UI 테스트 할 때 return 부분 주석 처리
   if (isInitializing) {
     return null; // 초기화 중에는 아무것도 렌더링하지 않음
   }

@@ -16,7 +16,9 @@ export const useKakaoLogin = () => {
   return useMutation<KakaoLoginResponse, Error, KakaoLoginParams>({
     mutationFn: ({ code, redirectUri }) => requestKakaoLogin(code, redirectUri),
     onSuccess: ({ accessToken, nickname, imageUrl }) => {
+      console.log('카카오 로그인 성공, 토큰:', accessToken);
       setAccessToken(accessToken);
+      console.log('토큰 저장 후 store 상태:', useAuthStore.getState()); 
       setNickname(nickname);
       setProfileImage(imageUrl);
     },

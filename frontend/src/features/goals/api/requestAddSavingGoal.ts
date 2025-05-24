@@ -7,5 +7,5 @@ export interface SavingGoalRequest {
 }
 
 export const requestAddSavingGoal = async (data: SavingGoalRequest) => {
-  await api.post(`/users/saving-goals`, data);
+  await api.post(`/saving-goals`, data);
 };

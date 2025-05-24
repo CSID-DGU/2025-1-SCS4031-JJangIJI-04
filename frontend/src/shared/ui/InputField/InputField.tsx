@@ -40,7 +40,6 @@ export const InputField = ({
 const InputWrapper = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 15px;
 `;
 
 const StyledInput = styled.input`

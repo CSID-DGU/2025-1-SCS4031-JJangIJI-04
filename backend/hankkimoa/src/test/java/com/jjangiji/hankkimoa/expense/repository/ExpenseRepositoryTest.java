@@ -3,6 +3,7 @@ package com.jjangiji.hankkimoa.expense.repository;
 import com.jjangiji.hankkimoa.config.RepositoryTest;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
+import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -40,13 +41,15 @@ class ExpenseRepositoryTest extends RepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
+
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
         expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 100_000, LocalDate.now(), LocalDate.now().plusDays(7)));
         Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
-        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
+        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000, address));
     }
 
     @DisplayName("지출 한달 내역 조회 성공")

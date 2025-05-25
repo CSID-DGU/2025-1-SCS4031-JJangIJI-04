@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.config.IntegrationTest;
+import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -25,6 +26,7 @@ class RestaurantServiceTest extends IntegrationTest {
     private CategoryRepository categoryRepository;
 
     private Category category;
+    private Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
 
     @BeforeEach
     void setUp() {
@@ -35,8 +37,8 @@ class RestaurantServiceTest extends IntegrationTest {
     @Test
     void createRestaurants() {
         // given
-        Restaurant restaurant1 = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000));
-        Restaurant restaurant2 = new Restaurant(category, "한끼식당2", "110", 10000);
+        Restaurant restaurant1 = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
+        Restaurant restaurant2 = new Restaurant(category, "한끼식당2", "110", 10000, address);
 
         // when
         MenuRequest menuRequest = new MenuRequest(true, "돈가스", null, 13000, null);

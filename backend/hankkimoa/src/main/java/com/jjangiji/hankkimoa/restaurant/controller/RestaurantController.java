@@ -2,10 +2,13 @@ package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
 import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
@@ -19,5 +22,11 @@ public class RestaurantController {
     public ResponseEntity<Void> createRestaurants(@RequestBody List<RestaurantCreateRequest> request) {
         restaurantService.createRestaurants(request);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/api/restaurants/search")
+    public ResponseEntity<List<RestaurantSearchResponse>> readRestaurants(@RequestParam("keyword") String keyword) {
+        List<RestaurantSearchResponse> restaurants = restaurantService.readRestaurants(keyword);
+        return ResponseEntity.ok(restaurants);
     }
 }

@@ -2,9 +2,13 @@ package com.jjangiji.hankkimoa.restaurant.repository;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Set;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    Set<Restaurant> findAllByUniqueIdIn(Set<String> uniqueIds);
+    @Query(value = "SELECT * FROM restaurant r WHERE MATCH(name) AGAINST(:word IN NATURAL LANGUAGE MODE)",
+            nativeQuery = true)
+    List<Restaurant> findAllByWord(@Param("word") String word);
 }

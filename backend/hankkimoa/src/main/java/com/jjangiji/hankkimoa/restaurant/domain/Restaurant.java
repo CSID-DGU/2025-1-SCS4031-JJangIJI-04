@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -32,22 +33,30 @@ public class Restaurant extends BaseEntity {
     @NotNull(message = "고유ID는 NULL일 수 없습니다.")
     private String uniqueId;
 
+    @Embedded
+    private Address address;
+
     private Integer menuAverage;
 
-    public Restaurant(Category category, String name, String uniqueId, Integer menuAverage) {
+    public Restaurant(Category category, String name, String uniqueId, Integer menuAverage, Address address) {
         this.category = category;
         this.name = name;
         this.uniqueId = uniqueId;
         this.menuAverage = menuAverage;
+        this.address = address;
     }
 
-    public Restaurant(Long id, Category category, String name, String uniqueId, Integer menuAverage) {
-        this(category, name, uniqueId, menuAverage);
+    public Restaurant(Long id, Category category, String name, String uniqueId, Integer menuAverage, Address address) {
+        this(category, name, uniqueId, menuAverage, address);
         this.id = id;
     }
 
     public String getCategoryName() {
         return category.getName().name();
+    }
+
+    public String getStreetAddress() {
+        return address.getStreetAddress();
     }
 
     @Override

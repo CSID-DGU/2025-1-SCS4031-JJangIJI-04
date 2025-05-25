@@ -11,6 +11,7 @@ import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.CommunityExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
+import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -48,13 +49,14 @@ class ExpenseServiceTest extends IntegrationTest {
     private Restaurant restaurant;
     private ExpenseSavingGoal expenseSavingGoal;
     private final LocalDate now = LocalDate.now();
+    private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
     private final LocalDate sevenDayAfter = now.plusDays(6);
 
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
-        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000));
+        restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000, address));
         expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
     }
 

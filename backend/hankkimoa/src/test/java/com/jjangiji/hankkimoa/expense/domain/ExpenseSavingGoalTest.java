@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.expense.domain;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
@@ -17,8 +18,9 @@ import java.util.List;
 class ExpenseSavingGoalTest {
 
     private final User user = new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER);
+    private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7));
-    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryDictionary.한식), "한끼식당", "12345", 10000);
+    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryDictionary.한식), "한끼식당", "12345", 10000, address);
     private final LocalDate now = LocalDate.now();
 
     @DisplayName("남은 예산 계산 성공")

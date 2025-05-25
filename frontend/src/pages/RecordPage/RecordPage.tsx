@@ -21,7 +21,7 @@ const RecordPage = () => {
   const [rating, setRating] = useState(0);
   const [memo, setMemo] = useState('');
   const navigate = useNavigate();
-  const { data: remainingBudget = 0 } = useRemainingBudget();
+  const { data: remainingBudget = 0, data: savingGoalStatus } = useRemainingBudget();
   const { mutate: addExpense } = useAddExpense();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +58,7 @@ const RecordPage = () => {
       memo,
       expenseDate: format(new Date(), 'yyyy-MM-dd'),
       rating,
+      expectSavingGoalId: savingGoalStatus?.id,
     };
 
     addExpense(payload, {

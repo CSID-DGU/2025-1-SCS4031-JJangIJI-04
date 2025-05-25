@@ -12,10 +12,16 @@ export const useRemainingBudget = () => {
         const res = await api.get('/saving-goals/remaining', {
           params: { date: today }
         });
-        return res.data.remainingBudget;
+        return res.data;
       } catch (error) {
         console.error('가용 예산 조회 실패:', error);
-        return 100000; // 로컬 테스트용 기본값
+        return { 
+          id: 0,
+          budget: 100000,
+          remainingBudget: 100000,
+          remainingPercentage: 100,
+          message: '테스트용 기본값'
+        }; // 로컬 테스트용 기본값
       }
     },
   });

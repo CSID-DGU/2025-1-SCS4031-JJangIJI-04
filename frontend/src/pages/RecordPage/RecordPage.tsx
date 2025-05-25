@@ -21,7 +21,7 @@ const RecordPage = () => {
   const [rating, setRating] = useState(0);
   const [memo, setMemo] = useState('');
   const navigate = useNavigate();
-  const { data: remainingBudget = 0, data: savingGoalStatus } = useRemainingBudget();
+  const { data: budgetData } = useRemainingBudget();
   const { mutate: addExpense } = useAddExpense();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,7 @@ const RecordPage = () => {
   };
 
   const numericAmount = Number(amount.replace(/,/g, '') || 0);
-  const remainingAfterExpense = remainingBudget - numericAmount;
+  const remainingAfterExpense = (budgetData?.remainingBudget ?? 0) - numericAmount;
 
   const isFormValid =
     restaurantName.trim() !== '' &&
@@ -50,6 +50,11 @@ const RecordPage = () => {
   };
 
   const handleSubmit = () => {
+    if (!budgetData?.id) {
+      alert('현재 활성화된 절약 목표가 없습니다.');
+      return;
+    }
+
     const payload = {
       restaurantId: selectedRestaurant?.id ? Number(selectedRestaurant.id) : undefined,
       restaurantName,
@@ -58,7 +63,7 @@ const RecordPage = () => {
       memo,
       expenseDate: format(new Date(), 'yyyy-MM-dd'),
       rating,
-      expectSavingGoalId: savingGoalStatus?.id,
+      expectSavingGoalId: budgetData.id,
     };
 
     addExpense(payload, {
@@ -124,7 +129,7 @@ const RecordPage = () => {
           <BudgetSummary>
             <BudgetBox>
               <BudgetLabel>현재 가용 금액</BudgetLabel>
-              <BudgetValue>{remainingBudget.toLocaleString()}원</BudgetValue>
+              <BudgetValue>{(budgetData?.remainingBudget ?? 0).toLocaleString()}원</BudgetValue>
             </BudgetBox>
             <StyledArrow />
             <BudgetBox>

@@ -2,10 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import api from '@/lib/axios';
 
+interface RemainingBudgetResponse {
+  id: number;
+  budget: number;
+  remainingBudget: number;
+  remainingPercentage: number;
+  message: string;
+}
+
 export const useRemainingBudget = () => {
   const today = format(new Date(), 'yyyy-MM-dd');
 
-  return useQuery({
+  return useQuery<RemainingBudgetResponse>({
     queryKey: ['remainingBudget', today],
     queryFn: async () => {
       try {
@@ -21,7 +29,7 @@ export const useRemainingBudget = () => {
           remainingBudget: 100000,
           remainingPercentage: 100,
           message: '테스트용 기본값'
-        }; // 로컬 테스트용 기본값
+        };
       }
     },
   });

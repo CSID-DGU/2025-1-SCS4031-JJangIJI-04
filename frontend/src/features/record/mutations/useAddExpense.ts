@@ -9,7 +9,7 @@ interface AddExpenseRequest {
   memo: string;
   expenseDate: string;
   rating: number;
-  expectSavingGoalId?: number;
+  expectSavingGoalId: number;
 }
 
 export const useAddExpense = () => {

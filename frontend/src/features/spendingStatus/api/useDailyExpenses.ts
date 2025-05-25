@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/axios';
 
 export interface SavingGoalStatus {
-  id: number;
   budget: number;
   remainingBudget: number;
   remainingPercentage: number;

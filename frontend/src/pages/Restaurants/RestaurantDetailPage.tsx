@@ -38,21 +38,21 @@ const detailItems = [
 ];
 
 export const RestaurantDetailPage = () => {
-  const navigate = useNavigate(); // ✅ 추가!
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
     if (id) {
-      getRestaurantById(id).then((res) => {
+      getRestaurantById(Number(id)).then((res) => {
         setRestaurant(res);
-        setBookmarked(res.bookmarked); // 데이터 받아온 후 설정
+        setBookmarked(res.bookmarked);
       });
     }
   }, [id]);
 
-  if (!restaurant) return <div>Loading...</div>; // 이건 그냥 놔둬
+  if (!restaurant) return <div>Loading...</div>;
   const toggleBookmark = () => {
     setBookmarked((prev) => !prev);
   };

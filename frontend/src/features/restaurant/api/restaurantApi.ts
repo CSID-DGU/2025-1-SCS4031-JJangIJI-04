@@ -5,7 +5,7 @@ export type Restaurant = RestaurantType;
 
 const mockRestaurants: Restaurant[] = [
   {
-    id: '1',
+    id: 1,
     name: '음식점 A',
     imageUrls: ['/images/sample1.png', '/images/sample1.png'],
     averagePrice: 11000,
@@ -28,7 +28,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: true,
   },
   {
-    id: '2',
+    id: 2,
     name: '음식점 B',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 15000,
@@ -45,7 +45,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: false,
   },
   {
-    id: '3',
+    id: 3,
     name: '음식점 C',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 12000,
@@ -68,7 +68,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: false,
   },
   {
-    id: '4',
+    id: 4,
     name: '음식점 D',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 8500,
@@ -85,7 +85,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: true,
   },
   {
-    id: '5',
+    id: 5,
     name: '음식점 E',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 9800,
@@ -102,7 +102,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: false,
   },
   {
-    id: '6',
+    id: 6,
     name: '음식점 F',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 13000,
@@ -119,7 +119,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: false,
   },
   {
-    id: '7',
+    id: 7,
     name: '음식점 G',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 10500,
@@ -136,7 +136,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: true,
   },
   {
-    id: '8',
+    id: 8,
     name: '음식점 H',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 17500,
@@ -153,7 +153,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: false,
   },
   {
-    id: '9',
+    id: 9,
     name: '음식점 I',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 8900,
@@ -170,7 +170,7 @@ const mockRestaurants: Restaurant[] = [
     bookmarked: true,
   },
   {
-    id: '10',
+    id: 10,
     name: '음식점 J',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 9200,
@@ -194,7 +194,7 @@ export const getRestaurants = async (): Promise<Restaurant[]> => {
   return mockRestaurants;
 };
 
-export const getRestaurantById = async (id: string): Promise<Restaurant> => {
+export const getRestaurantById = async (id: number): Promise<Restaurant> => {
   // id로 단일 식당 정보 fetch
   const restaurant = mockRestaurants.find((r) => r.id === id);
   if (!restaurant) {

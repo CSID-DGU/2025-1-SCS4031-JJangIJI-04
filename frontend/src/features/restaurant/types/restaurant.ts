@@ -6,7 +6,7 @@ export interface MenuItem {
 }
 
 export interface Restaurant {
-  id: string;
+  id: number;
   name: string;
   imageUrls: string[];
   averagePrice: number;

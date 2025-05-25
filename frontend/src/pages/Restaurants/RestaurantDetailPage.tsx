@@ -16,7 +16,7 @@ const detailItems = [
   },
   {
     icon: '/icons/restaurants/place.svg',
-    text: (r: Restaurant) => r.location,
+    text: (r: Restaurant) => r.address,
     color: '#808080',
     fontSize: 'var(--font-size-3xs)',
     fontWeight: 400,

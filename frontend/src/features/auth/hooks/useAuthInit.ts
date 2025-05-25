@@ -10,12 +10,13 @@ export const useAuthInit = () => {
       try {
         // 사용자 정보 요청
         const user = await getUserInfo();
-        console.log('유저 정보 받아옴:', user);
-        setUserId(Number(user.id));
-        setNickname(user.nickname);
-        setProfileImage(user.imageUrl);
-        setCategories(user.categories);
-        setRefreshFailed(false);
+        if (user) {
+          setUserId(Number(user.id));
+          setNickname(user.nickname);
+          setProfileImage(user.imageUrl);
+          setCategories(user.categories);
+          setRefreshFailed(false);
+        }
       } catch (error) {
         console.error('초기화 중 에러:', error);
         clearAuth();

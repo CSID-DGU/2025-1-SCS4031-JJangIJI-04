@@ -10,10 +10,13 @@ import { useAddExpense } from '@/features/record/mutations/useAddExpense';
 import { format } from 'date-fns';
 import DatabaseIcon from '@/assets/icons/database.svg?react';
 import ArrowIcon from '@/assets/icons/circle-point.svg?react';
+import { RestaurantSearchInput } from '@/features/record/ui/RestaurantSearchInput';
+import { Restaurant } from '@/features/restaurant/api/restaurantApi';
 
 const RecordPage = () => {
   const [menuName, setMenuName] = useState('');
   const [restaurantName, setRestaurantName] = useState('');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [amount, setAmount] = useState('');
   const [rating, setRating] = useState(0);
   const [memo, setMemo] = useState('');
@@ -41,8 +44,14 @@ const RecordPage = () => {
     numericAmount > 0 &&
     rating > 0;
 
+  const handleRestaurantChange = (name: string, restaurant?: Restaurant) => {
+    setRestaurantName(name);
+    setSelectedRestaurant(restaurant || null);
+  };
+
   const handleSubmit = () => {
     const payload = {
+      restaurantId: selectedRestaurant?.id ? Number(selectedRestaurant.id) : undefined,
       restaurantName,
       menuName,
       expense: numericAmount,
@@ -72,11 +81,9 @@ const RecordPage = () => {
 
       <LabeledInputWrapper>
         <Label>어떤 식당을 방문하셨나요? <Asterisk>*</Asterisk></Label>
-        <InputField
-          placeholder="식당명을 입력해주세요"
+        <RestaurantSearchInput
           value={restaurantName}
-          onChange={(e) => setRestaurantName(e.target.value)}
-          maxLength={30}
+          onChange={handleRestaurantChange}
         />
       </LabeledInputWrapper>
 

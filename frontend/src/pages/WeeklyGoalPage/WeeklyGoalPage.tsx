@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useAddSavingGoal } from '@/features/goals/mutations/useAddSavingGoal';
+import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
 import { InputField } from '@/shared/ui/InputField';
 import { format, endOfWeek } from 'date-fns';
 
 const WeeklyGoalPage = () => {
+  useCheckSavingGoal();
   const today = new Date();
   const endOfThisWeek = endOfWeek(today, { weekStartsOn: 0 }); // 토요일
   const startDate = format(today, 'yyyy-MM-dd');

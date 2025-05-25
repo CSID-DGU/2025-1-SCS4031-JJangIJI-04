@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import api from '@/lib/axios';
 
 interface RemainingBudgetResponse {
-  id: number;
+  savingGoalId: number;
   budget: number;
   remainingBudget: number;
   remainingPercentage: number;
@@ -25,7 +25,7 @@ export const useRemainingBudget = () => {
       } catch (error) {
         console.error('가용 예산 조회 실패:', error);
         return { 
-          id: 0,
+          savingGoalId: 0,
           budget: 100000,
           remainingBudget: 100000,
           remainingPercentage: 100,

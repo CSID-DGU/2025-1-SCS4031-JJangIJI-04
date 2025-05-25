@@ -3,7 +3,7 @@ import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { getUserInfo } from '../api/authApi';
 
 export const useAuthInit = () => {
-  const { setInitializing, clearAuth, setRefreshFailed, setNickname, setProfileImage, setCategories } = useAuthStore();
+  const { setInitializing, clearAuth, setRefreshFailed, setUserId, setNickname, setProfileImage, setCategories } = useAuthStore();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -11,6 +11,7 @@ export const useAuthInit = () => {
         // 사용자 정보 요청
         const user = await getUserInfo();
         console.log('유저 정보 받아옴:', user);
+        setUserId(Number(user.id));
         setNickname(user.nickname);
         setProfileImage(user.imageUrl);
         setCategories(user.categories);
@@ -25,5 +26,5 @@ export const useAuthInit = () => {
     };
 
     initializeAuth();
-  }, [setInitializing, clearAuth, setRefreshFailed, setNickname, setProfileImage, setCategories]);
+  }, [setInitializing, clearAuth, setRefreshFailed, setUserId, setNickname, setProfileImage, setCategories]);
 };

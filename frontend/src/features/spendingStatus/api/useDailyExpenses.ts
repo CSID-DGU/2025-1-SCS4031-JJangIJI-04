@@ -27,7 +27,9 @@ export const useDailyExpenses = (userId: number | null, date: string) => {
     queryKey: ['dailyExpenses', userId, date],
     queryFn: async () => {
       if (!userId) throw new Error('User ID is required');
-      const res = await api.get(`/users/${userId}/expenses/daily/${date}`);
+      const res = await api.get(`/users/${userId}/expenses`, {
+        params: { date }
+      });
       return res.data;
     },
     enabled: !!userId,

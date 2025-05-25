@@ -207,7 +207,7 @@ export const searchRestaurants = async (keyword: string): Promise<Restaurant[]> 
   if (!keyword.trim()) return [];
   
   try {
-    const response = await api.get(`/api/restaurants/search`, {
+    const response = await api.get(`/restaurants/search`, {
       params: { keyword }
     });
     // 응답 데이터가 배열인지 확인

@@ -64,7 +64,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void createExpense() {
         // given
-        ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), restaurant.getId(),
+        ExpenseCreateRequest request = new ExpenseCreateRequest(restaurant.getId(),
                 "한끼식당", "순두부찌개", 7000, "든든하게 먹음!", LocalDate.now(), 5);
 
         // when
@@ -77,7 +77,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @DisplayName("지출 내역 생성 성공 : 식당 정보가 없는 경우")
     @Test
     void createExpenseWhenRestaurantNull() {
-        ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
+        ExpenseCreateRequest request = new ExpenseCreateRequest(null,
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
 
         // when
@@ -159,7 +159,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void deleteExpense() {
         // given
-        ExpenseCreateRequest request = new ExpenseCreateRequest(expenseSavingGoal.getId(), null,
+        ExpenseCreateRequest request = new ExpenseCreateRequest(null,
                 "한끼식당", "순두부찌개", 8000, "든든하게 먹음!", LocalDate.now(), 5);
         Long expenseId = expenseService.createExpense(user, request);
 

@@ -169,33 +169,40 @@ const Grid = styled.div`
   width: calc(100% - 32px);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   grid-template-rows: repeat(6, 72px);
   row-gap: 10px;
-  column-gap: 6px;
+  column-gap: 4px;
+  box-sizing: border-box;
 `;
 
 const Empty = styled.div`
   height: 72px;
+  min-width: 0;
 `;
 
 const DayCell = styled.div`
   height: 72px;
-  padding: 6px 4px;
+  min-width: 0;
+  width: 100%;
+  padding: 6px 0;
   background: transparent;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
 
   .date {
+    width: 100%;
     font-size: 12px;
     font-weight: bold;
     margin-bottom: 4px;
   }
 
   .amount {
+    width: 100%;
     font-size: 10px;
     font-weight: 500;
     color: #202632;
@@ -208,10 +215,11 @@ const IconWrapper = styled.div<{ $isSelected?: boolean }>`
   align-items: center;
   justify-content: center;
   width: 36px;
-  aspect-ratio: 1; 
+  aspect-ratio: 1;
   border-radius: 50%;
   margin: 2px 0;
   cursor: pointer;
+  flex-shrink: 0;
 
   ${({ $isSelected }) =>
     $isSelected &&

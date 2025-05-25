@@ -10,7 +10,7 @@ export interface Restaurant {
   name: string;
   imageUrls: string[];
   averagePrice: number;
-  location: string;
+  address: string;
   categories: string[];
   menu: MenuItem[];
   bookmarked: boolean;

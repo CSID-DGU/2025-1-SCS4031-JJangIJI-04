@@ -1,4 +1,7 @@
-import { Restaurant } from '@/features/restaurant/types/restaurant';
+import { Restaurant as RestaurantType } from '@/features/restaurant/types/restaurant';
+import api from '@/lib/axios';
+
+export type Restaurant = RestaurantType;
 
 const mockRestaurants: Restaurant[] = [
   {
@@ -6,7 +9,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 A',
     imageUrls: ['/images/sample1.png', '/images/sample1.png'],
     averagePrice: 11000,
-    location: '서울 강남구',
+    address: '서울 강남구',
     categories: ['한식'],
     menu: [
       {
@@ -29,7 +32,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 B',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 15000,
-    location: '서울 서초구',
+    address: '서울 서초구',
     categories: ['일식'],
     menu: [
       {
@@ -46,7 +49,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 C',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 12000,
-    location: '서울 용산구',
+    address: '서울 용산구',
     categories: ['중식'],
     menu: [
       {
@@ -69,7 +72,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 D',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 8500,
-    location: '서울 마포구',
+    address: '서울 마포구',
     categories: ['분식'],
     menu: [
       {
@@ -86,7 +89,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 E',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 9800,
-    location: '서울 송파구',
+    address: '서울 송파구',
     categories: ['양식'],
     menu: [
       {
@@ -103,7 +106,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 F',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 13000,
-    location: '서울 강동구',
+    address: '서울 강동구',
     categories: ['한식', '퓨전'],
     menu: [
       {
@@ -120,7 +123,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 G',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 10500,
-    location: '서울 광진구',
+    address: '서울 광진구',
     categories: ['중식'],
     menu: [
       {
@@ -137,7 +140,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 H',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 17500,
-    location: '서울 동작구',
+    address: '서울 동작구',
     categories: ['일식'],
     menu: [
       {
@@ -154,7 +157,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 I',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 8900,
-    location: '서울 중구',
+    address: '서울 중구',
     categories: ['분식'],
     menu: [
       {
@@ -171,7 +174,7 @@ const mockRestaurants: Restaurant[] = [
     name: '음식점 J',
     imageUrls: ['/images/sample1.png'],
     averagePrice: 9200,
-    location: '서울 은평구',
+    address: '서울 은평구',
     categories: ['한식'],
     menu: [
       {
@@ -198,4 +201,19 @@ export const getRestaurantById = async (id: string): Promise<Restaurant> => {
     throw new Error('Restaurant not found');
   }
   return restaurant;
+};
+
+export const searchRestaurants = async (keyword: string): Promise<Restaurant[]> => {
+  if (!keyword.trim()) return [];
+  
+  try {
+    const response = await api.get(`/api/restaurants/search`, {
+      params: { keyword }
+    });
+    // 응답 데이터가 배열인지 확인
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error('식당 검색 API 호출 실패:', error);
+    return [];
+  }
 };

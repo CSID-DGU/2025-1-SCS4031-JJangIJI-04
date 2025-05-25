@@ -5,7 +5,7 @@ import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { useNavigate } from 'react-router-dom';
 import NavigateBeforeIcon from '@/assets/icons/navigate-before.svg?react';
 import { StarRating } from '@/features/record/ui/StarRating';
-import { requestGetRemainingBudget } from '@/features/goals/api/requestGetRemainingBudget';
+import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
 import { useAddExpense } from '@/features/record/mutations/useAddExpense';
 import { format } from 'date-fns';
 import DatabaseIcon from '@/assets/icons/database.svg?react';
@@ -18,7 +18,7 @@ const RecordPage = () => {
   const [rating, setRating] = useState(0);
   const [memo, setMemo] = useState('');
   const navigate = useNavigate();
-  const remainingBudget = Number(requestGetRemainingBudget());
+  const { data: remainingBudget = 0 } = useRemainingBudget();
   const { mutate: addExpense } = useAddExpense();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {

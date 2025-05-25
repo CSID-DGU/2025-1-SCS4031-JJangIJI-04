@@ -7,7 +7,7 @@ import { startOfWeek, isAfter } from 'date-fns';
 export const useCheckSavingGoal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { error, data } = useRemainingBudget();
+  const { error, data, isSuccess } = useRemainingBudget();
 
   useEffect(() => {
     // 현재 시간이 이번 주의 시작점(일요일 0시)보다 이후인지 체크
@@ -27,15 +27,19 @@ export const useCheckSavingGoal = () => {
       const isGoalMissing = 
         axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
 
-      if (isGoalMissing && location.pathname !== '/weeklygoal') {
-        navigate('/weeklygoal', { replace: true });
+        if (
+          isGoalMissing &&
+          location.pathname !== '/weeklygoal' &&
+          location.pathname !== '/main'
+        ) {
+          navigate('/weeklygoal', { replace: true });
         return;
       }
     }
 
     // 절약 목표가 있고 weeklygoal 페이지에 있으면 main으로 이동
-    if (data?.remainingBudget !== undefined && location.pathname === '/weeklygoal') {
+    if (isSuccess && data && location.pathname === '/weeklygoal') {
       navigate('/main', { replace: true });
     }
-  }, [error, data, location.pathname, navigate]);
+  }, [error, data, isSuccess, location.pathname, navigate]);
 };

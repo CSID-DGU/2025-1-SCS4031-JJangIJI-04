@@ -14,16 +14,14 @@ export const useRemainingBudget = () => {
     queryFn: async () => {
       try {
         const res = await api.get('/saving-goals/remaining', {
-          params: { date: today }
+          params: { date: today },
         });
         console.log('절약 목표 조회 응답:', res.data);
         return res.data;
       } catch (error) {
         console.error('가용 예산 조회 실패:', error);
-        return { 
-          remainingBudget: 0
-        };
+        throw error;
       }
     },
   });
-}; 
+};

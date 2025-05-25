@@ -73,22 +73,24 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect, select
         {days.map((date) => {
           const dateStr = format(date, 'yyyy-MM-dd');
           const isSelected = dateStr === selectedDate;
+          const isDateFuture = isFuture(date);
 
           const icon = getIconByStatus(
-            isFuture(date) ? undefined : statusMap[dateStr]?.status
+            isDateFuture ? undefined : statusMap[dateStr]?.status
           );
           const amount = statusMap[dateStr]?.totalExpense;
-          const displayAmount = !isFuture(date) && amount && amount > 0
+          const displayAmount = !isDateFuture && amount && amount > 0
             ? formatExpenseAmount(amount)
             : '-';
 
           return (
             <DayCell
               key={dateStr}
-              onClick={() => onDateSelect?.(dateStr)}
+              onClick={() => !isDateFuture && onDateSelect?.(dateStr)}
+              $isFuture={isDateFuture}
             >
               <div className="date">{format(date, 'd')}</div>
-              <IconWrapper $isSelected={isSelected}>
+              <IconWrapper $isSelected={isSelected} $isFuture={isDateFuture}>
                 {icon}
               </IconWrapper>
               <div className="amount">{displayAmount}</div>
@@ -181,7 +183,7 @@ const Empty = styled.div`
   min-width: 0;
 `;
 
-const DayCell = styled.div`
+const DayCell = styled.div<{ $isFuture: boolean }>`
   height: 72px;
   min-width: 0;
   width: 100%;
@@ -193,6 +195,7 @@ const DayCell = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+  cursor: ${({ $isFuture }) => ($isFuture ? 'not-allowed' : 'pointer')};
 
   .date {
     width: 100%;
@@ -210,7 +213,9 @@ const DayCell = styled.div`
   }
 `;
 
-const IconWrapper = styled.div<{ $isSelected?: boolean }>`
+const IconWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['$isSelected', '$isFuture'].includes(prop),
+})<{ $isSelected?: boolean; $isFuture?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +223,7 @@ const IconWrapper = styled.div<{ $isSelected?: boolean }>`
   aspect-ratio: 1;
   border-radius: 50%;
   margin: 2px 0;
-  cursor: pointer;
+  cursor: inherit;
   flex-shrink: 0;
 
   ${({ $isSelected }) =>

@@ -43,10 +43,14 @@ export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect, selected
             : '-';
 
           return (
-            <Day key={dateStr} onClick={() => onDateSelect?.(dateStr)}>
+            <Day 
+              key={dateStr} 
+              onClick={() => !isFuture && onDateSelect?.(dateStr)}
+              $isFuture={isFuture}
+            >
               <Label>{format(date, 'E', { locale: ko })}</Label>
               <DateText>{format(date, 'd')}</DateText>
-              <Face $isSelected={isSelected} onClick={() => onDateSelect?.(dateStr)}>
+              <Face $isSelected={isSelected} $isFuture={isFuture}>
                 <Icon />
               </Face>
               <Amount>{amountText}</Amount>
@@ -104,9 +108,10 @@ const Handle = styled.div`
   cursor: pointer;
 `;
 
-const Day = styled.div`
+const Day = styled.div<{ $isFuture: boolean }>`
   text-align: center;
   flex: 1;
+  cursor: ${({ $isFuture }) => ($isFuture ? 'not-allowed' : 'pointer')};
 `;
 
 const Label = styled.div`
@@ -122,8 +127,8 @@ const DateText = styled.div`
 `;
 
 const Face = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== '$isSelected',
-})<{ $isSelected: boolean }>`
+  shouldForwardProp: (prop) => !['$isSelected', '$isFuture'].includes(prop),
+})<{ $isSelected: boolean; $isFuture: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -131,7 +136,7 @@ const Face = styled.div.withConfig({
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: ${({ $isFuture }) => ($isFuture ? 'not-allowed' : 'pointer')};
 
   ${({ $isSelected }) =>
     $isSelected &&

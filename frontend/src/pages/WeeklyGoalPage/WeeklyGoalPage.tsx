@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { useAddSavingGoal } from '@/features/goals/mutations/useAddSavingGoal';
+import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
 import { InputField } from '@/shared/ui/InputField';
 import { format, endOfWeek } from 'date-fns';
 
 const WeeklyGoalPage = () => {
+  const navigate = useNavigate();
+  const { data: budgetData } = useRemainingBudget();
   const today = new Date();
   const endOfThisWeek = endOfWeek(today, { weekStartsOn: 0 }); // 토요일
   const startDate = format(today, 'yyyy-MM-dd');
@@ -12,6 +16,13 @@ const WeeklyGoalPage = () => {
   
   const [budget, setBudget] = useState('');
   const { mutate: addGoal } = useAddSavingGoal();
+
+  useEffect(() => {
+    // 절약 목표가 이미 있으면 메인으로 리다이렉트
+    if (budgetData?.remainingBudget !== undefined) {
+      navigate('/main', { replace: true });
+    }
+  }, [budgetData, navigate]);
 
   const isFormValid = budget !== '' && Number(budget.replace(/,/g, '')) > 0;
 

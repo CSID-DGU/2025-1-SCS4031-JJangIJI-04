@@ -7,7 +7,10 @@ export const useAddSavingGoal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: SavingGoalRequest) => requestAddSavingGoal(data),
+    mutationFn: async (data: SavingGoalRequest) => {
+      const result = await requestAddSavingGoal(data);
+      return result;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['remainingBudget'] });
       queryClient.invalidateQueries({ queryKey: ['dailyExpenses'] });

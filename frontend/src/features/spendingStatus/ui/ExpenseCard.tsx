@@ -1,17 +1,11 @@
 import styled from 'styled-components';
 import { EmojiReactionPanel } from '@/features/community/ui/EmojiReactionPanel';
-import type { EmojiKey } from '@/features/community/types/community';
 import StoreIcon from '@/assets/icons/store.svg?react';
 import MenuIcon from '@/assets/icons/menu.svg?react';
 import WalletIcon from '@/assets/icons/wallet.svg?react';
+import { ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
 
-interface ExpenseCardProps {
-  storeName: string;
-  category: string;
-  amount: number;
-  memo: string;
-  reactions: Partial<Record<EmojiKey, number>>;
-}
+type ExpenseCardProps = Omit<ExpenseRecord, 'id'>;
 
 export const ExpenseCard = ({
   storeName,

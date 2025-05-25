@@ -4,71 +4,43 @@ import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
-import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 import FileIcon from '@/assets/icons/file.svg?react';
 import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
+import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
+import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
+import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
 
 const MainPage = () => {
   useCheckSavingGoal();
-  const getToday = () => format(new Date(), 'yyyy-MM-dd');
+  const userId = useAuthStore((s) => s.userId);
+  const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const navigate = useNavigate();
+  const getToday = () => format(new Date(), 'yyyy-MM-dd');
   const [selectedDate, setSelectedDate] = useState(getToday());
 
-  const dummyData: DailyExpenseStatus[] = [
-    { date: '2025-05-05', totalExpense: 8000, status: 'GOOD' },
-    { date: '2025-05-06', totalExpense: 13000, status: 'NOT_BAD' },
-    { date: '2025-05-07', totalExpense: 188000, status: 'BAD' },
-  ];
+  const { startDate, endDate } = getCurrentWeek();
 
-  const dummyExpenses = [
-    {
-      date: '2025-05-20',
-      records: [
-        {
-          id: 1,
-          storeName: '아비꼬',
-          category: '돈까스 카레',
-          amount: 8900,
-          memo: '돈까스카레 맛있었음',
-          reactions: { 1: 2, 3: 1 },
-        },
-      ],
-    },
-    {
-      date: '2025-05-21',
-      records: [
-        {
-          id: 2,
-          storeName: '이삭토스트',
-          category: '햄치즈토스트',
-          amount: 4500,
-          memo: '맛있당',
-          reactions: { 2: 1 },
-        },
-        {
-          id: 3,
-          storeName: '필동면옥',
-          category: '냉면',
-          amount: 15000,
-          memo: '그냥저냥 평냉',
-          reactions: { 2: 1 },
-        },
-      ],
-    },
-  ];
+  const { data: dailyData } = useDailyExpenses(userId, selectedDate);
+  const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);
 
-  const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
-  const selectedExpense = dummyExpenses.find((e) => e.date === selectedDate);
-  const records = selectedExpense?.records ?? [];
+  const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
-  
+
+  const budget = dailyData?.savingGoalStatus?.budget ?? 0;
+  const remaining = dailyData?.savingGoalStatus?.remainingBudget ?? 0;
+  const spent = budget - remaining;
+
   return (
     <Container>
-      <ExpandableCalendar dailyStatusList={dummyData} onDateSelect={setSelectedDate} selectedDate={selectedDate} />
-      <GaugeChart total={84000} spent={28000} />
+      <ExpandableCalendar
+        dailyStatusList={weeklyStatus}
+        onDateSelect={setSelectedDate}
+        selectedDate={selectedDate}
+      />
+      <GaugeChart total={budget} spent={spent} />
       <FullWidthDivider />
 
       <CenteredTextBlock>
@@ -87,9 +59,10 @@ const MainPage = () => {
           </>
         )}
       </CenteredTextBlock>
+
       {hasRecords && (
         <>
-          {records.map((record) => (
+          {records.map((record: ExpenseRecord) => (
             <ExpenseCard key={record.id} {...record} />
           ))}
           <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
@@ -156,7 +129,7 @@ const NoDataText = styled.div`
 const AddButton = styled.button`
   display: block;
   margin: 32px auto 24px;
-  padding: 10px 20px; 
+  padding: 10px 20px;
   background-color: #fd6918;
   color: #fff;
   font-weight: 600;

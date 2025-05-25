@@ -9,8 +9,10 @@ import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 import FileIcon from '@/assets/icons/file.svg?react';
+import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
 
 const MainPage = () => {
+  useCheckSavingGoal();
   const getToday = () => format(new Date(), 'yyyy-MM-dd');
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(getToday());

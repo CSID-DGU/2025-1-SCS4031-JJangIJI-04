@@ -50,11 +50,6 @@ const RecordPage = () => {
   };
 
   const handleSubmit = () => {
-    if (!budgetData?.savingGoalId) {
-      alert('현재 활성화된 절약 목표가 없습니다.');
-      return;
-    }
-
     const payload = {
       restaurantId: selectedRestaurant?.id ? Number(selectedRestaurant.id) : undefined,
       restaurantName,
@@ -63,7 +58,6 @@ const RecordPage = () => {
       memo,
       expenseDate: format(new Date(), 'yyyy-MM-dd'),
       rating,
-      expectSavingGoalId: budgetData.savingGoalId,
     };
 
     addExpense(payload, {

@@ -5,7 +5,7 @@ import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import java.time.LocalDate;
 
-public record ExpenseCreateRequest(Long expectSavingGoalId, Long restaurantId,
+public record ExpenseCreateRequest(Long restaurantId,
                                    String restaurantName, String menuName, Integer expense,
                                    String memo, LocalDate expenseDate, Integer rating) {
 

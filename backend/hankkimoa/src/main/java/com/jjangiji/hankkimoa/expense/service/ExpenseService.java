@@ -40,24 +40,12 @@ public class ExpenseService {
 
     @Transactional
     public Long createExpense(User user, ExpenseCreateRequest request) {
-        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(user, request.expectSavingGoalId());
+        ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(user.getId(), request.expenseDate());
         Restaurant restaurant = readRestaurant(request.restaurantId());
 
         Expense expense = request.toExpense(expenseSavingGoal, restaurant);
         Expense saved = expenseRepository.save(expense);
         return saved.getId();
-    }
-
-    private ExpenseSavingGoal readExpenseSavingGoal(User user, Long id) {
-        ExpenseSavingGoal expenseSavingGoal = expenseSavingGoalRepository.findById(id)
-                .orElseThrow(() -> new HankkiMoaException(
-                        ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
-
-        if (!expenseSavingGoal.isOwned(user)) {
-            throw new HankkiMoaException(ExceptionCode.EXPENSE_SAVING_GOAL_NOT_OWNED);
-        }
-
-        return expenseSavingGoal;
     }
 
     private Restaurant readRestaurant(Long id) {

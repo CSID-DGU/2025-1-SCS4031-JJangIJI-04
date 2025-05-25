@@ -8,6 +8,7 @@ interface RemainingBudgetResponse {
   remainingBudget: number;
   remainingPercentage: number;
   message: string;
+  endDate: string;
 }
 
 export const useRemainingBudget = () => {
@@ -28,7 +29,8 @@ export const useRemainingBudget = () => {
           budget: 100000,
           remainingBudget: 100000,
           remainingPercentage: 100,
-          message: '테스트용 기본값'
+          message: '테스트용 기본값',
+          endDate: ''
         };
       }
     },

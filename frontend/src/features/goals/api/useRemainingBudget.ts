@@ -23,5 +23,7 @@ export const useRemainingBudget = () => {
         throw error;
       }
     },
+    refetchOnMount: true,
+    staleTime: 0,
   });
 };

@@ -1,47 +1,53 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
 import { AxiosError } from 'axios';
-import { startOfWeek, isAfter } from 'date-fns';
+import { startOfWeek, isAfter, startOfDay } from 'date-fns';
 
 export const useCheckSavingGoal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { error, data, isSuccess } = useRemainingBudget();
+  const { error, data, isSuccess, isLoading } = useRemainingBudget();
+  const redirectAttempted = useRef(false);
 
   useEffect(() => {
-    // 현재 시간이 이번 주의 시작점(일요일 0시)보다 이후인지 체크
+    if (isLoading || redirectAttempted.current) return;
+  
+    const excludedPaths = ['/oauth/callback/kakao', '/signup', '/landing'];
+    const pathname = location.pathname;
+    if (excludedPaths.includes(pathname)) return;
+  
     const now = new Date();
-    const weekStart = startOfWeek(now, { weekStartsOn: 0 });
+    const weekStart = startOfDay(startOfWeek(now, { weekStartsOn: 0 }));
     const isNewWeek = isAfter(now, weekStart);
-
-    // 새로운 주가 시작되었고 weeklygoal 페이지가 아니면 weeklygoal로 이동
-    if (isNewWeek && location.pathname !== '/weeklygoal') {
-      navigate('/weeklygoal', { replace: true });
-      return;
-    }
-
-    // 에러가 있고(절약 목표가 없고) weeklygoal 페이지가 아니면 weeklygoal로 이동
-    if (error) {
-      const axiosError = error as AxiosError<{ exceptionCode: string }>;
-      const isGoalMissing = 
-        axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
-
-      // 로그인 직후 /main으로의 리다이렉트는 허용
-      if (
-        isGoalMissing &&
-        location.pathname !== '/weeklygoal' &&
-        location.pathname !== '/main' &&
-        location.pathname !== '/oauth/callback/kakao'
-      ) {
+  
+    // 주가 바뀌면 목표금액 초기화 되는 거 체크 해봐야 함.
+    if (isSuccess && data?.remainingBudget) {
+      if (isNewWeek) {
+        redirectAttempted.current = true;
         navigate('/weeklygoal', { replace: true });
         return;
       }
+    
+      if (pathname === '/weeklygoal') {
+        redirectAttempted.current = true;
+        navigate('/main', { replace: true });
+      }
+      return;
     }
-
-    // 절약 목표가 있고 weeklygoal 페이지에 있으면 main으로 이동
-    if (isSuccess && data && location.pathname === '/weeklygoal') {
-      navigate('/main', { replace: true });
+  
+    if (error) {
+      const axiosError = error as AxiosError<{ exceptionCode: string }>;
+      const isGoalMissing = axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
+  
+      if (isGoalMissing && pathname !== '/weeklygoal' && !excludedPaths.includes(pathname)) {
+        redirectAttempted.current = true;
+        navigate('/weeklygoal', { replace: true });
+      }
     }
-  }, [error, data, isSuccess, location.pathname, navigate]);
+  }, [isLoading, isSuccess, error, data, location.pathname, navigate]);
+  
+  useEffect(() => {
+    redirectAttempted.current = false;
+  }, [location.pathname]);
 };

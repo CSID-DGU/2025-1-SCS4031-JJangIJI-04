@@ -14,6 +14,7 @@ export interface SavingGoalStatus {
 }
 
 export interface ExpenseRecord {
+  id: number;
   restaurant: string;
   menu: string;
   expense: number;

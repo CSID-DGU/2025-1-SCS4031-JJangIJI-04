@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
@@ -19,27 +19,31 @@ const MainPage = () => {
   const userId = useAuthStore((s) => s.userId);
   const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const navigate = useNavigate();
-  const getToday = () => format(new Date(), 'yyyy-MM-dd');
-  const [selectedDate, setSelectedDate] = useState(getToday());
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
   const { startDate, endDate } = getCurrentWeek();
+  const location = useLocation(); // 현재 경로 확인
 
   const { error, isLoading, isSuccess, data: budgetData } = useRemainingBudget();
-  if (isLoading) return <LoadingSpinner message="절약 목표 확인 중..." />;
 
-  if (error) {
+  useEffect(() => {
+    if (!error) return;
+
     const axiosError = error as AxiosError<{ exceptionCode: string }>;
     const isGoalMissing = axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
+
     if (isGoalMissing) {
       navigate('/weeklygoal', { replace: true });
-      return null;
     }
-  }
+  }, [error, navigate]);
 
-  if (isSuccess && budgetData?.remainingBudget && location.pathname === '/weeklygoal') {
-    navigate('/main', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (isSuccess && budgetData?.remainingBudget && location.pathname === '/weeklygoal') {
+      navigate('/main', { replace: true });
+    }
+  }, [isSuccess, budgetData, location.pathname, navigate]);
+
+  if (isLoading) return <LoadingSpinner message="절약 목표 확인 중..." />;
 
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
   const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);

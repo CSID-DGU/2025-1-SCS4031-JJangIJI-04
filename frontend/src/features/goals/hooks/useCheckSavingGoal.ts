@@ -17,9 +17,9 @@ export const useCheckSavingGoal = () => {
     if (excludedPaths.includes(pathname)) return;
 
     if (isSuccess && data?.remainingBudget) {
-      // ✅ 고급 로직: startDate와 endDate가 응답에 포함되는 경우
+      // startDate와 endDate가 응답에 포함되는 경우
       if (data.startDate && data.endDate) {
-        // 🎯 주석 해제 시: 목표 유효기간이 지난 경우 weeklygoal로 리디렉션
+        // 주석 해제 시: 목표 유효기간이 지난 경우 weeklygoal로 리디렉션
         /*
         const start = parseISO(data.startDate);
         const end = parseISO(data.endDate);

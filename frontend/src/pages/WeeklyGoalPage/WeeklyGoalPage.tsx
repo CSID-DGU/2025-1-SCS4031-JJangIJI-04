@@ -2,12 +2,14 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useAddSavingGoal } from '@/features/goals/mutations/useAddSavingGoal';
 import { InputField } from '@/shared/ui/InputField';
-import { format, endOfWeek } from 'date-fns';
+import { format, endOfWeek, startOfWeek } from 'date-fns';
 
 const WeeklyGoalPage = () => {
   const today = new Date();
-  const endOfThisWeek = endOfWeek(today, { weekStartsOn: 0 }); // 토요일
-  const startDate = format(today, 'yyyy-MM-dd');
+  const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 }); 
+  const endOfThisWeek = endOfWeek(today, { weekStartsOn: 0 });
+  
+  const startDate = format(startOfThisWeek, 'yyyy-MM-dd');
   const endDate = format(endOfThisWeek, 'yyyy-MM-dd');
   
   const [budget, setBudget] = useState('');

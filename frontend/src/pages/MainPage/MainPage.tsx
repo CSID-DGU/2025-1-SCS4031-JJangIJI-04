@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { ExpandableCalendar } from '@/features/calendar/ui/ExpandableCalendar';
@@ -13,21 +13,24 @@ import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/u
 import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
 import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
 import { useRemainingBudgetByDate } from '@/features/goals/api/useRemainingBudgetByDate';
+import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 
 const MainPage = () => {
   useCheckSavingGoal();
   const userId = useAuthStore((s) => s.userId);
   const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const navigate = useNavigate();
-  const getToday = () => format(new Date(), 'yyyy-MM-dd');
-  const [selectedDate, setSelectedDate] = useState(getToday());
+  const location = useLocation();
+  const [selectedDate, setSelectedDate] = useState(
+    location.state?.date ?? format(new Date(), 'yyyy-MM-dd')
+  );
 
   const { startDate, endDate } = getCurrentWeek();
 
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
   const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);
 
-  const { isError: isGoalMissing } = useRemainingBudgetByDate(selectedDate);
+  const { isError: isGoalMissing, isLoading: isGoalLoading } = useRemainingBudgetByDate(selectedDate);
 
   const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
@@ -36,6 +39,10 @@ const MainPage = () => {
   const remaining = dailyData?.savingGoalStatus?.remainingBudget ?? 0;
   const spent = budget - remaining;
 
+  if (isGoalLoading) {
+    return <LoadingSpinner message="지출 목표 확인 중..." />;
+  }
+  
   return (
     <Container>
       <ExpandableCalendar

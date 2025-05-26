@@ -66,7 +66,7 @@ const RecordPage = () => {
     addExpense(payload, {
       onSuccess: () => {
         alert('지출내역이 성공적으로 저장되었어요!');
-        navigate('/main');
+        navigate('/main', { state: { date: selectedDateFromCalendar } });
       },
       onError: () => {
         alert('저장 중 오류가 발생했습니다.');

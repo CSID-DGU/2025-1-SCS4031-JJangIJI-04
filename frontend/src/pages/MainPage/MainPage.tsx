@@ -67,7 +67,7 @@ const MainPage = () => {
               </FileIconWrapper>
               <NoDataText>아직 지출 기록이 없어요</NoDataText>
             </NoDataBlock>
-            <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
+            <AddButton onClick={() => navigate('/record', { state: { date: selectedDate } })} disabled={isGoalMissing} >+ 기록하기</AddButton>
           </>
         )}
       </CenteredTextBlock>
@@ -77,7 +77,7 @@ const MainPage = () => {
           {records.map((record: ExpenseRecord) => (
             <ExpenseCard key={record.id} {...record} />
           ))}
-          <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
+          <AddButton onClick={() => navigate('/record', { state: { date: selectedDate } })} disabled={isGoalMissing}>+ 기록하기</AddButton>
         </>
       )}
     </Container>
@@ -138,27 +138,27 @@ const NoDataText = styled.div`
   font-weight: 700;
 `;
 
-const AddButton = styled.button`
+const AddButton = styled.button<{ disabled?: boolean }>`
   display: block;
   margin: 32px auto 24px;
   padding: 10px 20px;
-  background-color: #fd6918;
+  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#fd6918')};
   color: #fff;
   font-weight: 600;
   font-size: 12px;
   border: none;
   border-radius: 999px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   transition: background-color 0.2s ease, transform 0.1s ease;
 
   &:hover {
-    background-color: #e85c0e;
-    transform: translateY(-1px);
+    background-color: ${({ disabled }) => (disabled ? '#ccc' : '#e85c0e')};
+    transform: ${({ disabled }) => (disabled ? 'none' : 'translateY(-1px)')};
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: ${({ disabled }) => (disabled ? 'none' : 'scale(0.98)')};
   }
 `;
 

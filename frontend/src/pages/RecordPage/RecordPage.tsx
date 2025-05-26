@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { InputField } from '@/shared/ui/InputField';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import NavigateBeforeIcon from '@/assets/icons/navigate-before.svg?react';
 import { StarRating } from '@/features/record/ui/StarRating';
 import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
@@ -23,6 +23,9 @@ const RecordPage = () => {
   const navigate = useNavigate();
   const { data: budgetData } = useRemainingBudget();
   const { mutate: addExpense } = useAddExpense();
+  const location = useLocation();
+  const selectedDateFromCalendar = location.state?.date as string ?? format(new Date(), 'yyyy-MM-dd');
+
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, '');
@@ -56,7 +59,7 @@ const RecordPage = () => {
       menuName,
       expense: numericAmount,
       memo,
-      expenseDate: format(new Date(), 'yyyy-MM-dd'),
+      expenseDate: selectedDateFromCalendar,
       rating,
     };
 

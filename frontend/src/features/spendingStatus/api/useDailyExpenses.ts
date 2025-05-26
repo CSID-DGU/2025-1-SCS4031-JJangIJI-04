@@ -12,7 +12,7 @@ export interface ExpenseRecord {
   id: number;
   storeName: string;
   category: string;
-  amount: number;
+  expense: number;
   memo: string;
   reactions: Record<number, number>;
 }

@@ -10,7 +10,7 @@ type ExpenseCardProps = Omit<ExpenseRecord, 'id'>;
 export const ExpenseCard = ({
   storeName,
   category,
-  amount,
+  expense,
   memo,
   reactions,
 }: ExpenseCardProps) => {
@@ -28,7 +28,7 @@ export const ExpenseCard = ({
           </Item>
           <Item>
             <WalletIcon />
-            <Text>{amount.toLocaleString()}원</Text>
+            <Text>{expense.toLocaleString()}원</Text>
           </Item>
         </InfoRow>
 

@@ -101,7 +101,7 @@ public class Expense extends BaseEntity {
     }
 
     private void validateExpenseDate(LocalDate date) {
-        if (date != null & date.isAfter(LocalDate.now())) {
+        if (date != null && date.isAfter(LocalDate.now("Asia/Seoul"))) {
             throw new HankkiMoaException(ExceptionCode.EXPENSE_DATE_INVALID);
         }
     }

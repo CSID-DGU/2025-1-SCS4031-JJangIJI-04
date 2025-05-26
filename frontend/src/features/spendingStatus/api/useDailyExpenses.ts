@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/axios';
 
+export interface EmojiReaction {
+  emojiId: number;
+  count: number;
+}
+
 export interface SavingGoalStatus {
   budget: number;
   remainingBudget: number;
@@ -9,12 +14,11 @@ export interface SavingGoalStatus {
 }
 
 export interface ExpenseRecord {
-  id: number;
-  storeName: string;
-  category: string;
+  restaurant: string;
+  menu: string;
   expense: number;
   memo: string;
-  reactions: Record<number, number>;
+  emojis: EmojiReaction[];
 }
 
 export interface DailyExpensesResponse {

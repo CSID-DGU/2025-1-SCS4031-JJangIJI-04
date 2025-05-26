@@ -8,11 +8,11 @@ import { ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
 type ExpenseCardProps = Omit<ExpenseRecord, 'id'>;
 
 export const ExpenseCard = ({
-  storeName,
-  category,
+  restaurant,
+  menu,
   expense,
   memo,
-  reactions,
+  emojis,
 }: ExpenseCardProps) => {
   return (
     <Card>
@@ -20,11 +20,11 @@ export const ExpenseCard = ({
         <InfoRow>
           <Item>
             <StoreIcon />
-            <Text>{storeName}</Text>
+            <Text>{restaurant}</Text>
           </Item>
           <Item>
             <MenuIcon />
-            <Text>{category}</Text>
+            <Text>{menu}</Text>
           </Item>
           <Item>
             <WalletIcon />
@@ -35,7 +35,10 @@ export const ExpenseCard = ({
         <Memo>{memo}</Memo>
 
         <EmojiWrapper>
-          <EmojiReactionPanel reactions={reactions} selected={null} />
+        <EmojiReactionPanel
+            reactions={Object.fromEntries(emojis.map(e => [e.emojiId, e.count]))}
+            selected={null}
+          />
         </EmojiWrapper>
       </Content>
     </Card>

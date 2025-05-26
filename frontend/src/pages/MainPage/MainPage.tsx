@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { useState } from 'react';
+import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
@@ -8,14 +8,14 @@ import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 import FileIcon from '@/assets/icons/file.svg?react';
-import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
 import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
 import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
 import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
-import { useRemainingBudgetByDate } from '@/features/goals/api/useRemainingBudgetByDate';
+import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
+import { AxiosError } from 'axios';
+import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 
 const MainPage = () => {
-  useCheckSavingGoal();
   const userId = useAuthStore((s) => s.userId);
   const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const navigate = useNavigate();
@@ -24,10 +24,25 @@ const MainPage = () => {
 
   const { startDate, endDate } = getCurrentWeek();
 
+  const { error, isLoading, isSuccess, data: budgetData } = useRemainingBudget();
+  if (isLoading) return <LoadingSpinner message="절약 목표 확인 중..." />;
+
+  if (error) {
+    const axiosError = error as AxiosError<{ exceptionCode: string }>;
+    const isGoalMissing = axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
+    if (isGoalMissing) {
+      navigate('/weeklygoal', { replace: true });
+      return null;
+    }
+  }
+
+  if (isSuccess && budgetData?.remainingBudget && location.pathname === '/weeklygoal') {
+    navigate('/main', { replace: true });
+    return null;
+  }
+
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
   const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);
-
-  const { isError: isGoalMissing } = useRemainingBudgetByDate(selectedDate);
 
   const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
@@ -43,17 +58,8 @@ const MainPage = () => {
         onDateSelect={setSelectedDate}
         selectedDate={selectedDate}
       />
-      {!isGoalMissing ? (
-        <>
-          <GaugeChart total={budget} spent={spent} />
-          <FullWidthDivider />
-        </>
-      ) : (
-        <>
-          <NoGoalBox>선택한 날짜에는 지출 목표 금액이 없어요!</NoGoalBox>
-          <FullWidthDivider />
-        </>
-      )}
+      <GaugeChart total={budget} spent={spent} />
+      <FullWidthDivider />
 
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
@@ -67,7 +73,7 @@ const MainPage = () => {
               </FileIconWrapper>
               <NoDataText>아직 지출 기록이 없어요</NoDataText>
             </NoDataBlock>
-            <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
+            <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
           </>
         )}
       </CenteredTextBlock>
@@ -77,7 +83,7 @@ const MainPage = () => {
           {records.map((record: ExpenseRecord) => (
             <ExpenseCard key={record.id} {...record} />
           ))}
-          <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
+          <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
         </>
       )}
     </Container>
@@ -160,15 +166,4 @@ const AddButton = styled.button`
   &:active {
     transform: scale(0.98);
   }
-`;
-
-const NoGoalBox = styled.div`
-  margin: 16px 0;
-  padding: 12px;
-  background-color: #f8f8f8;
-  border-left: 4px solid #ff6701;
-  font-size: 14px;
-  font-weight: 600;
-  color: #444;
-  text-align: center;
 `;

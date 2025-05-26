@@ -12,6 +12,7 @@ import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
 import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
 import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
 import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
+import { useRemainingBudgetByDate } from '@/features/goals/api/useRemainingBudgetByDate';
 
 const MainPage = () => {
   useCheckSavingGoal();
@@ -25,6 +26,8 @@ const MainPage = () => {
 
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
   const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);
+
+  const { isError: isGoalMissing } = useRemainingBudgetByDate(selectedDate);
 
   const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
@@ -40,8 +43,17 @@ const MainPage = () => {
         onDateSelect={setSelectedDate}
         selectedDate={selectedDate}
       />
-      <GaugeChart total={budget} spent={spent} />
-      <FullWidthDivider />
+      {!isGoalMissing ? (
+        <>
+          <GaugeChart total={budget} spent={spent} />
+          <FullWidthDivider />
+        </>
+      ) : (
+        <>
+          <NoGoalBox>선택한 날짜에는 지출 목표 금액이 없어요!</NoGoalBox>
+          <FullWidthDivider />
+        </>
+      )}
 
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
@@ -55,7 +67,7 @@ const MainPage = () => {
               </FileIconWrapper>
               <NoDataText>아직 지출 기록이 없어요</NoDataText>
             </NoDataBlock>
-            <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
+            <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
           </>
         )}
       </CenteredTextBlock>
@@ -65,7 +77,7 @@ const MainPage = () => {
           {records.map((record: ExpenseRecord) => (
             <ExpenseCard key={record.id} {...record} />
           ))}
-          <AddButton onClick={() => navigate('/record')}>+ 기록하기</AddButton>
+          <AddButton onClick={() => navigate('/record')} disabled={isGoalMissing}>+ 기록하기</AddButton>
         </>
       )}
     </Container>
@@ -148,4 +160,15 @@ const AddButton = styled.button`
   &:active {
     transform: scale(0.98);
   }
+`;
+
+const NoGoalBox = styled.div`
+  margin: 16px 0;
+  padding: 12px;
+  background-color: #f8f8f8;
+  border-left: 4px solid #ff6701;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  text-align: center;
 `;

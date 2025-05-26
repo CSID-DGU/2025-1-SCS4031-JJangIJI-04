@@ -27,12 +27,14 @@ export const useCheckSavingGoal = () => {
       const isGoalMissing = 
         axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
 
-        if (
-          isGoalMissing &&
-          location.pathname !== '/weeklygoal' &&
-          location.pathname !== '/main'
-        ) {
-          navigate('/weeklygoal', { replace: true });
+      // 로그인 직후 /main으로의 리다이렉트는 허용
+      if (
+        isGoalMissing &&
+        location.pathname !== '/weeklygoal' &&
+        location.pathname !== '/main' &&
+        location.pathname !== '/oauth/callback/kakao'
+      ) {
+        navigate('/weeklygoal', { replace: true });
         return;
       }
     }

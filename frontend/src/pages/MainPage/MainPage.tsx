@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { useState } from 'react';
+import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
@@ -8,13 +8,14 @@ import { GaugeChart } from '@/features/spendingStatus/ui/GaugeChart';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 import FileIcon from '@/assets/icons/file.svg?react';
-import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
 import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
 import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
 import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
+import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
+import { AxiosError } from 'axios';
+import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 
 const MainPage = () => {
-  useCheckSavingGoal();
   const userId = useAuthStore((s) => s.userId);
   const nickname = useAuthStore((s) => s.nickname ?? '한끼모아');
   const navigate = useNavigate();
@@ -22,6 +23,23 @@ const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState(getToday());
 
   const { startDate, endDate } = getCurrentWeek();
+
+  const { error, isLoading, isSuccess, data: budgetData } = useRemainingBudget();
+  if (isLoading) return <LoadingSpinner message="절약 목표 확인 중..." />;
+
+  if (error) {
+    const axiosError = error as AxiosError<{ exceptionCode: string }>;
+    const isGoalMissing = axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
+    if (isGoalMissing) {
+      navigate('/weeklygoal', { replace: true });
+      return null;
+    }
+  }
+
+  if (isSuccess && budgetData?.remainingBudget && location.pathname === '/weeklygoal') {
+    navigate('/main', { replace: true });
+    return null;
+  }
 
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
   const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);

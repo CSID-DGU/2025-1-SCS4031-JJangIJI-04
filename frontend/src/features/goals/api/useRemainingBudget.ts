@@ -4,6 +4,8 @@ import api from '@/lib/axios';
 
 interface RemainingBudgetResponse {
   remainingBudget: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export const useRemainingBudget = () => {

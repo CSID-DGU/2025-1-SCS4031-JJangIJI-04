@@ -13,6 +13,8 @@ jobs:
   build:
     #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Seoul
     defaults:
       run:
         working-directory: ./backend/hankkimoa
@@ -65,4 +67,4 @@ jobs:
             docker ps -a --filter "ancestor=${{ secrets.DOCKER_USERNAME }}/hankkimoa_back" -q | xargs -r docker rm -f
             docker rmi ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
-            docker run -d --name hankkimoa_back -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back
+            docker run -d --name hankkimoa_back -p 8080:8080 -e TZ=Asia/Seoul ${{ secrets.DOCKER_USERNAME }}/hankkimoa_back

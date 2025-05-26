@@ -16,6 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -101,7 +102,7 @@ public class Expense extends BaseEntity {
     }
 
     private void validateExpenseDate(LocalDate date) {
-        if (date != null & date.isAfter(LocalDate.now())) {
+        if (date != null && date.isAfter(LocalDate.now(ZoneId.of("Asia/Seoul")))) {
             throw new HankkiMoaException(ExceptionCode.EXPENSE_DATE_INVALID);
         }
     }

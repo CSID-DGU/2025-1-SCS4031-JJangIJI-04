@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,9 +25,11 @@ public class RestaurantImage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "식당이 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 
+    @NotNull(message = "이미지 주소가 NULL일 수 없습니다.")
     @Column(length = 1000)
     private String imageUrl;
 

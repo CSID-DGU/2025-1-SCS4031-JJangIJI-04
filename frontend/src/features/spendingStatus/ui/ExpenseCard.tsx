@@ -35,9 +35,8 @@ export const ExpenseCard = ({
         <Memo>{memo}</Memo>
 
         <EmojiWrapper>
-        <EmojiReactionPanel
-            reactions={Object.fromEntries(emojis.map(e => [e.emojiId, e.count]))}
-            selected={null}
+          <EmojiReactionPanel
+            reactions={emojis}
           />
         </EmojiWrapper>
       </Content>

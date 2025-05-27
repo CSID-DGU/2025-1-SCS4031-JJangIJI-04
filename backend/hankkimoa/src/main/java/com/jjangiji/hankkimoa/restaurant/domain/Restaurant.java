@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,6 +33,7 @@ public class Restaurant extends BaseEntity {
     private String name;
 
     @NotNull(message = "고유ID는 NULL일 수 없습니다.")
+    @Column(unique = true)
     private String uniqueId;
 
     @Embedded

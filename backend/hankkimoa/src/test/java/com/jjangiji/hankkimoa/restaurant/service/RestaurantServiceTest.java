@@ -37,7 +37,7 @@ class RestaurantServiceTest extends IntegrationTest {
     @Test
     void createRestaurants() {
         // given
-        Restaurant restaurant1 = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
+        Restaurant restaurant1 = new Restaurant(category, "한끼식당1", "100", 10000, address);
         Restaurant restaurant2 = new Restaurant(category, "한끼식당2", "110", 10000, address);
 
         // when
@@ -56,5 +56,24 @@ class RestaurantServiceTest extends IntegrationTest {
         // then
         int size = restaurantRepository.findAll().size();
         Assertions.assertThat(size).isEqualTo(2);
+    }
+
+    @DisplayName("식당 생성 성공 : 이미 식당이 존재하는 경우 생성 제외")
+    @Test
+    void createRestaurants_restaurantExist() {
+        // given
+        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
+
+        // when
+        MenuRequest menuRequest = new MenuRequest(true, "돈가스", null, 13000, null);
+        RestaurantCreateRequest request1 = new RestaurantCreateRequest(restaurant.getUniqueId(),
+                restaurant.getName(),
+                restaurant.getCategoryName(),
+                null, 10000, null, null, List.of(menuRequest));
+        restaurantService.createRestaurants(List.of(request1));
+
+        // then
+        int size = restaurantRepository.findAll().size();
+        Assertions.assertThat(size).isEqualTo(1);
     }
 }

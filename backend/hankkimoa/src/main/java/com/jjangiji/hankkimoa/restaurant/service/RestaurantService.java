@@ -1,11 +1,11 @@
 package com.jjangiji.hankkimoa.restaurant.service;
 
+import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryMapper;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
 import com.jjangiji.hankkimoa.restaurant.domain.OpeningHours;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
-import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.RestaurantImage;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -31,14 +32,15 @@ public class RestaurantService {
 
     @Transactional
     public void createRestaurants(List<RestaurantCreateRequest> requests) {
-        restaurantRepository.deleteAll(); // todo 리팩토링 ⚒️
-
+        Set<String> uniqueIds = restaurantRepository.findAllUniqueId();
         CategoryMapper categoryMapper = new CategoryMapper(categoryRepository.findAll());
 
         for (RestaurantCreateRequest request : requests) {
             if (request.menus() == null) continue;
+            if (request.id() == null || uniqueIds.contains(request.id())) continue;
 
             Restaurant restaurant = saveRestaurant(request, categoryMapper);
+            uniqueIds.add(restaurant.getUniqueId());
             saveRestaurantImages(restaurant, request);
             saveOpeningHours(restaurant, request);
             saveMenus(restaurant, request);

@@ -32,16 +32,16 @@ export const CommunityPage = () => {
     </Header>
 
     {isLoading ? (
-      <PostArea>
+      <CenteredBlock>
         <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
-      </PostArea>
+      </CenteredBlock>
     ) : posts.length === 0 ? (
-      <NoDataBlock>
+      <CenteredBlock>
         <FileIconWrapper>
           <FileIcon />
         </FileIconWrapper>
         <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
-      </NoDataBlock>
+      </CenteredBlock>
     ) : (
       <PostList>
         {posts
@@ -50,7 +50,9 @@ export const CommunityPage = () => {
             <CommunityCard key={post.expenseId} post={post} />
           ))}
         <div ref={loadMoreRef} style={{ height: '40px' }} />
-        {isFetchingNextPage && <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />}
+        {isFetchingNextPage && (
+          <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
+        )}
       </PostList>
     )}
   </Container>
@@ -97,14 +99,6 @@ const PostList = styled.div`
   gap: 18px;
 `;
 
-const NoDataBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 48px;
-  gap: 12px;
-`;
-
 const FileIconWrapper = styled.div`
   margin-top: 12px;
   svg {
@@ -120,8 +114,12 @@ const NoDataText = styled.div`
   font-weight: 700;
 `;
 
-const PostArea = styled.div`
-  padding: 32px 0;
+const CenteredBlock = styled.div`
+  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;  
+  min-height: 300px;
+  gap: 12px;
 `;

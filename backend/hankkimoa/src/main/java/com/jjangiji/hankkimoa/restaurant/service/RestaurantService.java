@@ -40,6 +40,7 @@ public class RestaurantService {
             if (request.id() == null || uniqueIds.contains(request.id())) continue;
 
             Restaurant restaurant = saveRestaurant(request, categoryMapper);
+            uniqueIds.add(restaurant.getUniqueId());
             saveRestaurantImages(restaurant, request);
             saveOpeningHours(restaurant, request);
             saveMenus(restaurant, request);
@@ -55,8 +56,6 @@ public class RestaurantService {
         Restaurant restaurant = new Restaurant(category, request.name(), request.id(), request.menu_average(), address);
         return restaurantRepository.save(restaurant);
     }
-
-
 
     private void saveRestaurantImages(Restaurant restaurant, RestaurantCreateRequest request) {
         if (request.images() == null) return;

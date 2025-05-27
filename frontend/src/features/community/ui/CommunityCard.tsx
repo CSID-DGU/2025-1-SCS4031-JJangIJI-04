@@ -29,8 +29,9 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
   const handleAddReaction = (emojiId: number) => {
     const isSelected = selectedEmojis.has(emojiId);
   
-    toggleEmoji({ expenseId: post.expenseId, emojiId });
+    toggleEmoji({ body: { expenseId: post.expenseId, emojiId }, isSelected });
   
+    // 프론트 상태도 토글
     setReactions((prev) => {
       const updated = { ...prev };
       if (isSelected) {

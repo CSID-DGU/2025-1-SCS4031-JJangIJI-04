@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { emojiMap } from '@/features/community/constants/emojiMap';
-import { EmojiKey } from '@/features/community/types/community';
 
 interface EmojiPopoverProps {
-  onSelect: (emoji: EmojiKey) => void;
+  onSelect: (emoji: number) => void;
 }
 
 export const EmojiPopover = ({ onSelect }: EmojiPopoverProps) => {
@@ -14,7 +13,7 @@ export const EmojiPopover = ({ onSelect }: EmojiPopoverProps) => {
         {Object.entries(emojiMap).map(([key, { src, label }]) => (
           <EmojiButton
             key={key}
-            onClick={() => onSelect(Number(key) as EmojiKey)}
+            onClick={() => onSelect(Number(key))}
             aria-label={label}
             title={label}
           >

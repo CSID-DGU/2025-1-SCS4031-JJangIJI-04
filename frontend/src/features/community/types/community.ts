@@ -1,24 +1,32 @@
-export interface Reaction {
-  key: string;
+export interface EmojiCount {
+  emojiId: number;
   count: number;
 }
 
-export type EmojiKey = number;
-
 export interface CommunityPost {
-  id: number;
+  // 식별자
+  expenseId: number;
+
+  // 사용자 정보
+  userId: number;
   nickname: string;
-  profileImage: string;
-  date: string; // ISO 문자열 또는 yyyy.mm.dd 포맷
-  restaurant: {
-    name: string;
-    category: string;
-    price: number;
-  };
-  content: string;
-  emojiReactions: Partial<Record<EmojiKey, number>>;
-  budget: {
-    total: number;
-    used: number;
-  };
+  profileImage: string; // imageUrl → profileImage로 매핑
+
+  // 식당 및 지출 정보
+  restaurantId: number;
+  restaurant: string;
+  menu: string;
+  expense: number;
+
+  // 날짜 및 메모
+  createdAt: string;
+  memo: string;
+
+  // 절약 목표 관련
+  savingGoalId: number;
+  savingGoal: number;
+  remainingBudget: number;
+
+  // 이모지
+  emojis: EmojiCount[];
 }

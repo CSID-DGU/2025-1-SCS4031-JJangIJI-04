@@ -1,17 +1,16 @@
 import styled from 'styled-components';
 import { useEffect, useRef, useState } from 'react';
 import { EmojiPopover } from '@/features/community/ui/EmojiPopover';
-import { EmojiKey } from '@/features/community/types/community';
 
 interface EmojiAddButtonProps {
-  onSelect: (emojiKey: EmojiKey) => void;
+  onSelect: (emojiKey: number) => void;
 }
 
 export const EmojiAddButton = ({ onSelect }: EmojiAddButtonProps) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleSelect = (key: EmojiKey) => {
+  const handleSelect = (key: number) => {
     onSelect(key);
     setOpen(false);
   };

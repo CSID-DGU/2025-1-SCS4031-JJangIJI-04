@@ -14,8 +14,11 @@ interface CommunityCardProps {
 }
 
 export const CommunityCard = ({ post }: CommunityCardProps) => {
-  const [reactions, setReactions] = useState<Partial<Record<number, number>>>(
-    post.emojiReactions || {}
+  const [reactions, setReactions] = useState<Record<number, number>>(() =>
+    (post.emojis || []).reduce((acc, { emojiId, count }) => {
+      acc[emojiId] = count;
+      return acc;
+    }, {} as Record<number, number>)
   );
   const [selectedEmoji, setSelectedEmoji] = useState<number | null>(null);
 
@@ -59,34 +62,34 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
           <TextGroup>
             <TopRow>
               <Nickname>{post.nickname}</Nickname>
-              <DateText>{post.date}</DateText>
+              <DateText>{post.createdAt}</DateText>
             </TopRow>
 
             <InfoRow>
               <Item>
                 <StoreIcon />
-                <Text title={post.restaurant.name}>{post.restaurant.name}</Text>
+                <Text title={post.restaurant}>{post.restaurant}</Text>
               </Item>
               <Item>
                 <MenuIcon />
-                <Text title={post.restaurant.category}>{post.restaurant.category}</Text>
+                <Text title={post.menu}>{post.menu}</Text>
               </Item>
               <Item>
                 <WalletIcon />
-                <Text>{post.restaurant.price.toLocaleString()}원</Text>
+                <Text>{post.expense.toLocaleString()}원</Text>
               </Item>
             </InfoRow>
           </TextGroup>
 
           <AbsoluteGauge>
             <BudgetGauge
-              used={post.budget.used}
-              total={post.budget.total}
+              used={post.savingGoal - post.remainingBudget}
+              total={post.savingGoal}
             />
           </AbsoluteGauge>
         </RelativeWrapper>
 
-        <Memo>{post.content}</Memo>
+        <Memo>{post.memo}</Memo>
 
         <EmojiRow>
           <EmojiButtonWrapper>
@@ -94,7 +97,10 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
           </EmojiButtonWrapper>
 
           <EmojiReactionPanel
-            reactions={reactions}
+            reactions={Object.entries(reactions).map(([emojiId, count]) => ({
+              emojiId: Number(emojiId),
+              count,
+            }))}
             selected={selectedEmoji}
             onClickEmoji={handleAddReaction}
           />
@@ -212,6 +218,6 @@ const EmojiRow = styled.div`
 `;
 
 const EmojiButtonWrapper = styled.div`
-  position: relative; // 🔥 팝오버 기준점
+  position: relative;
   display: inline-block;
 `;

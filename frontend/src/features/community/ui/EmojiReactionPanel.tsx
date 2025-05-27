@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { emojiMap } from '@/features/community/constants/emojiMap';
-import { EmojiKey } from '@/features/community/types/community';
 
 interface EmojiReactionPanelProps {
-  reactions: Partial<Record<EmojiKey, number>>;
-  selected?: EmojiKey | null;
-  onClickEmoji?: (emoji: EmojiKey) => void; // 👈 클릭 이벤트 추가
+  reactions: { emojiId: number; count: number }[];
+  selected?: number | null;
+  onClickEmoji?: (emojiId: number) => void;
 }
 
 export const EmojiReactionPanel = ({
@@ -15,20 +14,18 @@ export const EmojiReactionPanel = ({
 }: EmojiReactionPanelProps) => {
   return (
     <Wrapper>
-      {Object.entries(reactions).map(([key, count]) => {
-        const emojiKey = Number(key) as EmojiKey;
-        const selectedKey = Number(selected); // ✅ selected도 숫자로 변환
-        const emoji = emojiMap[emojiKey];
-        if (!count || !emoji) return null;
+      {reactions.map(({ emojiId, count }) => {
+        const emoji = emojiMap[emojiId];
+        if (!emoji || !count) return null;
 
         return (
           <EmojiItem
-            key={key}
-            $selected={emojiKey === selectedKey}
-            onClick={() => onClickEmoji?.(emojiKey)}
+            key={emojiId}
+            $selected={emojiId === selected}
+            onClick={() => onClickEmoji?.(emojiId)}
           >
             <EmojiImg src={emoji.src} alt={emoji.label} />
-            <Count $selected={emojiKey === selectedKey}>{count}</Count>
+            <Count $selected={emojiId === selected}>{count}</Count>
           </EmojiItem>
         );
       })}

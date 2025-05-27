@@ -25,7 +25,7 @@ export const CommunityPage = () => {
       {hasPosts ? (
         <PostList>
           {data.map((post) => (
-            <CommunityCard key={post.id} post={post} />
+            <CommunityCard key={post.expenseId} post={post} />
           ))}
         </PostList>
       ) : (

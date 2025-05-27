@@ -21,37 +21,39 @@ export const CommunityPage = () => {
     }
   });
 
-  if (isLoading) return <LoadingWrapper>불러오는 중...</LoadingWrapper>;
-
   const posts = data?.pages.flatMap((page) => page.content) || [];
 
   return (
     <Container>
-      <Header>
-        <Title>한끼니티</Title>
-        <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
-        <Divider />
-      </Header>
+    <Header>
+      <Title>한끼니티</Title>
+      <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
+      <Divider />
+    </Header>
 
-      {!isLoading && posts.length === 0 ? (
-        <NoDataBlock>
-          <FileIconWrapper>
-            <FileIcon />
-          </FileIconWrapper>
-          <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
-        </NoDataBlock>
-      ) : (
-        <PostList>
-          {posts
-            .filter((post): post is CommunityPost => !!post && typeof post.expenseId !== 'undefined')
-            .map((post) => (
-              <CommunityCard key={post.expenseId} post={post} />
-            ))}
-          <div ref={loadMoreRef} style={{ height: '40px' }} />
-          {isFetchingNextPage && <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />}
-        </PostList>
-      )}
-    </Container>
+    {isLoading ? (
+      <PostArea>
+        <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
+      </PostArea>
+    ) : posts.length === 0 ? (
+      <NoDataBlock>
+        <FileIconWrapper>
+          <FileIcon />
+        </FileIconWrapper>
+        <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
+      </NoDataBlock>
+    ) : (
+      <PostList>
+        {posts
+          .filter((post): post is CommunityPost => !!post && typeof post.expenseId !== 'undefined')
+          .map((post) => (
+            <CommunityCard key={post.expenseId} post={post} />
+          ))}
+        <div ref={loadMoreRef} style={{ height: '40px' }} />
+        {isFetchingNextPage && <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />}
+      </PostList>
+    )}
+  </Container>
   );
 };
 
@@ -118,9 +120,8 @@ const NoDataText = styled.div`
   font-weight: 700;
 `;
 
-const LoadingWrapper = styled.div`
-  padding: 32px;
-  text-align: center;
-  font-size: 14px;
-  color: #555;
+const PostArea = styled.div`
+  padding: 32px 0;
+  display: flex;
+  justify-content: center;
 `;

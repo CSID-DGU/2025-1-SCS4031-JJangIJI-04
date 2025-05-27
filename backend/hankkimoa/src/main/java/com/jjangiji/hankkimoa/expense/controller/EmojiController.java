@@ -1,9 +1,11 @@
 package com.jjangiji.hankkimoa.expense.controller;
 
+import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.expense.service.EmojiService;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.request.EmojiDeleteRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiCreateResponse;
+import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,9 +20,9 @@ public class EmojiController {
     private final EmojiService emojiService;
 
     @PostMapping("/api/expenses/emojis")
-    public ResponseEntity<EmojiCreateResponse> createEmoji(@RequestBody EmojiCreateRequest request) {
-        // todo 유저 매핑
-        EmojiCreateResponse response = emojiService.createEmoji(null, request);
+    public ResponseEntity<EmojiCreateResponse> createEmoji(@AuthRequiredPrincipal User user,
+                                                           @RequestBody EmojiCreateRequest request) {
+        EmojiCreateResponse response = emojiService.createEmoji(user, request);
         return ResponseEntity.ok(response);
     }
 

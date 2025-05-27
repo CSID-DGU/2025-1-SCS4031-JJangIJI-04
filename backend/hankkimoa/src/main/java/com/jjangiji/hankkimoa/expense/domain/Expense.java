@@ -37,11 +37,12 @@ public class Expense extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "지출 절약 목표는 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private ExpenseSavingGoal expenseSavingGoal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Restaurant restaurantEntity;
+    private Restaurant restaurant;
 
     @NotNull(message = "식당이름이 NULL일 수 없습니다.")
     private String restaurantName;
@@ -72,7 +73,7 @@ public class Expense extends BaseEntity {
         validateExpenseDate(expenseDate);
         validateRating(rating);
         this.expenseSavingGoal = expenseSavingGoal;
-        this.restaurantEntity = restaurant;
+        this.restaurant = restaurant;
         this.restaurantName = restaurantName;
         this.menuName = menuName;
         this.expense = expense;
@@ -111,6 +112,12 @@ public class Expense extends BaseEntity {
         if (rating != null && (rating < RATING_MIN || rating > RATING_MAX)) {
             throw new HankkiMoaException(ExceptionCode.RATING_INVALID_FORMAT);
         }
+    }
+
+    public Long getRestaurantId() {
+        if (restaurant == null) return null;
+
+        return restaurant.getId();
     }
 
     @Override

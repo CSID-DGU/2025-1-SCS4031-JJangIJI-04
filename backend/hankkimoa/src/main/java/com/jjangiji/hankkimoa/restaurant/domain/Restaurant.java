@@ -24,6 +24,7 @@ public class Restaurant extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "카테고리는 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
@@ -36,6 +37,7 @@ public class Restaurant extends BaseEntity {
     @Embedded
     private Address address;
 
+    @NotNull(message = "메뉴 평균 가격이 NULL일 수 없습니다.")
     private Integer menuAverage;
 
     public Restaurant(Category category, String name, String uniqueId, Integer menuAverage, Address address) {

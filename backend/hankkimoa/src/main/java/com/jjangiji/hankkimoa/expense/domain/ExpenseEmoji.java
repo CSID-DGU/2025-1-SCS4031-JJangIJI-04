@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,9 +22,11 @@ public class ExpenseEmoji {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "유저는 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @NotNull(message = "지출은 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private Expense expense;
 

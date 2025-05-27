@@ -25,6 +25,7 @@ public class Menu extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "식당이 NULL일 수 없습니다.")
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 

@@ -1,4 +1,6 @@
 package com.jjangiji.hankkimoa.expense.service.dto.request;
 
-public record EmojiDeleteRequest(Long expenseEmojiId) {
+import jakarta.validation.constraints.NotNull;
+
+public record EmojiDeleteRequest(@NotNull(message = "이모지 ID를 입력해주세요.") Long expenseEmojiId) {
 }

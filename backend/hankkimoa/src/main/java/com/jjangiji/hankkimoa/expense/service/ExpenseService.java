@@ -159,7 +159,7 @@ public class ExpenseService {
                 user.getImageUrl(),
                 expenseSavingGoal.getId(),
                 lastExpense.getId(),
-                lastExpense.getRestaurantEntity().getId(),
+                lastExpense.getRestaurantId(),
                 lastExpense.getRestaurantName(),
                 lastExpense.getMenuName(),
                 lastExpense.getExpense(),

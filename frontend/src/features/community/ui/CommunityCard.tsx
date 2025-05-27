@@ -4,6 +4,8 @@ import { CommunityPost } from '@/features/community/types/community';
 import { EmojiReactionPanel } from '@/features/community/ui/EmojiReactionPanel';
 import { EmojiAddButton } from '@/features/community/ui/EmojiAddButton';
 import { BudgetGauge } from '@/features/community/ui/BudgetGauge';
+import { useAddEmoji } from '@/features/community/api/useAddEmoji';
+import { useDeleteEmoji } from '@/features/community/api/useDeleteEmoji';
 
 import StoreIcon from '@/assets/icons/store.svg?react';
 import MenuIcon from '@/assets/icons/menu.svg?react';
@@ -20,32 +22,39 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
       return acc;
     }, {} as Record<number, number>)
   );
-  const [selectedEmoji, setSelectedEmoji] = useState<number | null>(null);
+  const [selectedEmojis, setSelectedEmojis] = useState<Set<number>>(new Set());
 
-  const handleAddReaction = (emoji: number) => {
-    setReactions((prev) => {
-      const updated = { ...prev };
+  const { mutate: addEmoji } = useAddEmoji();
+  const { mutate: deleteEmoji } = useDeleteEmoji();
 
-      if (selectedEmoji === emoji) {
-        const prevCount = updated[emoji] || 0;
-        if (prevCount > 1) updated[emoji] = prevCount - 1;
-        else delete updated[emoji];
-        setSelectedEmoji(null);
+  const handleAddReaction = (emojiId: number) => {
+    const isSelected = selectedEmojis.has(emojiId);
+
+    if (isSelected) {
+      deleteEmoji({ expenseId: post.expenseId, emojiId });
+      setReactions((prev) => {
+        const updated = { ...prev };
+        if (updated[emojiId] > 1) updated[emojiId]--;
+        else delete updated[emojiId];
         return updated;
-      }
-
-      if (selectedEmoji !== null) {
-        const prevCount = updated[selectedEmoji] || 0;
-        if (prevCount > 1) updated[selectedEmoji] = prevCount - 1;
-        else delete updated[selectedEmoji];
-      }
-
-      updated[emoji] = (updated[emoji] || 0) + 1;
-      setSelectedEmoji(emoji);
-      return updated;
-    });
-
-    setSelectedEmoji(emoji);
+      });
+      setSelectedEmojis((prev) => {
+        const updated = new Set(prev);
+        updated.delete(emojiId);
+        return updated;
+      });
+    } else {
+      addEmoji({ expenseId: post.expenseId, emojiId });
+      setReactions((prev) => ({
+        ...prev,
+        [emojiId]: (prev[emojiId] || 0) + 1,
+      }));
+      setSelectedEmojis((prev) => {
+        const updated = new Set(prev);
+        updated.add(emojiId);
+        return updated;
+      });
+    }
   };
 
   return (
@@ -101,7 +110,7 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
               emojiId: Number(emojiId),
               count,
             }))}
-            selected={selectedEmoji}
+            selected={selectedEmojis}
             onClickEmoji={handleAddReaction}
           />
         </EmojiRow>

@@ -3,7 +3,7 @@ import { emojiMap } from '@/features/community/constants/emojiMap';
 
 interface EmojiReactionPanelProps {
   reactions: { emojiId: number; count: number }[];
-  selected?: number | null;
+  selected?: Set<number>;
   onClickEmoji?: (emojiId: number) => void;
 }
 
@@ -21,11 +21,11 @@ export const EmojiReactionPanel = ({
         return (
           <EmojiItem
             key={emojiId}
-            $selected={emojiId === selected}
+            $selected={!!selected?.has(emojiId)}
             onClick={() => onClickEmoji?.(emojiId)}
           >
             <EmojiImg src={emoji.src} alt={emoji.label} />
-            <Count $selected={emojiId === selected}>{count}</Count>
+            <Count $selected={!!selected?.has(emojiId)}>{count}</Count>
           </EmojiItem>
         );
       })}

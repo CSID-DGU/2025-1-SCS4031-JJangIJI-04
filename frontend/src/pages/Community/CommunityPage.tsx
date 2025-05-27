@@ -1,73 +1,61 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
-import { fetchCommunityPosts } from '@/features/community/api/useCommunityPosts';
+import { useIntersectionObserver } from '@/shared/hooks/useIntersectionObserver';
+import { useCommunityPosts } from '@/features/community/api/useCommunityPosts';
 import { CommunityCard } from '@/features/community/ui/CommunityCard';
 import FileIcon from '@/assets/icons/file.svg?react';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import { CommunityPost } from '@/features/community/types/community';
 
 export const CommunityPage = () => {
-  const [page, setPage] = useState(0);
-  const [posts, setPosts] = useState<CommunityPost[]>([]);
-  const [isLast, setIsLast] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useCommunityPosts();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetchCommunityPosts(page);
-        setPosts((prev) => [...prev, ...res.content]);
-        setIsLast(res.last);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-        setIsLoadingMore(false);
-      }
-    };
-    fetchData();
-  }, [page]);
-
-  const handleLoadMore = () => {
-    if (!isLast && !isLoadingMore) {
-      setIsLoadingMore(true);
-      setPage((prev) => prev + 1);
+  const loadMoreRef = useIntersectionObserver(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  };
+  });
+
+  const posts = data?.pages.flat() || [];
 
   return (
     <Container>
-      <Header>
-        <Title>한끼니티</Title>
-        <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
-        <Divider />
-      </Header>
+    <Header>
+      <Title>한끼니티</Title>
+      <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
+      <Divider />
+    </Header>
 
-      {isLoading ? (
-        <CenteredBlock>
-          <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
-        </CenteredBlock>
-      ) : posts.length === 0 ? (
-        <CenteredBlock>
-          <FileIconWrapper>
-            <FileIcon />
-          </FileIconWrapper>
-          <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
-        </CenteredBlock>
-      ) : (
-        <PostList>
-          {posts.map((post) => (
+    {isLoading ? (
+      <CenteredBlock>
+        <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
+      </CenteredBlock>
+    ) : posts.length === 0 ? (
+      <CenteredBlock>
+        <FileIconWrapper>
+          <FileIcon />
+        </FileIconWrapper>
+        <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
+      </CenteredBlock>
+    ) : (
+      <PostList>
+        {posts
+          .filter((post): post is CommunityPost => !!post && typeof post.expenseId !== 'undefined')
+          .map((post) => (
             <CommunityCard key={post.expenseId} post={post} />
           ))}
-          {!isLast && (
-            <LoadMoreButton onClick={handleLoadMore} disabled={isLoadingMore}>
-              {isLoadingMore ? '불러오는 중...' : '더 보기'}
-            </LoadMoreButton>
-          )}
-        </PostList>
-      )}
-    </Container>
+        <div ref={loadMoreRef} style={{ height: '40px' }} />
+        {isFetchingNextPage && (
+          <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
+        )}
+      </PostList>
+    )}
+  </Container>
   );
 };
 
@@ -134,20 +122,4 @@ const CenteredBlock = styled.div`
   align-items: center;  
   min-height: 300px;
   gap: 12px;
-`;
-
-const LoadMoreButton = styled.button`
-  padding: 10px 16px;
-  margin: 20px auto 0;
-  font-size: 14px;
-  background-color: #ff6701;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
 `;

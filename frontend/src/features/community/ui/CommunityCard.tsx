@@ -61,7 +61,7 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
     <CardWrapper>
       <LeftSection>
         <ProfileImg
-          src={post.profileImage || '/icons/community/user-avatar.svg'}
+          src={post.imageUrl || '/icons/community/user-avatar.svg'}
           alt="프로필"
         />
       </LeftSection>

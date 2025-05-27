@@ -5,7 +5,7 @@ export const getCommunityPosts = async (): Promise<CommunityPost[]> => {
     {
       nickname: "한끼모아",
       userId: 1,
-      profileImage: "",
+      imageUrl: "",
       savingGoalId: 10,
       expenseId: 101,
       restaurantId: 1001,
@@ -24,7 +24,7 @@ export const getCommunityPosts = async (): Promise<CommunityPost[]> => {
     {
       nickname: "Heeju",
       userId: 2,
-      profileImage: "https://placehold.co/48x48",
+      imageUrl: "https://placehold.co/48x48",
       savingGoalId: 11,
       expenseId: 102,
       restaurantId: 1002,
@@ -42,7 +42,7 @@ export const getCommunityPosts = async (): Promise<CommunityPost[]> => {
     {
       nickname: "두끼모아",
       userId: 3,
-      profileImage: "",
+      imageUrl: "",
       savingGoalId: 12,
       expenseId: 103,
       restaurantId: 1003,

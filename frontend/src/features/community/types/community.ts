@@ -10,7 +10,7 @@ export interface CommunityPost {
   // 사용자 정보
   userId: number;
   nickname: string;
-  profileImage: string; // imageUrl → profileImage로 매핑
+  imageUrl: string;
 
   // 식당 및 지출 정보
   restaurantId: number;

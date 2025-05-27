@@ -6,6 +6,7 @@ import { EmojiAddButton } from '@/features/community/ui/EmojiAddButton';
 import { BudgetGauge } from '@/features/community/ui/BudgetGauge';
 import { useAddEmoji } from '@/features/community/api/useAddEmoji';
 import { useDeleteEmoji } from '@/features/community/api/useDeleteEmoji';
+import { format } from 'date-fns';
 
 import StoreIcon from '@/assets/icons/store.svg?react';
 import MenuIcon from '@/assets/icons/menu.svg?react';
@@ -71,7 +72,7 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
           <TextGroup>
             <TopRow>
               <Nickname>{post.nickname}</Nickname>
-              <DateText>{post.createdAt}</DateText>
+              <DateText>{format(new Date(post.createdAt), 'yyyy.MM.dd HH:mm')}</DateText>
             </TopRow>
 
             <InfoRow>

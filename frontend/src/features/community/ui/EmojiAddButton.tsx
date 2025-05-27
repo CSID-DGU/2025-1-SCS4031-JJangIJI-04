@@ -41,7 +41,7 @@ const Button = styled.button`
   cursor: pointer;
 
   img {
-    width: 11px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
   }
 `;

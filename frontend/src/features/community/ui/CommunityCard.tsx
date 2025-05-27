@@ -2,8 +2,12 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { CommunityPost } from '@/features/community/types/community';
 import { EmojiReactionPanel } from '@/features/community/ui/EmojiReactionPanel';
-import { BudgetGauge } from '@/features/community/ui/BudgetGauge';
 import { EmojiAddButton } from '@/features/community/ui/EmojiAddButton';
+import { BudgetGauge } from '@/features/community/ui/BudgetGauge';
+
+import StoreIcon from '@/assets/icons/store.svg?react';
+import MenuIcon from '@/assets/icons/menu.svg?react';
+import WalletIcon from '@/assets/icons/wallet.svg?react';
 
 interface CommunityCardProps {
   post: CommunityPost;
@@ -16,59 +20,30 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
   const [selectedEmoji, setSelectedEmoji] = useState<number | null>(null);
 
   const handleAddReaction = (emoji: number) => {
-    // if (selectedEmoji === emoji) return; // 이미 선택한 이모지 클릭 시 무시
     setReactions((prev) => {
       const updated = { ...prev };
 
-      // 이미 선택한 이모지를 다시 누른 경우 → 취소
       if (selectedEmoji === emoji) {
         const prevCount = updated[emoji] || 0;
-        if (prevCount > 1) {
-          updated[emoji] = prevCount - 1;
-        } else {
-          delete updated[emoji];
-        }
-        setSelectedEmoji(null); // 선택 해제
+        if (prevCount > 1) updated[emoji] = prevCount - 1;
+        else delete updated[emoji];
+        setSelectedEmoji(null);
         return updated;
       }
 
-      // 이전 이모지가 있었다면 제거
-      if (selectedEmoji !== null && selectedEmoji !== undefined) {
+      if (selectedEmoji !== null) {
         const prevCount = updated[selectedEmoji] || 0;
-        if (prevCount > 1) {
-          updated[selectedEmoji] = prevCount - 1;
-        } else {
-          delete updated[selectedEmoji];
-        }
+        if (prevCount > 1) updated[selectedEmoji] = prevCount - 1;
+        else delete updated[selectedEmoji];
       }
 
-      // 새 이모지를 선택
       updated[emoji] = (updated[emoji] || 0) + 1;
       setSelectedEmoji(emoji);
       return updated;
     });
 
-    // 현재 선택한 이모지 갱신
     setSelectedEmoji(emoji);
   };
-
-  const restaurantInfoItems = [
-    {
-      icon: '/icons/community/emojis/store.svg',
-      label: post.restaurant.name,
-      alt: '식당',
-    },
-    {
-      icon: '/icons/community/emojis/menu.svg',
-      label: post.restaurant.category,
-      alt: '카테고리',
-    },
-    {
-      icon: '/icons/community/emojis/wallet.svg',
-      label: `${post.restaurant.price.toLocaleString()}원`,
-      alt: '가격',
-    },
-  ];
 
   return (
     <CardWrapper>
@@ -80,27 +55,39 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
       </LeftSection>
 
       <RightSection>
-        <TopInfoRow>
+        <RelativeWrapper>
           <TextGroup>
             <TopRow>
               <Nickname>{post.nickname}</Nickname>
               <DateText>{post.date}</DateText>
             </TopRow>
-            <RestaurantInfo>
-              {restaurantInfoItems.map((item, index) => (
-                <InfoItem key={index}>
-                  <img src={item.icon} alt={item.alt} />
-                  <span>{item.label}</span>
-                </InfoItem>
-              ))}
-            </RestaurantInfo>
-          </TextGroup>
-          <FixedGaugeWrapper>
-            <BudgetGauge used={post.budget.used} total={post.budget.total} />
-          </FixedGaugeWrapper>
-        </TopInfoRow>
 
-        <Content>{post.content}</Content>
+            <InfoRow>
+              <Item>
+                <StoreIcon />
+                <Text title={post.restaurant.name}>{post.restaurant.name}</Text>
+              </Item>
+              <Item>
+                <MenuIcon />
+                <Text title={post.restaurant.category}>{post.restaurant.category}</Text>
+              </Item>
+              <Item>
+                <WalletIcon />
+                <Text>{post.restaurant.price.toLocaleString()}원</Text>
+              </Item>
+            </InfoRow>
+          </TextGroup>
+
+          <AbsoluteGauge>
+            <BudgetGauge
+              used={post.budget.used}
+              total={post.budget.total}
+            />
+          </AbsoluteGauge>
+        </RelativeWrapper>
+
+        <Memo>{post.content}</Memo>
+
         <EmojiReactionPanelWrapper>
           <EmojiAddButton onSelect={handleAddReaction} />
           <EmojiReactionPanel
@@ -117,8 +104,6 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
 const CardWrapper = styled.div`
   display: flex;
   padding: 20px 0;
-
-  /* border-bottom: 1px solid #eee; */
 `;
 
 const LeftSection = styled.div`
@@ -132,23 +117,31 @@ const ProfileImg = styled.img`
   border-radius: 50%;
 `;
 
+const RelativeWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  padding-right: 130px;
+  box-sizing: border-box;
+`;
+
 const RightSection = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  min-width: 0;
 `;
 
-const TopInfoRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+const AbsoluteGauge = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 119px;
 `;
 
 const TextGroup = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1; // 🟢 TextGroup이 너비를 꽉 채우게
 `;
 
 const TopRow = styled.div`
@@ -167,36 +160,47 @@ const DateText = styled.div`
   color: #999;
 `;
 
-const InfoItem = styled.div`
+const InfoRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+`;
+
+const Item = styled.div`
   display: flex;
   align-items: center;
-  gap: 2px;
-  img {
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+
+  svg {
     width: 12px;
     height: 12px;
-  }
-
-  span {
-    font-size: var(--font-size-4xs);
+    flex-shrink: 0;
   }
 `;
 
-const FixedGaugeWrapper = styled.div`
-  flex-shrink: 0;
-  width: 119px; // 🟠 Gauge의 정확한 width에 맞춰 고정
+const Text = styled.span`
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-4xs);
+  font-weight: 600;
+  color: #555;
 `;
 
-const RestaurantInfo = styled.div`
-  display: flex;
-  gap: 4px;
-  margin-top: 4px;
-`;
-
-const Content = styled.div`
+const Memo = styled.div`
   margin-top: 12px;
   margin-bottom: 6px;
-  font-size: var(--font-size-4xs);
+  font-size: 10px;
+  color: #202632;
+  font-weight: 600;
+  white-space: pre-line;
 `;
+
 const EmojiReactionPanelWrapper = styled.div`
   display: flex;
   position: relative;

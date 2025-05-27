@@ -48,8 +48,8 @@ export const getCommunityPosts = async (): Promise<CommunityPost[]> => {
       date: '2025.03.18',
       restaurant: {
         name: '은화수식당',
-        category: '고구마치즈돈까스',
-        price: 12500,
+        category: '고구마치즈돈까스파게티맛있어',
+        price: 13000,
       },
       content: '',
       emojiReactions: {} as Record<EmojiKey, number>,

@@ -88,14 +88,17 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
 
         <Memo>{post.content}</Memo>
 
-        <EmojiReactionPanelWrapper>
-          <EmojiAddButton onSelect={handleAddReaction} />
+        <EmojiRow>
+          <EmojiButtonWrapper>
+            <EmojiAddButton onSelect={handleAddReaction} />
+          </EmojiButtonWrapper>
+
           <EmojiReactionPanel
             reactions={reactions}
             selected={selectedEmoji}
             onClickEmoji={handleAddReaction}
           />
-        </EmojiReactionPanelWrapper>
+        </EmojiRow>
       </RightSection>
     </CardWrapper>
   );
@@ -201,8 +204,14 @@ const Memo = styled.div`
   white-space: pre-line;
 `;
 
-const EmojiReactionPanelWrapper = styled.div`
+const EmojiRow = styled.div`
   display: flex;
-  position: relative;
   gap: 4px;
+  align-items: flex-start;
+  position: relative;
+`;
+
+const EmojiButtonWrapper = styled.div`
+  position: relative; // 🔥 팝오버 기준점
+  display: inline-block;
 `;

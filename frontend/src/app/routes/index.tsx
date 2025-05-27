@@ -10,6 +10,7 @@ import MainPage from '@/pages/MainPage/MainPage';
 import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 import { CommunityPage } from '@/pages/Community/CommunityPage';
 import RecordPage from '@/pages/RecordPage/RecordPage';
+import MyPage from '@/pages/MyPage/MyPage';
 
 export const router = createBrowserRouter([
   // 카카오 콜백 페이지 별도
@@ -33,9 +34,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-            <SignupPage />
-        ),
+        element: <SignupPage />,
       },
     ],
   },
@@ -122,6 +121,20 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CommunityPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'mypage',
+    element: <Layout hasFooter={true} />,
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <MyPage />
           </PrivateRoute>
         ),
       },

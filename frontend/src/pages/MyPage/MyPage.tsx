@@ -65,7 +65,7 @@ const MyPage = () => {
       ) : (
         <PostList>
           {posts.map((post) => (
-            <CommunityCard key={post.id} post={post} />
+            <CommunityCard post={post} />
           ))}
         </PostList>
       )}
@@ -98,7 +98,6 @@ const ProfileSection = styled.div`
 `;
 const LeftProfile = styled.div`
   display: flex;
-  /* align-items: center; */
   gap: 12px;
 `;
 
@@ -136,9 +135,6 @@ const TopRight = styled.div`
 
 const ToggleGroup = styled.div`
   display: flex;
-
-  /* border: 2px solid #3b82f6; */
-
   background-color: #ffc288;
   border-radius: 999px;
   overflow: hidden;
@@ -186,7 +182,6 @@ const ActionButton = styled.button`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   font-size: var(--font-size-3xs);
   cursor: pointer;
-
   text-align: center;
   white-space: pre-line;
 `;
@@ -202,7 +197,6 @@ const Tab = styled.button<{ $active?: boolean }>`
   border: none;
   flex-grow: 1;
   background: none;
-
   color: ${({ $active }) => ($active ? '#f97316' : '#808080')};
   border-bottom: ${({ $active }) =>
     $active ? '1px solid #f97316' : '1px solid #808080;'};
@@ -215,11 +209,4 @@ const PostList = styled.div`
   flex-direction: column;
   margin-top: 10px;
   gap: 24px;
-`;
-
-const ListWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-  gap: 28px;
 `;

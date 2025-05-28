@@ -9,10 +9,20 @@ import java.util.Set;
 
 public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-    @Query(value = "SELECT * FROM restaurant r WHERE MATCH(name) AGAINST(:word IN NATURAL LANGUAGE MODE)",
+    @Query(value = """
+            SELECT * FROM restaurant r
+            WHERE MATCH(name) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
+            """,
             nativeQuery = true)
-    List<Restaurant> findAllByWord(@Param("word") String word);
+    List<Restaurant> findAllByKeyword(@Param("keyword") String keyword);
 
     @Query("SELECT r.uniqueId FROM Restaurant r")
     Set<String> findAllUniqueId();
+
+    @Query(value = """
+            SELECT r.* FROM restaurant r
+            JOIN recommend_restaurant rr ON rr.restaurant_id = r.id
+            WHERE rr.user_id = :userId
+            """, nativeQuery = true)
+    List<Restaurant> findAllRecommendRestaurantsByUser(@Param("userId") Long userId);
 }

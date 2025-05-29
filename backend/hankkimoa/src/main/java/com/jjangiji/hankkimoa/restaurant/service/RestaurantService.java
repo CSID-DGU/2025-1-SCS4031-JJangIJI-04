@@ -2,9 +2,8 @@ package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryMapper;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
-import com.jjangiji.hankkimoa.restaurant.domain.OpeningHours;
+import com.jjangiji.hankkimoa.restaurant.domain.OpeningHour;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.RestaurantImage;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
@@ -12,12 +11,20 @@ import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.restaurant.service.dto.RecommendRestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantSearchResponse;
+import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
+import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class RestaurantService {
     private final OpeningHoursRepository openingHoursRepository;
     private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Transactional
     public void createRestaurants(List<RestaurantCreateRequest> requests) {
@@ -70,8 +78,8 @@ public class RestaurantService {
     private void saveOpeningHours(Restaurant restaurant, RestaurantCreateRequest request) {
         if (request.openingHours() == null) return;
 
-        List<OpeningHours> openingHours = request.openingHours().stream()
-                .map(openingHour -> new OpeningHours(restaurant, openingHour.dayOfWeek(),
+        List<OpeningHour> openingHours = request.openingHours().stream()
+                .map(openingHour -> new OpeningHour(restaurant, openingHour.dayOfWeek(),
                         openingHour.hours().startTime(), openingHour.hours().endTime(),
                         openingHour.hours().breakStartTime(), openingHour.hours().breakEndTime(),
                         openingHour.hours().lastOrderTime()))
@@ -91,8 +99,8 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public List<RestaurantSearchResponse> readRestaurants(String word) {
-        List<Restaurant> restaurants = restaurantRepository.findAllByWord(word);
+    public List<RestaurantSearchResponse> searchRestaurants(String keyword) {
+        List<Restaurant> restaurants = restaurantRepository.findAllByKeyword(keyword);
         return restaurants.stream()
                 .map(restaurant -> new RestaurantSearchResponse(
                         restaurant.getId(),
@@ -100,5 +108,43 @@ public class RestaurantService {
                         restaurant.getStreetAddress()
                 ))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecommendRestaurantResponse> readRecommendRestaurants(User user) {
+        // todo 추천 서버와 통신하는 방식으로 변경
+        List<RecommendRestaurantResponse> result = new ArrayList<>();
+        List<Restaurant> recommendRestaurants = restaurantRepository.findAllRecommendRestaurantsByUser(user.getId());
+
+        for (Restaurant restaurant : recommendRestaurants) {
+            Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
+            Optional<RestaurantImage> restaurantImage = restaurantImageRepository.findByRestaurantId(restaurant.getId());
+            boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+
+            result.add(new RecommendRestaurantResponse(
+                    restaurant.getId(),
+                    restaurant.getMenuAverage(),
+                    restaurantImage.map(RestaurantImage::getImageUrl).orElse(null),
+                    restaurant.getStreetAddress(),
+                    convertToString(openingHour),
+                    restaurant.getCategoryName(),
+                    bookmared));
+        }
+
+        return result;
+    }
+
+    private Optional<OpeningHour> readTodayOpeningHour(Restaurant restaurant) {
+        DayOfWeek todayDayOfWeek = LocalDate.now().getDayOfWeek();
+
+        return openingHoursRepository.findAllByRestaurantId(restaurant.getId()).stream()
+                .filter(openingHour -> openingHour.isDayOfWeekMatch(todayDayOfWeek))
+                .findAny();
+    }
+
+    private String convertToString(Optional<OpeningHour> openingHour) {
+        return openingHour
+                .map(oh -> oh.getDayOfWeek() + " " + oh.getOpenTime() + " - " + oh.getCloseTime())
+                .orElse(null);
     }
 }

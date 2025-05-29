@@ -20,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class OpeningHours extends BaseEntity {
+public class OpeningHour extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +42,8 @@ public class OpeningHours extends BaseEntity {
 
     private LocalTime lastOrderTime;
 
-    public OpeningHours(Restaurant restaurant, String dayOfWeek, LocalTime openTime, LocalTime closeTime,
-                        LocalTime breakStartTime, LocalTime breakEndTime, LocalTime lastOrderTime) {
+    public OpeningHour(Restaurant restaurant, String dayOfWeek, LocalTime openTime, LocalTime closeTime,
+                       LocalTime breakStartTime, LocalTime breakEndTime, LocalTime lastOrderTime) {
         this.restaurant = restaurant;
         this.dayOfWeek = dayOfWeek;
         this.openTime = openTime;
@@ -53,8 +53,8 @@ public class OpeningHours extends BaseEntity {
         this.lastOrderTime = lastOrderTime;
     }
 
-    public OpeningHours(Long id, Restaurant restaurant, String dayOfWeek, LocalTime openTime, LocalTime closeTime,
-                        LocalTime breakStartTime, LocalTime breakEndTime, LocalTime lastOrderTime) {
+    public OpeningHour(Long id, Restaurant restaurant, String dayOfWeek, LocalTime openTime, LocalTime closeTime,
+                       LocalTime breakStartTime, LocalTime breakEndTime, LocalTime lastOrderTime) {
         this(restaurant, dayOfWeek, openTime, closeTime, breakStartTime, breakEndTime, lastOrderTime);
         this.id = id;
     }
@@ -62,14 +62,6 @@ public class OpeningHours extends BaseEntity {
     public boolean isDayOfWeekMatch(DayOfWeek dayOfWeek) {
         if (this.dayOfWeek.equals("매일")) return true;
         return DayofWeekDictionary.from(this.dayOfWeek).equals(dayOfWeek);
-    }
-
-    public boolean hasBreakTime() {
-        return breakStartTime != null && breakEndTime != null;
-    }
-
-    public boolean hasLastOrderTime() {
-        return lastOrderTime != null;
     }
 
     @Override
@@ -80,7 +72,7 @@ public class OpeningHours extends BaseEntity {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        OpeningHours that = (OpeningHours) object;
+        OpeningHour that = (OpeningHour) object;
         return Objects.equals(id, that.id);
     }
 

@@ -26,7 +26,7 @@ public class RestaurantController {
 
     @GetMapping("/api/restaurants/search")
     public ResponseEntity<List<RestaurantSearchResponse>> readRestaurants(@RequestParam("keyword") String keyword) {
-        List<RestaurantSearchResponse> restaurants = restaurantService.readRestaurants(keyword);
+        List<RestaurantSearchResponse> restaurants = restaurantService.searchRestaurants(keyword);
         return ResponseEntity.ok(restaurants);
     }
 }

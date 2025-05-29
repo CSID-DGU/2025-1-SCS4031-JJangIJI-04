@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-class OpeningHoursTest {
+class OpeningHourTest {
 
     private final Category category = new Category(CategoryDictionary.한식);
     private final Restaurant restaurant = new Restaurant(category, "한끼식당", "110", 15_000, null);
@@ -15,7 +15,7 @@ class OpeningHoursTest {
     @Test
     void isDayOfWeekMatch() {
         // given
-        OpeningHours openingHours = new OpeningHours(
+        OpeningHour openingHour = new OpeningHour(
                 restaurant,
                 "일요일",
                 LocalTime.of(11, 0), LocalTime.of(22, 0),
@@ -24,7 +24,7 @@ class OpeningHoursTest {
 
         // when
         DayOfWeek dayOfWeek = DayOfWeek.SUNDAY;
-        boolean result = openingHours.isDayOfWeekMatch(dayOfWeek);
+        boolean result = openingHour.isDayOfWeekMatch(dayOfWeek);
 
         // then
         Assertions.assertThat(result).isTrue();
@@ -34,7 +34,7 @@ class OpeningHoursTest {
     @Test
     void isDayOfWeekNotMatch() {
         // given
-        OpeningHours openingHours = new OpeningHours(
+        OpeningHour openingHour = new OpeningHour(
                 restaurant,
                 "월요일",
                 LocalTime.of(11, 0), LocalTime.of(22, 0),
@@ -43,7 +43,7 @@ class OpeningHoursTest {
 
         // when
         DayOfWeek dayOfWeek = DayOfWeek.SUNDAY;
-        boolean result = openingHours.isDayOfWeekMatch(dayOfWeek);
+        boolean result = openingHour.isDayOfWeekMatch(dayOfWeek);
 
         // then
         Assertions.assertThat(result).isFalse();

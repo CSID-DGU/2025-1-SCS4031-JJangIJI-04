@@ -21,7 +21,7 @@ public abstract class IntegrationTest {
         jdbcTemplate.execute("DELETE FROM expense");
         jdbcTemplate.execute("DELETE FROM expense_emoji");
         jdbcTemplate.execute("DELETE FROM expense_saving_goal");
-        jdbcTemplate.execute("DELETE FROM opening_hours");
+        jdbcTemplate.execute("DELETE FROM opening_hour");
         jdbcTemplate.execute("DELETE FROM restaurant");
         jdbcTemplate.execute("DELETE FROM restaurant_image");
         jdbcTemplate.execute("DELETE FROM category");

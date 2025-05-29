@@ -4,6 +4,8 @@ import { FullScreenPopup } from '@/features/myPage/ui/FullScreenPopup';
 import { RestaurantListItem } from '@/features/restaurant/ui/RestaurantListItem';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useMonthlyExpenseTotal } from '@/features/myPage/api/useMonthlyExpenseTotal';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState<'bookmark' | 'likes'>('bookmark');
@@ -11,6 +13,8 @@ const MyPage = () => {
     null | 'nickname' | 'category' | 'settings'
   >(null);
   const { posts } = useCommunity();
+  const { userId } = useAuthStore();
+  const { data: monthlyTotal } = useMonthlyExpenseTotal(userId ?? null);
   return (
     <Container>
       <Header>
@@ -25,7 +29,7 @@ const MyPage = () => {
             <UserInfo>
               <Nickname>한끼모아</Nickname>
               <SpentText>
-                이번 달 총 지출 금액 <strong>240,000원</strong>
+                이번 달 총 지출 금액 <strong>{monthlyTotal?.toLocaleString() ?? 0}원</strong>
               </SpentText>
             </UserInfo>
           </LeftProfile>

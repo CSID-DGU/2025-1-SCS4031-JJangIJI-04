@@ -2,13 +2,20 @@ package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.RecommendRestaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
+import com.jjangiji.hankkimoa.restaurant.repository.RecommendRestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.MenuRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.RecommendRestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.user.domain.LoginType;
+import com.jjangiji.hankkimoa.user.domain.Role;
+import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,12 +31,18 @@ class RestaurantServiceTest extends IntegrationTest {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private RecommendRestaurantRepository recommendRestaurantRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     private Category category;
-    private Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
+    private User user;
+    private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
 
     @BeforeEach
     void setUp() {
+        user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         category = categoryRepository.save(new Category(CategoryDictionary.한식));
     }
 
@@ -75,5 +88,19 @@ class RestaurantServiceTest extends IntegrationTest {
         // then
         int size = restaurantRepository.findAll().size();
         Assertions.assertThat(size).isEqualTo(1);
+    }
+
+    @DisplayName("추천 식당 리스트 조회")
+    @Test
+    void readRecommendRestaurants() {
+        // given
+        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
+        recommendRestaurantRepository.save(new RecommendRestaurant(user, restaurant));
+
+        // when
+        List<RecommendRestaurantResponse> results = restaurantService.readRecommendRestaurants(user);
+
+        // then
+        Assertions.assertThat(results).hasSize(1);
     }
 }

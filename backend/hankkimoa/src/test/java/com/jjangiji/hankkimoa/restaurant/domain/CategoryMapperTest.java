@@ -1,5 +1,6 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
+import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

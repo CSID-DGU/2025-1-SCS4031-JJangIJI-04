@@ -1,5 +1,7 @@
-package com.jjangiji.hankkimoa.restaurant.domain;
+package com.jjangiji.hankkimoa.restaurant.util;
 
+import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

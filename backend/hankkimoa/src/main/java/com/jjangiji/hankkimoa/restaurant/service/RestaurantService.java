@@ -112,7 +112,6 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public List<RecommendRestaurantResponse> readRecommendRestaurants(User user) {
-        // todo 추천 서버와 통신하는 방식으로 변경
         List<RecommendRestaurantResponse> result = new ArrayList<>();
         List<Restaurant> recommendRestaurants = restaurantRepository.findAllRecommendRestaurantsByUser(user.getId());
 

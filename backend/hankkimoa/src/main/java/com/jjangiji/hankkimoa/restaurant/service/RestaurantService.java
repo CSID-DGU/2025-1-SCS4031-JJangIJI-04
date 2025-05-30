@@ -1,5 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.service;
 
+import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
+import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
@@ -11,9 +13,11 @@ import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RecommendRestaurantResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantSearchResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
 import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
@@ -145,5 +149,45 @@ public class RestaurantService {
         return openingHour
                 .map(oh -> oh.getDayOfWeek() + " " + oh.getOpenTime() + " - " + oh.getCloseTime())
                 .orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantResponse readRestaurant(User user, Long restaurantId) {
+        Restaurant restaurant = readRestaurant(restaurantId);
+        List<String> openingHours = openingHoursRepository.findAllByRestaurantId(restaurant.getId())
+                .stream()
+                .map(openingHour -> convertToString(Optional.of(openingHour)))
+                .toList();
+        List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId())
+                .stream()
+                .map(RestaurantImage::getImageUrl)
+                .toList();
+        List<MenuResponse> menus = menuRepository.findAllByRestaurantId(restaurant.getId())
+                .stream()
+                .map(menu -> new MenuResponse(
+                        menu.getName(),
+                        menu.getIntroduce(),
+                        menu.getPrice(),
+                        menu.getImageUrl(),
+                        menu.isMain()))
+                .toList();
+        boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+
+        return new RestaurantResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getMenuAverage(),
+                restaurantImages,
+                restaurant.getStreetAddress(),
+                openingHours,
+                restaurant.getCategoryName(),
+                menus,
+                bookmared
+                );
+    }
+
+    private Restaurant readRestaurant(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new HankkiMoaException(ExceptionCode.RESTAURANT_NOT_FOUND));
     }
 }

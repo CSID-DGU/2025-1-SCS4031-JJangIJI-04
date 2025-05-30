@@ -2,13 +2,15 @@ package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RecommendRestaurantResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantSearchResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,5 +39,12 @@ public class RestaurantController {
     public ResponseEntity<List<RecommendRestaurantResponse>> readRecommendRestaurants(@AuthRequiredPrincipal User user) {
         List<RecommendRestaurantResponse> recommendRestaurants = restaurantService.readRecommendRestaurants(user);
         return ResponseEntity.ok(recommendRestaurants);
+    }
+
+    @GetMapping("/api/restaurants/{restaurantId}")
+    public ResponseEntity<RestaurantResponse> readRestaurant(@AuthRequiredPrincipal User user,
+                                                             @PathVariable Long restaurantId) {
+        RestaurantResponse restaurantResponse = restaurantService.readRestaurant(user, restaurantId);
+        return ResponseEntity.ok(restaurantResponse);
     }
 }

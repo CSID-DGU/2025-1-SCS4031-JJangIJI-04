@@ -1,4 +1,4 @@
-package com.jjangiji.hankkimoa.restaurant.service.dto;
+package com.jjangiji.hankkimoa.restaurant.service.dto.reqeust;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.List;

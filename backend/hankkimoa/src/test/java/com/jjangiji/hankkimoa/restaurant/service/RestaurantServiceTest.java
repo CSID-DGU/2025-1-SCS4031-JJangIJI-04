@@ -9,9 +9,10 @@ import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RecommendRestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
-import com.jjangiji.hankkimoa.restaurant.service.dto.MenuRequest;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RecommendRestaurantResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.MenuRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
 import com.jjangiji.hankkimoa.user.domain.User;
@@ -102,5 +103,18 @@ class RestaurantServiceTest extends IntegrationTest {
 
         // then
         Assertions.assertThat(results).hasSize(1);
+    }
+
+    @DisplayName("식당 조회")
+    @Test
+    void readRestaurant() {
+        // given
+        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
+
+        // when
+        RestaurantResponse result = restaurantService.readRestaurant(user, restaurant.getId());
+
+        // then
+        Assertions.assertThat(result.id()).isEqualTo(restaurant.getId());
     }
 }

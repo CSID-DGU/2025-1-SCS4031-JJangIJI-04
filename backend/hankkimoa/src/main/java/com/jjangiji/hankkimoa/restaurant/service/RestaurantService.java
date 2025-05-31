@@ -16,11 +16,14 @@ import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
 import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
 import com.jjangiji.hankkimoa.user.domain.User;
+import com.jjangiji.hankkimoa.user.domain.UserCategory;
 import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
+import com.jjangiji.hankkimoa.user.repository.UserCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +37,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class RestaurantService {
-    
+
+    private final RecommendClient recommendClient;
+    private final UserCategoryRepository userCategoryRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final OpeningHoursRepository openingHoursRepository;
@@ -116,8 +121,11 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public List<RecommendRestaurantResponse> readRecommendRestaurants(User user) {
+        List<UserCategory> userCategories = userCategoryRepository.findAllByUser(user);
+        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(user, userCategories);
+
         List<RecommendRestaurantResponse> result = new ArrayList<>();
-        List<Restaurant> recommendRestaurants = restaurantRepository.findAllRecommendRestaurantsByUser(user.getId());
+        List<Restaurant> recommendRestaurants = restaurantRepository.findAllByUniqueIdIn(recommendResponse.restaurantUniqueIds());
 
         for (Restaurant restaurant : recommendRestaurants) {
             Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);

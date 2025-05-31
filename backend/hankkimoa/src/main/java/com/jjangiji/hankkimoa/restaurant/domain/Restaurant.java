@@ -56,7 +56,7 @@ public class Restaurant extends BaseEntity {
     }
 
     public String getCategoryName() {
-        return category.getName().name();
+        return category.getName();
     }
 
     public String getStreetAddress() {

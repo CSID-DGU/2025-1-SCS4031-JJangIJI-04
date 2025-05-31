@@ -39,12 +39,12 @@ public class EmojiService {
 
     @Transactional
     public void deleteExpense(EmojiDeleteRequest request) {
-        ExpenseEmoji expenseEmoji = readExpenseEmoji(request.expenseEmojiId());
+        ExpenseEmoji expenseEmoji = readExpenseEmoji(request.expenseId(), request.emojiId());
         expenseEmojiRepository.deleteById(expenseEmoji.getId());
     }
 
-    private ExpenseEmoji readExpenseEmoji(Long id) {
-        return expenseEmojiRepository.findById(id)
+    private ExpenseEmoji readExpenseEmoji(Long expenseId, Integer emojiId) {
+        return expenseEmojiRepository.findByExpenseIdAndEmojiId(expenseId, emojiId)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.EMOJI_NOT_FOUND));
     }
 

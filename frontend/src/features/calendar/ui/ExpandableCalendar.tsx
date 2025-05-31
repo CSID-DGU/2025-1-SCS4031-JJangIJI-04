@@ -3,71 +3,84 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { MiniCalendar } from '@/features/calendar/ui/MiniCalendar';
 import { FullCalendar } from '@/features/calendar/ui/FullCalendar';
-import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
+import { useMonthlyExpenseStatus } from '@/features/calendar/api/useMonthlyExpenseStatus';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
-interface Props {
-  dailyStatusList: DailyExpenseStatus[];
+export const ExpandableCalendar = ({
+  onDateSelect,
+  selectedDate,
+}: {
   onDateSelect?: (date: string) => void;
   selectedDate?: string;
-}
+}) => {
+  const { userId } = useAuthStore();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-export const ExpandableCalendar = ({ dailyStatusList, onDateSelect, selectedDate }: Props) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-  
-    const handleExpand = () => {
-      setIsExpanded((prev) => !prev);
+  const { data: dailyStatusList = [] } = useMonthlyExpenseStatus(
+    userId!,
+    currentDate
+  );
+
+  const handleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const mainElement = document.querySelector('main');
+    if (isExpanded && mainElement) {
+      mainElement.style.overflow = 'hidden';
+    } else if (mainElement) {
+      mainElement.style.overflow = 'auto';
+    }
+    return () => {
+      if (mainElement) mainElement.style.overflow = 'auto';
     };
-  
-    useEffect(() => {
-      const mainElement = document.querySelector('main');
-      if (isExpanded && mainElement) {
-        mainElement.style.overflow = 'hidden';
-      } else if (mainElement) {
-        mainElement.style.overflow = 'auto';
-      }
-  
-      return () => {
-        if (mainElement) {
-          mainElement.style.overflow = 'auto';
-        }
-      };
-    }, [isExpanded]);
-  
-    return (
-      <Container>
-        <motion.div
-          animate={{ 
-            height: isExpanded ? 650 : 150,
-          }}
-          initial={false}
-          transition={{ 
-            duration: 0.5,
-            ease: [0.4, 0, 0.2, 1]
-          }}
-          style={{ overflow: 'hidden' }}
-        >
-          <Wrapper $isMini={!isExpanded}>
-            {!isExpanded ? (
-              <MiniCalendar dailyStatusList={dailyStatusList} onExpand={handleExpand} onDateSelect={onDateSelect} selectedDate={selectedDate} />
-            ) : (
-              <FullCalendar dailyStatusList={dailyStatusList} onCollapse={handleExpand} onDateSelect={onDateSelect} selectedDate={selectedDate} />
-            )}
-          </Wrapper>
-        </motion.div>
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ModalBackground onClick={handleExpand} />
-            </motion.div>
+  }, [isExpanded]);
+
+  return (
+    <Container>
+      <motion.div
+        animate={{ height: isExpanded ? 650 : 150 }}
+        initial={false}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        style={{ overflow: 'hidden' }}
+      >
+        <Wrapper $isMini={!isExpanded}>
+          {!isExpanded ? (
+            <MiniCalendar
+              dailyStatusList={dailyStatusList}
+              onExpand={handleExpand}
+              onDateSelect={onDateSelect}
+              selectedDate={selectedDate}
+            />
+          ) : (
+            <FullCalendar
+              currentDate={currentDate}
+              onDateChange={setCurrentDate}
+              dailyStatusList={dailyStatusList}
+              onCollapse={handleExpand}
+              onDateSelect={onDateSelect}
+              selectedDate={selectedDate}
+            />
           )}
-        </AnimatePresence>
-      </Container>
-    );
+        </Wrapper>
+      </motion.div>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ModalBackground onClick={handleExpand} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Container>
+  );
 };
 
 const Container = styled.div`

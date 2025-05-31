@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import {
   format,
@@ -6,9 +5,9 @@ import {
   endOfMonth,
   eachDayOfInterval,
   getDay,
-  addMonths,
-  subMonths,
   isFuture,
+  subMonths,
+  addMonths,
 } from 'date-fns';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 
@@ -21,33 +20,42 @@ import AfterIcon from '@/assets/icons/navigate-after.svg?react';
 import { formatExpenseAmount } from '@/lib/number/formatExpenseAmount';
 
 interface Props {
+  currentDate: Date;
+  onDateChange: (newDate: Date) => void;
   dailyStatusList: DailyExpenseStatus[];
   onCollapse?: () => void;
   onDateSelect?: (dateStr: string) => void;
   selectedDate?: string;
 }
 
-export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect, selectedDate }: Props) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+export const FullCalendar = ({
+  currentDate,
+  onDateChange,
+  dailyStatusList,
+  onCollapse,
+  onDateSelect,
+  selectedDate,
+}: Props) => {
   const start = startOfMonth(currentDate);
   const end = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start, end });
   const firstDayIndex = getDay(start);
 
-  const handlePrevMonth = () => setCurrentDate(prev => subMonths(prev, 1));
-  const handleNextMonth = () => setCurrentDate(prev => addMonths(prev, 1));
+  const handlePrevMonth = () => onDateChange(subMonths(currentDate, 1));
+  const handleNextMonth = () => onDateChange(addMonths(currentDate, 1));
 
-  const statusMap = Object.fromEntries(
-    dailyStatusList.map((d) => [d.date, d])
-  );
+  const statusMap = Object.fromEntries(dailyStatusList.map((d) => [d.date, d]));
 
   const getIconByStatus = (status?: 'GOOD' | 'NOT_BAD' | 'BAD') => {
     switch (status) {
-      case 'GOOD': return <GoodIcon />;
-      case 'NOT_BAD': return <NormalIcon />;
-      case 'BAD': return <DangerousIcon />;
-      default: return <BasicIcon />;
+      case 'GOOD':
+        return <GoodIcon />;
+      case 'NOT_BAD':
+        return <NormalIcon />;
+      case 'BAD':
+        return <DangerousIcon />;
+      default:
+        return <BasicIcon />;
     }
   };
 
@@ -69,7 +77,11 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect, select
         ))}
       </Weekdays>
       <Grid>
-        {Array(firstDayIndex).fill(null).map((_, i) => <Empty key={`empty-${i}`} />)}
+        {Array(firstDayIndex)
+          .fill(null)
+          .map((_, i) => (
+            <Empty key={`empty-${i}`} />
+          ))}
         {days.map((date) => {
           const dateStr = format(date, 'yyyy-MM-dd');
           const isSelected = dateStr === selectedDate;
@@ -79,9 +91,10 @@ export const FullCalendar = ({ dailyStatusList, onCollapse, onDateSelect, select
             isDateFuture ? undefined : statusMap[dateStr]?.status
           );
           const amount = statusMap[dateStr]?.totalExpense;
-          const displayAmount = !isDateFuture && amount && amount > 0
-            ? formatExpenseAmount(amount)
-            : '-';
+          const displayAmount =
+            !isDateFuture && amount && amount > 0
+              ? formatExpenseAmount(amount)
+              : '-';
 
           return (
             <DayCell

@@ -33,7 +33,7 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
   const [selectedEmojis, setSelectedEmojis] = useState<Set<number>>(() => {
     const initial = new Set<number>();
     post.emojis.forEach((emoji) => {
-      if (userId !== null && emoji.userIds.includes(userId)) {
+      if (userId !== null && emoji.userIds?.includes(userId)) {
         initial.add(emoji.emojiId);
       }
     });

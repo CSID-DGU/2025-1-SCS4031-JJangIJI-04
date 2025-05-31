@@ -1,7 +1,7 @@
 export interface EmojiCount {
   emojiId: number;
   count: number;
-  userIds: number[];
+  userIds?: number[];
 }
 
 export interface CommunityPost {

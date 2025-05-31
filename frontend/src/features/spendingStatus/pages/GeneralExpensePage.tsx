@@ -56,8 +56,17 @@ export const GeneralExpensePage = ({
         selectedDate={selectedDate}
       />
 
-      <GaugeChart total={budget} spent={spent} />
-      <FullWidthDivider />
+      {budget > 0 ? (
+        <>
+          <GaugeChart total={budget} spent={spent} />
+          <FullWidthDivider />
+        </>
+      ) : (
+        <>
+          <NoGoalBox>지출 목표 금액이 없습니다.</NoGoalBox>
+          <FullWidthDivider />
+        </>
+      )}
 
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
@@ -132,4 +141,15 @@ const NoDataText = styled.div`
   font-weight: 700;
   text-align: center;
   margin-top: 24px;
+`;
+
+const NoGoalBox = styled.div`
+  margin: 16px 0;
+  padding: 12px;
+  background-color: #f8f8f8;
+  border-left: 4px solid #ff6701;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  text-align: center;
 `;

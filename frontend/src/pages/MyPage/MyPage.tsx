@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useMonthlyExpenseTotal } from '@/features/myPage/api/useMonthlyExpenseTotal';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { useUserInfo } from '@/features/auth/api/useUserInfo';
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState<'bookmark' | 'likes'>('bookmark');
@@ -12,6 +13,7 @@ const MyPage = () => {
   >(null);
   const { userId } = useAuthStore();
   const { data: monthlyTotal } = useMonthlyExpenseTotal(userId ?? null);
+  const { data: userInfo, isLoading } = useUserInfo();
 
   return (
     <Container>
@@ -23,9 +25,20 @@ const MyPage = () => {
         </TopRight>
         <ProfileSection>
           <LeftProfile>
-            <Avatar src="/icons/community/user-avatar.svg" />
+            <Avatar
+              src={
+                isLoading
+                  ? '/icons/community/user-avatar.svg'
+                  : (userInfo?.imageUrl ?? '/icons/community/user-avatar.svg')
+              }
+              alt="프로필 이미지"
+            />
             <UserInfo>
-              <Nickname>한끼모아</Nickname>
+              {isLoading ? (
+                <Nickname>불러오는 중...</Nickname>
+              ) : (
+                <Nickname>{userInfo?.nickname ?? '알 수 없음'}</Nickname>
+              )}
               <SpentText>
                 이번 달 총 지출 금액{' '}
                 <strong>{monthlyTotal?.toLocaleString() ?? 0}원</strong>
@@ -235,8 +248,8 @@ const EmptyState = styled.div`
   align-items: center;
   justify-content: center;
 
-  min-height: 50vh; // 화면 절반 정도 차지해서 어느 기기든 중앙 근처
-  padding-top: 40px; // 살짝 위로 띄우는 느낌 조정
+  min-height: 50vh;
+  padding-top: 40px;
   gap: 12px;
   color: #808080;
   text-align: center;

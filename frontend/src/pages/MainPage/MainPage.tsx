@@ -9,9 +9,10 @@ import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { ExpenseCard } from '@/features/spendingStatus/ui/ExpenseCard';
 import FileIcon from '@/assets/icons/file.svg?react';
 import { useCheckSavingGoal } from '@/features/goals/hooks/useCheckSavingGoal';
-import { useDailyExpenses, ExpenseRecord } from '@/features/spendingStatus/api/useDailyExpenses';
-import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
-import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
+import {
+  useDailyExpenses,
+  ExpenseRecord,
+} from '@/features/spendingStatus/api/useDailyExpenses';
 import { useRemainingBudgetByDate } from '@/features/goals/api/useRemainingBudgetByDate';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 
@@ -25,12 +26,9 @@ const MainPage = () => {
     location.state?.date ?? format(new Date(), 'yyyy-MM-dd')
   );
 
-  const { startDate, endDate } = getCurrentWeek();
-
   const { data: dailyData } = useDailyExpenses(userId, selectedDate);
-  const { data: weeklyStatus = [] } = useWeeklyExpenseStatus(userId, startDate, endDate);
-
-  const { isError: isGoalMissing, isLoading: isGoalLoading } = useRemainingBudgetByDate(selectedDate);
+  const { isError: isGoalMissing, isLoading: isGoalLoading } =
+    useRemainingBudgetByDate(selectedDate);
 
   const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
@@ -42,14 +40,15 @@ const MainPage = () => {
   if (isGoalLoading) {
     return <LoadingSpinner message="지출 목표 확인 중..." />;
   }
-  
+
   return (
     <Container>
       <ExpandableCalendar
-        dailyStatusList={weeklyStatus}
+        userId={userId!}
         onDateSelect={setSelectedDate}
         selectedDate={selectedDate}
       />
+
       {!isGoalMissing ? (
         <>
           <GaugeChart total={budget} spent={spent} />
@@ -64,7 +63,9 @@ const MainPage = () => {
 
       <CenteredTextBlock>
         <DateText>{format(parseISO(selectedDate), 'yyyy년 M월 d일')}</DateText>
-        <TitleText>{nickname}님의 외식비 지출 내역 {records.length}건</TitleText>
+        <TitleText>
+          {nickname}님의 외식비 지출 내역 {records.length}건
+        </TitleText>
 
         {!hasRecords && (
           <>
@@ -74,7 +75,14 @@ const MainPage = () => {
               </FileIconWrapper>
               <NoDataText>아직 지출 기록이 없어요</NoDataText>
             </NoDataBlock>
-            <AddButton onClick={() => navigate('/record', { state: { date: selectedDate } })} disabled={isGoalMissing} >+ 기록하기</AddButton>
+            <AddButton
+              onClick={() =>
+                navigate('/record', { state: { date: selectedDate } })
+              }
+              disabled={isGoalMissing}
+            >
+              + 기록하기
+            </AddButton>
           </>
         )}
       </CenteredTextBlock>
@@ -84,7 +92,14 @@ const MainPage = () => {
           {records.map((record: ExpenseRecord) => (
             <ExpenseCard key={record.id} {...record} />
           ))}
-          <AddButton onClick={() => navigate('/record', { state: { date: selectedDate } })} disabled={isGoalMissing}>+ 기록하기</AddButton>
+          <AddButton
+            onClick={() =>
+              navigate('/record', { state: { date: selectedDate } })
+            }
+            disabled={isGoalMissing}
+          >
+            + 기록하기
+          </AddButton>
         </>
       )}
     </Container>
@@ -157,7 +172,9 @@ const AddButton = styled.button<{ disabled?: boolean }>`
   border-radius: 999px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 
   &:hover {
     background-color: ${({ disabled }) => (disabled ? '#ccc' : '#e85c0e')};

@@ -10,8 +10,6 @@ import {
   useDailyExpenses,
   ExpenseRecord,
 } from '@/features/spendingStatus/api/useDailyExpenses';
-import { useWeeklyExpenseStatus } from '@/features/calendar/api/useWeeklyExpenseStatus';
-import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
 
 interface Props {
   userId: number;
@@ -27,14 +25,11 @@ export const GeneralExpensePage = ({
   setSelectedDate,
 }: Props) => {
   const navigate = useNavigate();
-  const { startDate, endDate } = getCurrentWeek();
 
   const { data: dailyData, isLoading: isLoadingDaily } = useDailyExpenses(
     userId,
     selectedDate
   );
-  const { data: weeklyStatus = [], isLoading: isLoadingWeekly } =
-    useWeeklyExpenseStatus(userId, startDate, endDate);
 
   const records = dailyData?.expenses ?? [];
   const hasRecords = records.length > 0;
@@ -43,7 +38,7 @@ export const GeneralExpensePage = ({
   const remaining = dailyData?.savingGoalStatus?.remainingBudget ?? 0;
   const spent = budget - remaining;
 
-  if (isLoadingDaily || isLoadingWeekly) {
+  if (isLoadingDaily) {
     return <LoadingSpinner message="지출 내역 불러오는 중..." />;
   }
 
@@ -56,7 +51,7 @@ export const GeneralExpensePage = ({
       </TopBar>
 
       <ExpandableCalendar
-        dailyStatusList={weeklyStatus}
+        userId={userId}
         onDateSelect={setSelectedDate}
         selectedDate={selectedDate}
       />

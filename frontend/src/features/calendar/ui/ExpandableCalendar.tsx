@@ -4,21 +4,21 @@ import styled from 'styled-components';
 import { MiniCalendar } from '@/features/calendar/ui/MiniCalendar';
 import { FullCalendar } from '@/features/calendar/ui/FullCalendar';
 import { useMonthlyExpenseStatus } from '@/features/calendar/api/useMonthlyExpenseStatus';
-import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 export const ExpandableCalendar = ({
+  userId,
   onDateSelect,
   selectedDate,
 }: {
+  userId: number;
   onDateSelect?: (date: string) => void;
   selectedDate?: string;
 }) => {
-  const { userId } = useAuthStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const { data: dailyStatusList = [] } = useMonthlyExpenseStatus(
-    userId!,
+    userId,
     currentDate
   );
 

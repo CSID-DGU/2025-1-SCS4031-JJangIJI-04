@@ -14,7 +14,7 @@ public class CategoryMapper {
     public CategoryMapper(List<Category> categories) {
         this.categoryMap = categories.stream()
                 .collect(Collectors.toMap(
-                        Category::getName, Function.identity()
+                        Category::getCategoryDictionary, Function.identity()
                 ));
     }
 

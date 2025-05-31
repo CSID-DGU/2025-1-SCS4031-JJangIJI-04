@@ -4,14 +4,13 @@ import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
-import com.jjangiji.hankkimoa.restaurant.domain.RecommendRestaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
-import com.jjangiji.hankkimoa.restaurant.repository.RecommendRestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.MenuRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -21,19 +20,26 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class RestaurantServiceTest extends IntegrationTest {
 
+    @MockitoBean
+    private RecommendClient recommendClient;
     @Autowired
     private RestaurantService restaurantService;
     @Autowired
     private RestaurantRepository restaurantRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private RecommendRestaurantRepository recommendRestaurantRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -95,14 +101,17 @@ class RestaurantServiceTest extends IntegrationTest {
     @Test
     void readRecommendRestaurants() {
         // given
-        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", "100", 10000, address));
-        recommendRestaurantRepository.save(new RecommendRestaurant(user, restaurant));
+        String uniqueId = "100";
+        Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", uniqueId, 10000, address));
+
+        when(recommendClient.requestRecommendRestaurants(any(), any()))
+                .thenReturn(new RecommendServerRestaurantsResponse(List.of(uniqueId)));
 
         // when
         List<RecommendRestaurantResponse> results = restaurantService.readRecommendRestaurants(user);
 
         // then
-        Assertions.assertThat(results).hasSize(1);
+        Assertions.assertThat(results.get(0).id()).isEqualTo(restaurant.getId());
     }
 
     @DisplayName("식당 조회")

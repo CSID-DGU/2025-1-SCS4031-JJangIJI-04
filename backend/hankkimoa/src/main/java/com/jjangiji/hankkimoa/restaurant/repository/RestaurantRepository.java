@@ -19,10 +19,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("SELECT r.uniqueId FROM Restaurant r")
     Set<String> findAllUniqueId();
 
-    @Query(value = """
-            SELECT r.* FROM restaurant r
-            JOIN recommend_restaurant rr ON rr.restaurant_id = r.id
-            WHERE rr.user_id = :userId
-            """, nativeQuery = true)
-    List<Restaurant> findAllRecommendRestaurantsByUser(@Param("userId") Long userId);
+    List<Restaurant> findAllByUniqueIdIn(List<String> uniqueIds);
 }

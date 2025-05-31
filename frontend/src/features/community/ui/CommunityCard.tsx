@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { CommunityPost } from '@/features/community/types/community';
 import { EmojiReactionPanel } from '@/features/community/ui/EmojiReactionPanel';
@@ -18,6 +19,7 @@ interface CommunityCardProps {
 
 export const CommunityCard = ({ post }: CommunityCardProps) => {
   const { userId } = useAuthStore();
+  const navigate = useNavigate();
   const [reactions, setReactions] = useState<Record<number, number>>(() =>
     (post.emojis || []).reduce(
       (acc, { emojiId, count }) => {
@@ -71,6 +73,11 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
         <ProfileImg
           src={post.imageUrl || '/icons/community/user-avatar.svg'}
           alt="프로필"
+          onClick={() =>
+            navigate(`/users/${post.userId}/expenses`, {
+              state: { nickname: post.nickname },
+            })
+          }
         />
       </LeftSection>
 
@@ -78,7 +85,16 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
         <RelativeWrapper>
           <TextGroup>
             <TopRow>
-              <Nickname>{post.nickname}</Nickname>
+              <Nickname
+                onClick={() =>
+                  navigate(`/users/${post.userId}/expenses`, {
+                    state: { nickname: post.nickname },
+                  })
+                }
+              >
+                {post.nickname}
+              </Nickname>
+
               <DateText>
                 {format(new Date(post.createdAt), 'yyyy.MM.dd HH:mm')}
               </DateText>
@@ -143,6 +159,7 @@ const ProfileImg = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 const RelativeWrapper = styled.div`
@@ -181,6 +198,7 @@ const TopRow = styled.div`
 const Nickname = styled.div`
   font-size: var(--font-size-2xs);
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const DateText = styled.div`

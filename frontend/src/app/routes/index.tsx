@@ -11,6 +11,7 @@ import WeeklyGoalPage from '@/pages/WeeklyGoalPage/WeeklyGoalPage';
 import { CommunityPage } from '@/pages/Community/CommunityPage';
 import RecordPage from '@/pages/RecordPage/RecordPage';
 import MyPage from '@/pages/MyPage/MyPage';
+import GeneralExpensePageWrapper from '@/pages/GeneralExpensePageWrapper/GeneralExpensePageWrapper';
 
 export const router = createBrowserRouter([
   // 카카오 콜백 페이지 별도
@@ -77,6 +78,20 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <RecordPage />
+          </PrivateRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: 'users/:userId/expenses',
+    element: <Layout hasFooter={false} />,
+    children: [
+      {
+        index: true,
+        element: (
+          <PrivateRoute>
+            <GeneralExpensePageWrapper />
           </PrivateRoute>
         ),
       },

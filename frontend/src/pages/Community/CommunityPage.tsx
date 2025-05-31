@@ -7,13 +7,8 @@ import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import { CommunityPost } from '@/features/community/types/community';
 
 export const CommunityPage = () => {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  } = useCommunityPosts();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useCommunityPosts();
 
   const loadMoreRef = useIntersectionObserver(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -25,37 +20,43 @@ export const CommunityPage = () => {
 
   return (
     <Container>
-    <Header>
-      <Title>한끼니티</Title>
-      <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
-      <Divider />
-    </Header>
+      <Header>
+        <Title>한끼니티</Title>
+        <Subtitle>유저들의 지출 후기와 절약 노하우를 확인해 보세요</Subtitle>
+        <Divider />
+      </Header>
 
-    {isLoading ? (
-      <CenteredBlock>
-        <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
-      </CenteredBlock>
-    ) : posts.length === 0 ? (
-      <CenteredBlock>
-        <FileIconWrapper>
-          <FileIcon />
-        </FileIconWrapper>
-        <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
-      </CenteredBlock>
-    ) : (
-      <PostList>
-        {posts
-          .filter((post): post is CommunityPost => !!post && typeof post.expenseId !== 'undefined')
-          .map((post) => (
-            <CommunityCard key={post.expenseId} post={post} />
-          ))}
-        <div ref={loadMoreRef} style={{ height: '40px' }} />
-        {isFetchingNextPage && (
+      {isLoading ? (
+        <CenteredBlock>
           <LoadingSpinner message="커뮤니티 글을 불러오는 중이에요" size={40} />
-        )}
-      </PostList>
-    )}
-  </Container>
+        </CenteredBlock>
+      ) : posts.length === 0 ? (
+        <CenteredBlock>
+          <FileIconWrapper>
+            <FileIcon />
+          </FileIconWrapper>
+          <NoDataText>작성된 커뮤니티 글이 없어요</NoDataText>
+        </CenteredBlock>
+      ) : (
+        <PostList>
+          {posts
+            .filter(
+              (post): post is CommunityPost =>
+                !!post && typeof post.expenseId !== 'undefined'
+            )
+            .map((post) => (
+              <CommunityCard key={post.expenseId} post={post} />
+            ))}
+          <div ref={loadMoreRef} style={{ height: '40px' }} />
+          {isFetchingNextPage && (
+            <LoadingSpinner
+              message="커뮤니티 글을 불러오는 중이에요"
+              size={40}
+            />
+          )}
+        </PostList>
+      )}
+    </Container>
   );
 };
 
@@ -118,8 +119,8 @@ const CenteredBlock = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  align-items: center;  
+  justify-content: center;
+  align-items: center;
   min-height: 300px;
   gap: 12px;
 `;

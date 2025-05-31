@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { CommunityPost } from '@/features/community/types/community';
 import { EmojiReactionPanel } from '@/features/community/ui/EmojiReactionPanel';
@@ -10,27 +11,42 @@ import { format } from 'date-fns';
 import StoreIcon from '@/assets/icons/store.svg?react';
 import MenuIcon from '@/assets/icons/menu.svg?react';
 import WalletIcon from '@/assets/icons/wallet.svg?react';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
 
 interface CommunityCardProps {
   post: CommunityPost;
 }
 
 export const CommunityCard = ({ post }: CommunityCardProps) => {
+  const { userId } = useAuthStore();
+  const navigate = useNavigate();
   const [reactions, setReactions] = useState<Record<number, number>>(() =>
-    (post.emojis || []).reduce((acc, { emojiId, count }) => {
-      acc[emojiId] = count;
-      return acc;
-    }, {} as Record<number, number>)
+    (post.emojis || []).reduce(
+      (acc, { emojiId, count }) => {
+        acc[emojiId] = count;
+        return acc;
+      },
+      {} as Record<number, number>
+    )
   );
-  const [selectedEmojis, setSelectedEmojis] = useState<Set<number>>(new Set());
+
+  const [selectedEmojis, setSelectedEmojis] = useState<Set<number>>(() => {
+    const initial = new Set<number>();
+    post.emojis.forEach((emoji) => {
+      if (userId !== null && emoji.userIds.includes(userId)) {
+        initial.add(emoji.emojiId);
+      }
+    });
+    return initial;
+  });
 
   const { mutate: toggleEmoji } = useToggleEmoji();
 
   const handleAddReaction = (emojiId: number) => {
     const isSelected = selectedEmojis.has(emojiId);
-  
+
     toggleEmoji({ body: { expenseId: post.expenseId, emojiId }, isSelected });
-  
+
     // 프론트 상태도 토글
     setReactions((prev) => {
       const updated = { ...prev };
@@ -42,7 +58,7 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
       }
       return updated;
     });
-  
+
     setSelectedEmojis((prev) => {
       const updated = new Set(prev);
       if (isSelected) updated.delete(emojiId);
@@ -57,6 +73,11 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
         <ProfileImg
           src={post.imageUrl || '/icons/community/user-avatar.svg'}
           alt="프로필"
+          onClick={() =>
+            navigate(`/users/${post.userId}/expenses`, {
+              state: { nickname: post.nickname },
+            })
+          }
         />
       </LeftSection>
 
@@ -64,8 +85,19 @@ export const CommunityCard = ({ post }: CommunityCardProps) => {
         <RelativeWrapper>
           <TextGroup>
             <TopRow>
-              <Nickname>{post.nickname}</Nickname>
-              <DateText>{format(new Date(post.createdAt), 'yyyy.MM.dd HH:mm')}</DateText>
+              <Nickname
+                onClick={() =>
+                  navigate(`/users/${post.userId}/expenses`, {
+                    state: { nickname: post.nickname },
+                  })
+                }
+              >
+                {post.nickname}
+              </Nickname>
+
+              <DateText>
+                {format(new Date(post.createdAt), 'yyyy.MM.dd HH:mm')}
+              </DateText>
             </TopRow>
 
             <InfoRow>
@@ -127,6 +159,7 @@ const ProfileImg = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  cursor: pointer;
 `;
 
 const RelativeWrapper = styled.div`
@@ -165,6 +198,7 @@ const TopRow = styled.div`
 const Nickname = styled.div`
   font-size: var(--font-size-2xs);
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const DateText = styled.div`

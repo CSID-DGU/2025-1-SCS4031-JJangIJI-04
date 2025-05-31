@@ -1,15 +1,36 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import api from '@/lib/axios';
-import { ToggleEmojiRequest } from '@/features/community/types/emoji';
+import {
+  ToggleEmojiRequest,
+  EmojiApiErrorResponse,
+} from '@/features/community/types/emoji';
 
 export const useToggleEmoji = () => {
-  return useMutation<void, Error, { body: ToggleEmojiRequest; isSelected: boolean }>({
+  return useMutation<
+    void,
+    AxiosError<EmojiApiErrorResponse>,
+    { body: ToggleEmojiRequest; isSelected: boolean }
+  >({
     mutationFn: async ({ body, isSelected }) => {
-      if (isSelected) {
+      try {
+        if (isSelected) {
+          await api.delete('/expenses/emojis', { data: body });
+        } else {
+          await api.post('/expenses/emojis', body);
+        }
+      } catch (error: any) {
+        const axiosError = error as AxiosError<EmojiApiErrorResponse>;
+        const code = axiosError.response?.data?.exceptionCode;
 
-        await api.delete('/expenses/emojis', { data: body });
-      } else {
-        await api.post('/expenses/emojis', body);
+        if (
+          (!isSelected && code === 'EMOJI_ALREADY_EXIST') ||
+          (isSelected && code === 'EMOJI_NOT_FOUND')
+        ) {
+          return;
+        }
+
+        throw error;
       }
     },
   });

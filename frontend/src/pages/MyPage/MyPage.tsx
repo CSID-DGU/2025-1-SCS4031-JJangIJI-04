@@ -1,16 +1,20 @@
-import { useCommunity } from '@/features/community/hooks/useCommunity';
-import { CommunityCard } from '@/features/community/ui/CommunityCard';
 import { FullScreenPopup } from '@/features/myPage/ui/FullScreenPopup';
 import { RestaurantListItem } from '@/features/restaurant/ui/RestaurantListItem';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useMonthlyExpenseTotal } from '@/features/myPage/api/useMonthlyExpenseTotal';
+import { useAuthStore } from '@/features/auth/store/useAuthStore';
+import { useUserInfo } from '@/features/auth/api/useUserInfo';
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState<'bookmark' | 'likes'>('bookmark');
   const [popupType, setPopupType] = useState<
     null | 'nickname' | 'category' | 'settings'
   >(null);
-  const { posts } = useCommunity();
+  const { userId } = useAuthStore();
+  const { data: monthlyTotal } = useMonthlyExpenseTotal(userId ?? null);
+  const { data: userInfo, isLoading } = useUserInfo();
+
   return (
     <Container>
       <Header>
@@ -21,11 +25,23 @@ const MyPage = () => {
         </TopRight>
         <ProfileSection>
           <LeftProfile>
-            <Avatar src="/icons/community/user-avatar.svg" />
+            <Avatar
+              src={
+                isLoading
+                  ? '/icons/community/user-avatar.svg'
+                  : (userInfo?.imageUrl ?? '/icons/community/user-avatar.svg')
+              }
+              alt="프로필 이미지"
+            />
             <UserInfo>
-              <Nickname>한끼모아</Nickname>
+              {isLoading ? (
+                <Nickname>불러오는 중...</Nickname>
+              ) : (
+                <Nickname>{userInfo?.nickname ?? '알 수 없음'}</Nickname>
+              )}
               <SpentText>
-                이번 달 총 지출 금액 <strong>240,000원</strong>
+                이번 달 총 지출 금액{' '}
+                <strong>{monthlyTotal?.toLocaleString() ?? 0}원</strong>
               </SpentText>
             </UserInfo>
           </LeftProfile>
@@ -60,14 +76,27 @@ const MyPage = () => {
           좋아요 누른 피드
         </Tab>
       </TabGroup>
+
       {activeTab === 'bookmark' ? (
-        <RestaurantListItem />
-      ) : (
+        // 북마크 더미 처리
+        false ? (
+          <RestaurantListItem />
+        ) : (
+          <EmptyState>
+            <EmptyIcon src="/icons/bookmarks.svg" alt="북마크 없음" />
+            <Message>아직 북마크한 식당이 없어요</Message>
+          </EmptyState>
+        )
+      ) : // 좋아요 피드도 더미 처리
+      false ? (
         <PostList>
-          {posts.map((post) => (
-            <CommunityCard post={post} />
-          ))}
+          {/* 나중에 useLikedPosts() 훅으로 받은 데이터 map */}
         </PostList>
+      ) : (
+        <EmptyState>
+          <EmptyIcon src="/icons/insert-comment.svg" alt="이모지 피드 없음" />
+          <Message>아직 이모지 누른 피드가 없어요</Message>
+        </EmptyState>
       )}
 
       <FullScreenPopup
@@ -96,6 +125,7 @@ const ProfileSection = styled.div`
   justify-content: space-between;
   gap: 12px;
 `;
+
 const LeftProfile = styled.div`
   display: flex;
   gap: 12px;
@@ -144,7 +174,7 @@ const ToggleGroup = styled.div`
 
 const ToggleButton = styled.button<{ $active?: boolean }>`
   flex: 1;
-  padding: ${({ $active }) => ($active ? '6px 8px;' : '6px 0;')};
+  padding: ${({ $active }) => ($active ? '6px 8px' : '6px 0')};
   border: none;
   border-radius: ${({ $active }) => ($active ? '20px' : '0')};
   background-color: ${({ $active }) => ($active ? '#FF6701' : '#FFC288')};
@@ -154,6 +184,7 @@ const ToggleButton = styled.button<{ $active?: boolean }>`
   cursor: pointer;
   transition: background-color 0.2s ease;
 `;
+
 const GearButton = styled.button`
   background: none;
   border: none;
@@ -199,7 +230,7 @@ const Tab = styled.button<{ $active?: boolean }>`
   background: none;
   color: ${({ $active }) => ($active ? '#f97316' : '#808080')};
   border-bottom: ${({ $active }) =>
-    $active ? '1px solid #f97316' : '1px solid #808080;'};
+    $active ? '1px solid #f97316' : '1px solid #808080'};
   font-weight: bold;
   cursor: pointer;
 `;
@@ -209,4 +240,26 @@ const PostList = styled.div`
   flex-direction: column;
   margin-top: 10px;
   gap: 24px;
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 50vh;
+  padding-top: 40px;
+  gap: 12px;
+  color: #808080;
+  text-align: center;
+`;
+
+const EmptyIcon = styled.img`
+  width: 48px;
+  height: 48px;
+`;
+
+const Message = styled.div`
+  font-size: var(--font-size-xs);
 `;

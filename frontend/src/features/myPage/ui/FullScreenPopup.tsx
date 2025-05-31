@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
@@ -21,18 +21,34 @@ export const FullScreenPopup = ({
   onClose,
   type,
 }: FullScreenPopupProps) => {
+  const [nickname, setNickname] = useState('');
+  const [nicknameError, setNicknameError] = useState('');
+  const isNicknameValid = nicknameError === '' && nickname.trim() !== '';
+
   useEffect(() => {
-    if (visible) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    if (visible) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
     return () => {
       document.body.style.overflow = '';
     };
   }, [visible]);
 
   if (!visible) return null;
+
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNickname(value);
+
+    if (value.trim() === '') {
+      setNicknameError('닉네임을 입력해주세요.');
+    } else if (/\s/.test(value)) {
+      setNicknameError('공백은 사용할 수 없습니다.');
+    } else if ([...value].length > 10) {
+      setNicknameError('10자 이하로 입력해주세요.');
+    } else {
+      setNicknameError('');
+    }
+  };
 
   return createPortal(
     <Overlay>
@@ -47,10 +63,23 @@ export const FullScreenPopup = ({
         <Body>
           {type === 'nickname' && (
             <>
-              <NicknameForm />
-              <BottomButton>변경하기</BottomButton>
+              <NicknameForm
+                value={nickname}
+                onChange={handleNicknameChange}
+                error={nicknameError}
+              />
+              <BottomButton
+                disabled={!isNicknameValid}
+                onClick={() => {
+                  alert(`변경할 닉네임: ${nickname}`);
+                  onClose();
+                }}
+              >
+                변경하기
+              </BottomButton>
             </>
           )}
+
           {type === 'category' && (
             <>
               <Title>선호하는 음식 카테고리를 선택해 주세요</Title>
@@ -58,6 +87,7 @@ export const FullScreenPopup = ({
               <BottomButton>변경하기</BottomButton>
             </>
           )}
+
           {type === 'settings' && <SettingsList />}
         </Body>
       </Popup>
@@ -66,16 +96,24 @@ export const FullScreenPopup = ({
   );
 };
 
-const NicknameForm = () => (
+const NicknameForm = ({
+  value,
+  onChange,
+  error,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error: string;
+}) => (
   <NicknameFormContainer>
     <Instruction>변경하실 닉네임을 입력해주세요</Instruction>
     <InputField
-      value={''}
-      onChange={() => {}}
+      value={value}
+      onChange={onChange}
       placeholder="최대 10자까지 가능하며, 공백은 허용되지 않습니다"
       maxLength={10}
-      error={''}
-      isValid={true}
+      error={error}
+      isValid={error === ''}
     />
   </NicknameFormContainer>
 );
@@ -94,7 +132,6 @@ const SettingsList = () => (
   </SettingsContainer>
 );
 
-// Styles
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -106,7 +143,7 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 10px;
+  padding-top: env(safe-area-inset-top, 10px);
 `;
 
 const Popup = styled.div`
@@ -125,7 +162,8 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
+  height: 56px;
+  padding-top: 12px;
 `;
 
 const BackButton = styled.button`
@@ -136,6 +174,7 @@ const BackButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  padding-top: 12px;
 `;
 
 const HeaderTitle = styled.h1`
@@ -151,22 +190,26 @@ const Title = styled.h2`
 
 const Body = styled.div`
   flex: 1;
-  padding: 24px;
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  padding-top: 60px;
+  min-height: 100vh;
+  box-sizing: border-box;
 `;
 
-const BottomButton = styled.button`
+const BottomButton = styled.button<{ disabled?: boolean }>`
   margin-top: auto;
+  margin-bottom: 24px;
   width: 100%;
   padding: 14px;
   font-weight: bold;
   font-size: 16px;
   border: none;
   border-radius: 8px;
-  background-color: #ff6701;
+  background-color: ${({ disabled }) => (disabled ? '#ccc' : '#ff6701')};
   color: #fff;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
 
 const NicknameFormContainer = styled.div`

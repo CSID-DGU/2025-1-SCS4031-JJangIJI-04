@@ -15,4 +15,3 @@ export const PrivateRoute = ({ children }: PrivateRouteProps) => {
   if (!nickname) return <Navigate to="/landing" replace />;
   return children;
 };
-

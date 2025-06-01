@@ -1,5 +1,6 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -8,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -22,6 +22,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "name")
     @Enumerated(EnumType.STRING)
     private CategoryDictionary categoryDictionary;
 

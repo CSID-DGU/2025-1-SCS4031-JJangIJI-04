@@ -83,18 +83,21 @@ export const RestaurantDetailPage = () => {
             fontWeight={400}
             ellipsis={false}
           />
-          <IconTextRow
-            icon="/icons/restaurants/time.svg"
-            text={
-              Array.isArray(restaurant.openingHour)
-                ? restaurant.openingHour.join(', ')
-                : '영업 시간 정보 없음'
-            }
-            color="#808080"
-            fontSize="var(--font-size-3xs)"
-            fontWeight={400}
-            ellipsis={false}
-          />
+          <OpeningHourRow>
+            <Icon src="/icons/restaurants/time.svg" alt="영업시간" />
+            <HourList>
+              {restaurant.openingHour.map((line, index) => {
+                const [day, time] = line.split(' ');
+                const isClosed = line.includes('null');
+                return (
+                  <li key={index}>
+                    <span className="day">{day}</span>
+                    <span className="time">{isClosed ? '휴무' : time}</span>
+                  </li>
+                );
+              })}
+            </HourList>
+          </OpeningHourRow>
           <IconTextRow
             icon="/icons/restaurants/menu.svg"
             text={restaurant.category ?? '카테고리 정보 없음'}
@@ -257,4 +260,39 @@ const MenuImage = styled.img`
   object-fit: cover;
   border-radius: 10px;
   margin-left: 12px;
+`;
+
+const OpeningHourRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-top: 4px;
+`;
+
+const Icon = styled.img`
+  width: 12px;
+  height: 16px;
+  margin-right: 6px;
+  margin-top: 2px;
+`;
+
+const HourList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    font-size: var(--font-size-3xs);
+    color: #555;
+    margin-bottom: 2px;
+  }
+
+  .day {
+    width: 24px;
+    font-weight: 500;
+  }
+
+  .time {
+    margin-left: 6px;
+  }
 `;

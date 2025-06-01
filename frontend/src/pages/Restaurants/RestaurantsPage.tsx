@@ -3,7 +3,7 @@ import { RestaurantListItem } from '@/features/restaurant/ui/RestaurantListItem'
 
 export const RestaurantsPage = () => {
   return (
-    <PageWrapper>
+    <Container>
       <Header>
         <Title>한끼추천</Title>
         <Subtitle>
@@ -11,26 +11,33 @@ export const RestaurantsPage = () => {
           <br />
           적절한 식당을 추천해 드려요!
         </Subtitle>
+        <Divider />
       </Header>
-      <Divider />
+
+      {/* 추천 리스트 컴포넌트 */}
       <RestaurantListItem />
-    </PageWrapper>
+    </Container>
   );
 };
 
-// styled-components (기존과 동일)
-const PageWrapper = styled.div`
-  /* padding: 20px; */
-  /* background-color: #fef9f2; */
+const Container = styled.div`
+  background-color: #fff;
+  min-height: 100vh;
+  width: 100%;
+  padding: var(--page-padding);
+  padding-top: var(--safe-area-top);
+  box-sizing: border-box;
 `;
 
 const Header = styled.div`
   margin: 20px 5px;
+  text-align: left;
 `;
 
 const Title = styled.h1`
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: 700;
+  color: #202632;
 `;
 
 const Subtitle = styled.p`
@@ -38,10 +45,11 @@ const Subtitle = styled.p`
   color: #808080;
   font-weight: 700;
   line-height: 1.5;
+  margin-top: 2px;
 `;
 
 const Divider = styled.hr`
   border: none;
-  border-top: 1px solid #808080;
-  margin: 20px px;
+  border-top: 1px solid #ccc;
+  margin: 16px 0 32px;
 `;

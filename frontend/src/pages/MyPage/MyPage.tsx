@@ -80,7 +80,7 @@ const MyPage = () => {
       {activeTab === 'bookmark' ? (
         // 북마크 더미 처리
         false ? (
-          <RestaurantListItem />
+          <RestaurantListItem restaurants={[]} />
         ) : (
           <EmptyState>
             <EmptyIcon src="/icons/bookmarks.svg" alt="북마크 없음" />

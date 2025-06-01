@@ -6,7 +6,7 @@ export interface RecommendedRestaurant {
   menuAverage: number;
   imgUrl: string;
   streetAddress: string;
-  openingHour: string;
+  openingHours: string;
   category: string;
   bookmarked: boolean;
 }

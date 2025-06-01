@@ -11,7 +11,7 @@ interface RestaurantItem {
   menuAverage: number;
   imgUrl: string;
   streetAddress: string;
-  openingHour: string;
+  openingHours: string;
   category: string;
   bookmarked: boolean;
 }
@@ -87,7 +87,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
             />
             <IconTextRow
               icon="/icons/restaurants/time.svg"
-              text={restaurant.openingHour}
+              text={restaurant.openingHours}
               color="#808080"
               fontSize="var(--font-size-3xs)"
               fontWeight={600}

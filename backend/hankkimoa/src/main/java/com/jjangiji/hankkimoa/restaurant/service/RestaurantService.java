@@ -2,6 +2,8 @@ package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
+import com.jjangiji.hankkimoa.expense.service.ExpenseSavingGoalService;
+import com.jjangiji.hankkimoa.expense.service.dto.response.RemainingBudgetResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
@@ -13,9 +15,10 @@ import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendServerRestaurantsRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
@@ -38,6 +41,7 @@ import java.util.Set;
 @Service
 public class RestaurantService {
 
+    private final ExpenseSavingGoalService expenseSavingGoalService;
     private final RecommendClient recommendClient;
     private final UserCategoryRepository userCategoryRepository;
     private final RestaurantRepository restaurantRepository;
@@ -121,8 +125,16 @@ public class RestaurantService {
 
     @Transactional(readOnly = true)
     public List<RecommendRestaurantResponse> readRecommendRestaurants(User user) {
-        List<UserCategory> userCategories = userCategoryRepository.findAllByUser(user);
-        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(user, userCategories);
+        // todo expenseSavingGoalService 리팩토링
+        List<String> userCategory= userCategoryRepository.findAllByUser(user).stream()
+                .map(UserCategory::getCategoryName)
+                .toList();
+        RemainingBudgetResponse remainingBudgetResponse = expenseSavingGoalService.readRemainingBudget(user, LocalDate.now());
+        RecommendServerRestaurantsRequest request = new RecommendServerRestaurantsRequest(
+                user.getId(),
+                remainingBudgetResponse.remainingBudget(),
+                userCategory);
+        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(request);
 
         List<RecommendRestaurantResponse> result = new ArrayList<>();
         List<Restaurant> recommendRestaurants = restaurantRepository.findAllByUniqueIdIn(recommendResponse.restaurantUniqueIds());

@@ -1,6 +1,8 @@
 package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.config.IntegrationTest;
+import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
+import com.jjangiji.hankkimoa.expense.repository.ExpenseSavingGoalRepository;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,14 +45,21 @@ class RestaurantServiceTest extends IntegrationTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ExpenseSavingGoalRepository expenseSavingGoalRepository;
 
     private Category category;
     private User user;
+    private ExpenseSavingGoal expenseSavingGoal;
     private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
+    private final LocalDate now = LocalDate.now();
+    private final LocalDate sevenDayAfter = now.plusDays(6);
 
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
+        expenseSavingGoal = expenseSavingGoalRepository.save(expenseSavingGoalRepository.save(
+                new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter)));
         category = categoryRepository.save(new Category(CategoryDictionary.한식));
     }
 
@@ -104,7 +114,7 @@ class RestaurantServiceTest extends IntegrationTest {
         String uniqueId = "100";
         Restaurant restaurant = restaurantRepository.save(new Restaurant(category, "한끼식당1", uniqueId, 10000, address));
 
-        when(recommendClient.requestRecommendRestaurants(any(), any()))
+        when(recommendClient.requestRecommendRestaurants(any()))
                 .thenReturn(new RecommendServerRestaurantsResponse(List.of(uniqueId)));
 
         // when

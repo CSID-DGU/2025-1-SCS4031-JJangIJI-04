@@ -18,6 +18,7 @@ export const ExpandableCalendar = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  // selectedDate가 변경될 때 currentDate를 동기화
   useEffect(() => {
     if (selectedDate) {
       setCurrentDate(parseISO(selectedDate));
@@ -30,6 +31,10 @@ export const ExpandableCalendar = ({
   );
 
   const handleExpand = () => {
+    // 닫힐 때 선택된 날짜로 currentDate 복원
+    if (isExpanded && selectedDate) {
+      setCurrentDate(parseISO(selectedDate));
+    }
     setIsExpanded((prev) => !prev);
   };
 

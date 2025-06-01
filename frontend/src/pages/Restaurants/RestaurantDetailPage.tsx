@@ -73,6 +73,7 @@ export const RestaurantDetailPage = () => {
             color="#FF6701"
             fontSize="var(--font-size-2xs)"
             fontWeight={600}
+            ellipsis={false}
           />
           <IconTextRow
             icon="/icons/restaurants/place.svg"
@@ -80,6 +81,7 @@ export const RestaurantDetailPage = () => {
             color="#808080"
             fontSize="var(--font-size-3xs)"
             fontWeight={400}
+            ellipsis={false}
           />
           <IconTextRow
             icon="/icons/restaurants/time.svg"
@@ -91,6 +93,7 @@ export const RestaurantDetailPage = () => {
             color="#808080"
             fontSize="var(--font-size-3xs)"
             fontWeight={400}
+            ellipsis={false}
           />
           <IconTextRow
             icon="/icons/restaurants/menu.svg"
@@ -98,6 +101,7 @@ export const RestaurantDetailPage = () => {
             color="#808080"
             fontSize="var(--font-size-3xs)"
             fontWeight={400}
+            ellipsis={false}
           />
         </IconTextList>
 

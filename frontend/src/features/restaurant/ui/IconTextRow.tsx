@@ -6,6 +6,7 @@ interface IconTextRowProps {
   color?: string;
   fontSize?: string;
   fontWeight?: string | number;
+  ellipsis?: boolean;
 }
 
 export const IconTextRow = ({
@@ -14,11 +15,14 @@ export const IconTextRow = ({
   color = '#808080',
   fontSize = '13px',
   fontWeight = '600',
+  ellipsis = true, // 기본값은 잘림 허용
 }: IconTextRowProps) => {
   return (
     <Row>
       <Icon src={icon} alt="" />
-      <Text style={{ color, fontSize, fontWeight }}>{text}</Text>
+      <Text $ellipsis={ellipsis} style={{ color, fontSize, fontWeight }}>
+        {text}
+      </Text>
     </Row>
   );
 };
@@ -35,10 +39,19 @@ const Icon = styled.img`
   margin-right: 2px;
 `;
 
-const Text = styled.span`
+const Text = styled.span<{ $ellipsis: boolean }>`
   display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
+  ${({ $ellipsis }) =>
+    $ellipsis
+      ? `
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  `
+      : `
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  `}
 `;

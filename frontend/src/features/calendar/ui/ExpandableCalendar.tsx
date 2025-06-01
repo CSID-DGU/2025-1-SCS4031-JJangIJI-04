@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { MiniCalendar } from '@/features/calendar/ui/MiniCalendar';
 import { FullCalendar } from '@/features/calendar/ui/FullCalendar';
 import { useMonthlyExpenseStatus } from '@/features/calendar/api/useMonthlyExpenseStatus';
+import { parseISO } from 'date-fns';
 
 export const ExpandableCalendar = ({
   userId,
@@ -16,6 +17,12 @@ export const ExpandableCalendar = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    if (selectedDate) {
+      setCurrentDate(parseISO(selectedDate));
+    }
+  }, [selectedDate]);
 
   const { data: dailyStatusList = [] } = useMonthlyExpenseStatus(
     userId,

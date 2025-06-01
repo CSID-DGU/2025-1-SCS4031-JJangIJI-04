@@ -4,54 +4,9 @@ import { useRecommendedRestaurants } from '@/features/restaurant/api/useRecommen
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import FileIcon from '@/assets/icons/file.svg?react';
 
-const MOCK_RESTAURANTS = [
-  {
-    id: 1,
-    menuAverage: 8500,
-    imgUrl: '',
-    streetAddress: '서울시 강남구 강남대로 123',
-    openingHour: '10:00 ~ 20:00',
-    category: '한식',
-    bookmarked: false,
-  },
-  {
-    id: 2,
-    menuAverage: 9200,
-    imgUrl: '',
-    streetAddress: '서울시 마포구 월드컵북로 456',
-    openingHour: '11:30 ~ 22:00',
-    category: '일식',
-    bookmarked: true,
-  },
-  {
-    id: 3,
-    menuAverage: 7900,
-    imgUrl: '',
-    streetAddress: '서울시 종로구 청계천로 789',
-    openingHour: '09:00 ~ 18:00',
-    category: '양식',
-    bookmarked: false,
-  },
-  {
-    id: 4,
-    menuAverage: 78900,
-    imgUrl: '',
-    streetAddress: '서울시 종로구 청계천로 789 22222222',
-    openingHour: '09:00 ~ 18:00',
-    category: '양식',
-    bookmarked: false,
-  },
-  // 필요하면 더 추가
-];
-
 export const RestaurantsPage = () => {
-  // 목데이터 삭제시 삭제
-  const isDev = import.meta.env.DEV;
   const { data: recommendedRestaurants, isLoading } =
     useRecommendedRestaurants();
-
-  // 목데이터 삭제시 삭제
-  const restaurants = isDev ? MOCK_RESTAURANTS : (recommendedRestaurants ?? []);
 
   return (
     <Container>
@@ -67,8 +22,8 @@ export const RestaurantsPage = () => {
 
       {isLoading ? (
         <LoadingSpinner message="추천 식당을 불러오는 중입니다..." />
-      ) : recommendedRestaurants?.length ? (
-        <RestaurantListItem restaurants={restaurants} />
+      ) : recommendedRestaurants && recommendedRestaurants.length > 0 ? (
+        <RestaurantListItem restaurants={recommendedRestaurants} />
       ) : (
         <EmptyBlock>
           <FileIcon />

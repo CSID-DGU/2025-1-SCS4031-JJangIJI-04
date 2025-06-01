@@ -6,7 +6,9 @@ on:
       - 'backend/**'
     branches: [ "dev" , "main", "dev-be"]
   push:
-    branches: [ "feat/#6-backend-cicd" ]
+    paths:
+      - '.github/workflows/backend-ci.yml'
+      - '.github/workflows/backend-cd.yml'
 
 jobs:
   build:

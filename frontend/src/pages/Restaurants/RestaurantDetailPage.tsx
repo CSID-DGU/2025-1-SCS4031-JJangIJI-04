@@ -84,15 +84,19 @@ export const RestaurantDetailPage = () => {
             ellipsis={false}
           />
           <OpeningHourRow>
-            <Icon src="/icons/restaurants/time.svg" alt="영업시간" />
+            <IconWrapper>
+              <Icon src="/icons/restaurants/time.svg" alt="영업시간" />
+            </IconWrapper>
             <HourList>
               {restaurant.openingHour.map((line, index) => {
-                const [day, time] = line.split(' ');
-                const isClosed = line.includes('null');
+                const [day, ...times] = line.split(' ');
+                const timeStr = times.join(' ');
+                const isClosed = timeStr.includes('null');
+
                 return (
                   <li key={index}>
                     <span className="day">{day}</span>
-                    <span className="time">{isClosed ? '휴무' : time}</span>
+                    <span className="time">{isClosed ? '휴무' : timeStr}</span>
                   </li>
                 );
               })}
@@ -268,11 +272,14 @@ const OpeningHourRow = styled.div`
   margin-top: 4px;
 `;
 
+const IconWrapper = styled.div`
+  margin-top: 2px;
+  margin-right: 6px;
+`;
+
 const Icon = styled.img`
   width: 12px;
   height: 16px;
-  margin-right: 6px;
-  margin-top: 2px;
 `;
 
 const HourList = styled.ul`
@@ -288,11 +295,13 @@ const HourList = styled.ul`
   }
 
   .day {
+    display: inline-block;
     width: 24px;
     font-weight: 500;
   }
 
   .time {
     margin-left: 6px;
+    white-space: nowrap;
   }
 `;

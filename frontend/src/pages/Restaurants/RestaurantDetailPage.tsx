@@ -4,7 +4,8 @@ import { useRestaurantDetail } from '@/features/restaurant/api/useRestaurantDeta
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
 
 export const RestaurantDetailPage = () => {
   const navigate = useNavigate();
@@ -12,18 +13,24 @@ export const RestaurantDetailPage = () => {
   const restaurantId = Number(id);
   const { data: restaurant, isLoading } = useRestaurantDetail(restaurantId);
 
-  const [bookmarked, setBookmarked] = useState<boolean>(
-    restaurant?.bookmarked ?? false
-  );
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    if (restaurant) {
+      setBookmarked(restaurant.bookmarked);
+    }
+  }, [restaurant]);
+
+  const { mutate: toggleBookmark } = useToggleBookmark();
+
+  const handleToggleBookmark = () => {
+    toggleBookmark({ restaurantId, isBookmarked: bookmarked });
+    setBookmarked((prev) => !prev);
+  };
 
   if (isLoading || !restaurant) {
     return <LoadingSpinner message="식당 정보를 불러오는 중입니다..." />;
   }
-
-  const handleToggleBookmark = () => {
-    setBookmarked((prev) => !prev);
-    // 실제 API 연동은 나중에
-  };
 
   return (
     <PageWrapper>

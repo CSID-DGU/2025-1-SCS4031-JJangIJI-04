@@ -3,20 +3,48 @@ import { Link } from 'react-router-dom';
 import { Crown } from '@/features/restaurant/ui/crown/Crown';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
+import { useState } from 'react';
+import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
+
+interface RestaurantItem {
+  id: number;
+  menuAverage: number;
+  imgUrl: string;
+  streetAddress: string;
+  openingHour: string;
+  category: string;
+  bookmarked: boolean;
+}
 
 interface Props {
-  restaurants: {
-    id: number;
-    menuAverage: number;
-    imgUrl: string;
-    streetAddress: string;
-    openingHour: string;
-    category: string;
-    bookmarked: boolean;
-  }[];
+  restaurants: RestaurantItem[];
 }
 
 export const RestaurantListItem = ({ restaurants }: Props) => {
+  const [localBookmarks, setLocalBookmarks] = useState<Record<number, boolean>>(
+    () =>
+      restaurants.reduce(
+        (acc, r) => {
+          acc[r.id] = r.bookmarked;
+          return acc;
+        },
+        {} as Record<number, boolean>
+      )
+  );
+
+  const { mutate } = useToggleBookmark();
+
+  const handleToggle = (restaurant: RestaurantItem) => {
+    const prev = localBookmarks[restaurant.id];
+
+    setLocalBookmarks((prevState) => ({
+      ...prevState,
+      [restaurant.id]: !prev,
+    }));
+
+    mutate({ restaurantId: restaurant.id, isBookmarked: prev });
+  };
+
   return (
     <ListWrapper>
       {restaurants.map((restaurant, index) => (
@@ -38,10 +66,8 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
               </NameWrapper>
               <BookmarkButtonWrapper>
                 <BookmarkButton
-                  active={restaurant.bookmarked}
-                  onClick={() => {
-                    // 북마크 API 연동은 나중에
-                  }}
+                  active={localBookmarks[restaurant.id]}
+                  onClick={() => handleToggle(restaurant)}
                 />
               </BookmarkButtonWrapper>
             </TopRow>

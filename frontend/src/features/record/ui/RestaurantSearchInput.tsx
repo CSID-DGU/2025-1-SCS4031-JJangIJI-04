@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Restaurant, searchRestaurants } from '@/features/restaurant/api/restaurantApi';
+import { searchRestaurants } from '@/features/restaurant/api/restaurantApi';
 import { useDebounce } from '@/hooks/useDebounce';
 import { InputField } from '@/shared/ui/InputField';
+import { Restaurant } from '@/features/restaurant/types/restaurant';
 
 interface RestaurantSearchInputProps {
   value: string;
@@ -46,7 +47,10 @@ export const RestaurantSearchInput = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -79,7 +83,7 @@ export const RestaurantSearchInput = ({
         onChange={handleInputChange}
         placeholder={placeholder}
       />
-      
+
       {isOpen && searchTerm && (
         <DropdownContainer>
           {loading ? (
@@ -118,7 +122,7 @@ const DropdownContainer = styled.div`
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   margin-top: 4px;
   max-height: 200px;
@@ -136,7 +140,7 @@ const DropdownItem = styled.div`
   }
 
   &:not(:last-child) {
-    border-bottom: 1px solid #E0E0E0;
+    border-bottom: 1px solid #e0e0e0;
   }
 `;
 
@@ -149,4 +153,4 @@ const RestaurantName = styled.div`
 const RestaurantAddress = styled.div`
   font-size: 12px;
   color: #666;
-`; 
+`;

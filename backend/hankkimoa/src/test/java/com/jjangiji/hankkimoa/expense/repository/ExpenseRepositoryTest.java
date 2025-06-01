@@ -54,7 +54,7 @@ class ExpenseRepositoryTest extends RepositoryTest {
 
     @DisplayName("지출 한달 내역 조회 성공")
     @Test
-    void findAllByExpenseDateOrderByExpenseDateAsc() {
+    void findAllWithSavingGoalAndUserByExpenseDateOrderByExpenseDateAsc() {
         // given
         Expense expense1 = new Expense(expenseSavingGoal, restaurant,
                 "한끼식당", "순두부", 8_000,
@@ -73,7 +73,7 @@ class ExpenseRepositoryTest extends RepositoryTest {
 
     @DisplayName("지출 한달 내역 조회 성공 : 주어진 날짜 범위 벗어난 경우")
     @Test
-    void findAllByExpenseDateOrderByExpenseDateAsc_withOutOfRange() {
+    void findAllWithSavingGoalAndUserByExpenseDateOrderByExpenseDateAsc_withOutOfRange() {
         // given
         Expense expense1 = new Expense(expenseSavingGoal, restaurant,
                 "한끼식당", "순두부", 8_000,

@@ -4,7 +4,7 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.expense.domain.DailyExpenses;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
-import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
+import com.jjangiji.hankkimoa.expense.domain.ExpenseEmojis;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.expense.domain.SavingGoalStatusMessage;
 import com.jjangiji.hankkimoa.expense.repository.ExpenseRepository;
@@ -21,14 +21,15 @@ import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -93,24 +94,27 @@ public class ExpenseService {
     }
 
     private List<ExpenseResponse> toExpenseResponses(List<Expense> expenses) {
-        return expenses.stream()
-                .map(expense -> new ExpenseResponse(
-                        expense.getRestaurantName(), expense.getMenuName(),
-                        expense.getExpense(), expense.getMemo(), toEmojiResponses(expense.getEmojis())
-                ))
-                .toList();
+        List<ExpenseResponse> expenseResponses = new ArrayList<>();
+
+        for (Expense expense : expenses) {
+            ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
+            expenseResponses.add(new ExpenseResponse(
+                    expense.getRestaurantName(),
+                    expense.getMenuName(),
+                    expense.getExpense(),
+                    expense.getMemo(),
+                    toEmojiResponses(expenseEmojis)));
+        }
+        return expenseResponses;
     }
 
-    private List<EmojiResponse> toEmojiResponses(List<ExpenseEmoji> expenseEmojis) {
-        LinkedHashMap<Integer, Long> emojis = expenseEmojis.stream()
-                .collect(Collectors.groupingBy(
-                        ExpenseEmoji::getEmojiId,
-                        LinkedHashMap::new,
-                        Collectors.counting()
-                ));
-
-        return emojis.entrySet().stream()
-                .map(entry -> new EmojiResponse(entry.getKey(), entry.getValue()))
+    private List<EmojiResponse> toEmojiResponses(ExpenseEmojis expenseEmojis) {
+        return expenseEmojis.getEmojiIds()
+                .stream()
+                .map(emojiId -> {
+                    List<Long> userIds = expenseEmojis.getUserIds(emojiId);
+                    return new EmojiResponse(emojiId, userIds.size(), userIds);
+                })
                 .toList();
     }
 
@@ -135,40 +139,35 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public List<CommunityExpenseResponse> readCommunityExpenses(Integer size, Integer page) {
-        List<CommunityExpenseResponse> result = new ArrayList<>(); // TODO 리팩토링
+        List<CommunityExpenseResponse> result = new ArrayList<>();
 
-        List<ExpenseSavingGoal> expenseSavingGoals = expenseSavingGoalRepository.findAllLastExpenseSavingGoalOrderByCreatedAtDESC(size, page);
-        for (ExpenseSavingGoal expenseSavingGoal : expenseSavingGoals) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Expense> expenses = expenseRepository.findAllWithSavingGoalAndUser(pageable);
 
-            List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(expenseSavingGoal).stream()
-                    .sorted(Comparator.comparing(Expense::getCreatedAt).reversed())
-                    .toList();
-            User user = expenseSavingGoal.getUser();
+        for (Expense expense : expenses) {
+            ExpenseSavingGoal savingGoal = expense.getExpenseSavingGoal();
+            List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(savingGoal);
+            User user = savingGoal.getUser();
+            ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
 
-            result.add(toCommunityExpenseResponse(user, expenseSavingGoal, savingGoalExpenses));
+            result.add(new CommunityExpenseResponse(
+                    user.getNickname(),
+                    user.getId(),
+                    user.getImageUrl(),
+                    savingGoal.getId(),
+                    expense.getId(),
+                    expense.getRestaurantId(),
+                    expense.getRestaurantName(),
+                    expense.getMenuName(),
+                    expense.getExpense(),
+                    expense.getCreatedAt(),
+                    savingGoal.getBudget(),
+                    savingGoal.calculateRemainingBudget(savingGoalExpenses),
+                    expense.getMemo(),
+                    toEmojiResponses(expenseEmojis)));
         }
 
         return result;
-    }
-
-    private CommunityExpenseResponse toCommunityExpenseResponse(User user, ExpenseSavingGoal expenseSavingGoal, List<Expense> savingGoalExpenses) {
-        Expense lastExpense = savingGoalExpenses.get(0);
-        return new CommunityExpenseResponse(
-                user.getNickname(),
-                user.getId(),
-                user.getImageUrl(),
-                expenseSavingGoal.getId(),
-                lastExpense.getId(),
-                lastExpense.getRestaurantId(),
-                lastExpense.getRestaurantName(),
-                lastExpense.getMenuName(),
-                lastExpense.getExpense(),
-                lastExpense.getCreatedAt(),
-                expenseSavingGoal.getBudget(),
-                expenseSavingGoal.calculateRemainingBudget(savingGoalExpenses),
-                lastExpense.getMemo(),
-                toEmojiResponses(lastExpense.getEmojis())
-        );
     }
 
     @Transactional

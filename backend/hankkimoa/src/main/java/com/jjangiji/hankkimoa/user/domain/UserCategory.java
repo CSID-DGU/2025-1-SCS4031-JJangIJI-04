@@ -32,6 +32,10 @@ public class UserCategory extends BaseEntity {
         this.category = category;
     }
 
+    public String getCategoryName() {
+        return category.getName();
+    }
+
     public UserCategory(Long id, User user, Category category) {
         this(user, category);
         this.id = id;

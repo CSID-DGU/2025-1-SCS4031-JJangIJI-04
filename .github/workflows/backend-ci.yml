@@ -6,7 +6,9 @@ on:
       - 'backend/**'
     branches: [ "dev" , "main", "dev-be"]
   push:
-    branches: [ "feat/#6-backend-cicd" ]
+    paths:
+      - '.github/workflows/backend-ci.yml'
+      - '.github/workflows/backend-cd.yml'
 
 jobs:
   build:
@@ -29,7 +31,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Gradle 세팅
-        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Gradle Wrapper 실행 권한 추가
         run: chmod +x gradlew

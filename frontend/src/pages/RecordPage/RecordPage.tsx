@@ -22,11 +22,11 @@ const RecordPage = () => {
   const [rating, setRating] = useState(0);
   const [memo, setMemo] = useState('');
   const navigate = useNavigate();
-  const { data: budgetData } = useRemainingBudget();
   const { mutate: addExpense } = useAddExpense();
   const location = useLocation();
   const selectedDateFromCalendar =
     (location.state?.date as string) ?? format(new Date(), 'yyyy-MM-dd');
+  const { data: budgetData } = useRemainingBudget(selectedDateFromCalendar);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, '');

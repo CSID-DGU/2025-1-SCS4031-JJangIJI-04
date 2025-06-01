@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
 import api from '@/lib/axios';
 
 interface RemainingBudgetResponse {
@@ -8,15 +7,13 @@ interface RemainingBudgetResponse {
   endDate?: string;
 }
 
-export const useRemainingBudget = () => {
-  const today = format(new Date(), 'yyyy-MM-dd');
-
+export const useRemainingBudget = (date: string) => {
   return useQuery<RemainingBudgetResponse>({
-    queryKey: ['remainingBudget', today],
+    queryKey: ['remainingBudget', date],
     queryFn: async () => {
       try {
         const res = await api.get('/saving-goals/remaining', {
-          params: { date: today },
+          params: { date },
         });
         console.log('절약 목표 조회 응답:', res.data);
         return res.data;

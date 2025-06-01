@@ -1,106 +1,128 @@
-import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { getRestaurantById } from '@/features/restaurant/api/restaurantApi';
-import { Restaurant } from '@/features/restaurant/types/restaurant';
+import { useRestaurantDetail } from '@/features/restaurant/api/useRestaurantDetail';
+import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
-
-const detailItems = [
-  {
-    icon: '/icons/restaurants/price.svg',
-    text: (r: Restaurant) => `평균 가격 ${r.averagePrice.toLocaleString()}원`,
-    color: '#FF6701',
-    fontSize: 'var(--font-size-2xs)',
-    fontWeight: 600,
-  },
-  {
-    icon: '/icons/restaurants/place.svg',
-    text: (r: Restaurant) => r.address,
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-  {
-    icon: '/icons/restaurants/time.svg',
-    text: () => '영업 시간',
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-  {
-    icon: '/icons/restaurants/menu.svg',
-    text: () => '음식 종류',
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-];
+import { useEffect, useState } from 'react';
+import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
 
 export const RestaurantDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const restaurantId = Number(id);
+  const { data: restaurant, isLoading } = useRestaurantDetail(restaurantId);
+
   const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      getRestaurantById(Number(id)).then((res) => {
-        setRestaurant(res);
-        setBookmarked(res.bookmarked);
-      });
+    if (restaurant) {
+      setBookmarked(restaurant.bookmarked);
     }
-  }, [id]);
+  }, [restaurant]);
 
-  if (!restaurant) return <div>Loading...</div>;
-  const toggleBookmark = () => {
+  const { mutate: toggleBookmark } = useToggleBookmark();
+
+  const handleToggleBookmark = () => {
+    toggleBookmark({ restaurantId, isBookmarked: bookmarked });
     setBookmarked((prev) => !prev);
   };
+
+  if (isLoading || !restaurant) {
+    return <LoadingSpinner message="식당 정보를 불러오는 중입니다..." />;
+  }
 
   return (
     <PageWrapper>
       <ImageSection>
-        {restaurant.imageUrls.map((url, index) => (
-          <Image key={index} src={url} alt="음식 이미지" />
-        ))}
-        <BackButton onClick={() => navigate(-1)}> &lt;</BackButton>
+        {Array.isArray(restaurant.imgUrl) && restaurant.imgUrl.length > 0 ? (
+          restaurant.imgUrl.map((url, index) => (
+            <Image
+              key={index}
+              src={url}
+              alt="음식 이미지"
+              onError={(e) => {
+                e.currentTarget.src = '/images/basic-restaurant.svg';
+              }}
+            />
+          ))
+        ) : (
+          <Image src="/images/basic-restaurant.svg" alt="기본 음식 이미지" />
+        )}
+        <BackButton onClick={() => navigate(-1)}>&lt;</BackButton>
         <BookmarkWrapper>
           <BookmarkButton
             active={bookmarked}
-            onClick={toggleBookmark}
+            onClick={handleToggleBookmark}
             size={16}
           />
         </BookmarkWrapper>
       </ImageSection>
 
       <ContentSection>
-        <RestaurantName>{restaurant!.name}</RestaurantName>
+        <RestaurantName>{restaurant.name ?? '이름 없음'}</RestaurantName>
 
         <IconTextList>
-          {detailItems.map(({ icon, text, color, fontSize, fontWeight }) => (
-            <IconTextRow
-              key={icon}
-              icon={icon}
-              text={typeof text === 'function' ? text(restaurant) : text}
-              color={color}
-              fontSize={fontSize}
-              fontWeight={fontWeight}
-            />
-          ))}
+          <IconTextRow
+            icon="/icons/restaurants/price.svg"
+            text={`평균 가격 ${
+              restaurant.menuAverage !== undefined
+                ? `${restaurant.menuAverage.toLocaleString()}원`
+                : '정보 없음'
+            }`}
+            color="#FF6701"
+            fontSize="var(--font-size-2xs)"
+            fontWeight={600}
+          />
+          <IconTextRow
+            icon="/icons/restaurants/place.svg"
+            text={restaurant.streetAddress ?? '주소 정보 없음'}
+            color="#808080"
+            fontSize="var(--font-size-3xs)"
+            fontWeight={400}
+          />
+          <IconTextRow
+            icon="/icons/restaurants/time.svg"
+            text={
+              Array.isArray(restaurant.openingHour)
+                ? restaurant.openingHour.join(', ')
+                : '영업 시간 정보 없음'
+            }
+            color="#808080"
+            fontSize="var(--font-size-3xs)"
+            fontWeight={400}
+          />
+          <IconTextRow
+            icon="/icons/restaurants/menu.svg"
+            text={restaurant.category ?? '카테고리 정보 없음'}
+            color="#808080"
+            fontSize="var(--font-size-3xs)"
+            fontWeight={400}
+          />
         </IconTextList>
 
         <MenuTitle>메뉴</MenuTitle>
-        {restaurant.menu.map((item, index) => (
-          <MenuItem key={index}>
-            <MenuInfo>
-              {index === 0 && <Badge>대표</Badge>}
-              <MenuName>{item.name}</MenuName>
-              <MenuDescription>{item.description}</MenuDescription>
-              <MenuPrice>{item.price}</MenuPrice>
-            </MenuInfo>
-            <MenuImage src={item.imageUrl} alt={item.name} />
-          </MenuItem>
-        ))}
+        {restaurant.menu.length > 0 ? (
+          restaurant.menu.map((item, index) => (
+            <MenuItem key={index}>
+              <MenuInfo>
+                {item.main && <Badge>대표</Badge>}
+                <MenuName>{item.name}</MenuName>
+                <MenuDescription>{item.introduce}</MenuDescription>
+                <MenuPrice>{item.price?.toLocaleString() ?? 0}원</MenuPrice>
+              </MenuInfo>
+              <MenuImage
+                src={item.imgUrl || '/images/basic-restaurant.svg'}
+                onError={(e) => {
+                  e.currentTarget.src = '/images/basic-restaurant.svg';
+                }}
+                alt={item.name}
+              />
+            </MenuItem>
+          ))
+        ) : (
+          <MenuDescription>메뉴 정보가 없습니다.</MenuDescription>
+        )}
       </ContentSection>
     </PageWrapper>
   );
@@ -130,9 +152,9 @@ const BackButton = styled.button`
   background-color: white;
   border: none;
   border-radius: 50%;
-  width: 20px; /* 수정 */
-  height: 20px; /* 수정 */
-  font-size: 12px; /* 수정 */
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -150,8 +172,8 @@ const BookmarkWrapper = styled.div`
   right: 12px;
   background-color: white;
   border-radius: 50%;
-  width: 20px; /* 수정 */
-  height: 20px; /* 수정 */
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -174,7 +196,7 @@ const RestaurantName = styled.h2`
 const IconTextList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px; /* 아이템 간 간격 */
+  gap: 2px;
   margin-top: 6px;
 `;
 
@@ -194,7 +216,7 @@ const MenuItem = styled.div`
 const MenuInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px; // 각 텍스트 간 간격
+  gap: 4px;
 `;
 
 const MenuName = styled.div`
@@ -230,5 +252,5 @@ const MenuImage = styled.img`
   height: 80px;
   object-fit: cover;
   border-radius: 10px;
-  margin-left: 12px; // 간격 조정
+  margin-left: 12px;
 `;

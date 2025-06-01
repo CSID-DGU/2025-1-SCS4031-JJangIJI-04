@@ -1,4 +1,3 @@
-// src/shared/ui/restaurant/IconTextRow.tsx
 import styled from 'styled-components';
 
 interface IconTextRowProps {
@@ -12,9 +11,9 @@ interface IconTextRowProps {
 export const IconTextRow = ({
   icon,
   text,
-  color = '#666',
+  color = '#808080',
   fontSize = '13px',
-  fontWeight = '400',
+  fontWeight = '600',
 }: IconTextRowProps) => {
   return (
     <Row>
@@ -36,4 +35,10 @@ const Icon = styled.img`
   margin-right: 2px;
 `;
 
-const Text = styled.span``;
+const Text = styled.span`
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+`;

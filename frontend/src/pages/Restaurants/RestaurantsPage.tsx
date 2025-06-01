@@ -1,7 +1,58 @@
 import styled from 'styled-components';
 import { RestaurantListItem } from '@/features/restaurant/ui/RestaurantListItem';
+import { useRecommendedRestaurants } from '@/features/restaurant/api/useRecommendedRestaurants';
+import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
+import FileIcon from '@/assets/icons/file.svg?react';
+
+const MOCK_RESTAURANTS = [
+  {
+    id: 1,
+    menuAverage: 8500,
+    imgUrl: '',
+    streetAddress: '서울시 강남구 강남대로 123',
+    openingHour: '10:00 ~ 20:00',
+    category: '한식',
+    bookmarked: false,
+  },
+  {
+    id: 2,
+    menuAverage: 9200,
+    imgUrl: '',
+    streetAddress: '서울시 마포구 월드컵북로 456',
+    openingHour: '11:30 ~ 22:00',
+    category: '일식',
+    bookmarked: true,
+  },
+  {
+    id: 3,
+    menuAverage: 7900,
+    imgUrl: '',
+    streetAddress: '서울시 종로구 청계천로 789',
+    openingHour: '09:00 ~ 18:00',
+    category: '양식',
+    bookmarked: false,
+  },
+  {
+    id: 4,
+    menuAverage: 78900,
+    imgUrl: '',
+    streetAddress: '서울시 종로구 청계천로 789 22222222',
+    openingHour: '09:00 ~ 18:00',
+    category: '양식',
+    bookmarked: false,
+  },
+  // 필요하면 더 추가
+];
 
 export const RestaurantsPage = () => {
+  // 목데이터 삭제시 삭제
+  const isDev = import.meta.env.DEV;
+  const { data: recommendedRestaurants, isLoading } =
+    useRecommendedRestaurants();
+
+  // 목데이터 삭제시 삭제
+  const restaurants = isDev ? MOCK_RESTAURANTS : (recommendedRestaurants ?? []);
+
   return (
     <Container>
       <Header>
@@ -14,8 +65,16 @@ export const RestaurantsPage = () => {
         <Divider />
       </Header>
 
-      {/* 추천 리스트 컴포넌트 */}
-      <RestaurantListItem />
+      {isLoading ? (
+        <LoadingSpinner message="추천 식당을 불러오는 중입니다..." />
+      ) : recommendedRestaurants?.length ? (
+        <RestaurantListItem restaurants={restaurants} />
+      ) : (
+        <EmptyBlock>
+          <FileIcon />
+          <NoDataText>추천할 식당이 없습니다.</NoDataText>
+        </EmptyBlock>
+      )}
     </Container>
   );
 };
@@ -52,4 +111,24 @@ const Divider = styled.hr`
   border: none;
   border-top: 1px solid #ccc;
   margin: 16px 0 32px;
+`;
+
+const EmptyBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 80px;
+
+  svg {
+    width: 40px;
+    height: 40px;
+    opacity: 0.4;
+  }
+`;
+
+const NoDataText = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: #808080;
 `;

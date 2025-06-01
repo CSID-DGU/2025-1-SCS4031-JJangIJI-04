@@ -1,88 +1,78 @@
 import styled from 'styled-components';
-import { Restaurant } from '@/features/restaurant/types/restaurant';
 import { Link } from 'react-router-dom';
 import { Crown } from '@/features/restaurant/ui/crown/Crown';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
-import { getRestaurants } from '@/features/restaurant/api/restaurantApi';
-import { useEffect, useState } from 'react';
 
-const detailItems = [
-  {
-    icon: '/icons/restaurants/price.svg',
-    text: (r: Restaurant) => `평균 가격 ${r.averagePrice.toLocaleString()}원`,
-    color: '#FF6701',
-    fontSize: 'var(--font-size-2xs)',
-    fontWeight: 600,
-  },
-  {
-    icon: '/icons/restaurants/place.svg',
-    text: () => '음식점 주소',
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-  {
-    icon: '/icons/restaurants/time.svg',
-    text: () => '영업 시간',
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-  {
-    icon: '/icons/restaurants/menu.svg',
-    text: () => '음식 종류',
-    color: '#808080',
-    fontSize: 'var(--font-size-3xs)',
-    fontWeight: 400,
-  },
-];
+interface Props {
+  restaurants: {
+    id: number;
+    menuAverage: number;
+    imgUrl: string;
+    streetAddress: string;
+    openingHour: string;
+    category: string;
+    bookmarked: boolean;
+  }[];
+}
 
-export const RestaurantListItem = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-
-  useEffect(() => {
-    getRestaurants().then(setRestaurants);
-  }, []);
-
-  // 북마크 토글하는 함수 (index 기반)
-  const toggleBookmark = (index: number) => {
-    setRestaurants((prev) =>
-      prev.map((restaurant, idx) =>
-        idx === index
-          ? { ...restaurant, bookmarked: !restaurant.bookmarked }
-          : restaurant
-      )
-    );
-  };
+export const RestaurantListItem = ({ restaurants }: Props) => {
   return (
     <ListWrapper>
       {restaurants.map((restaurant, index) => (
-        <Card>
+        <Card key={restaurant.id}>
           <ThumbnailLink to={`/restaurants/${restaurant.id}`}>
-            <Thumbnail src={restaurant.imageUrls[0]} alt={restaurant.name} />
+            <Thumbnail
+              src={restaurant.imgUrl || '/images/basic-restaurant.svg'}
+              onError={(e) => {
+                e.currentTarget.src = '/images/basic-restaurant.svg';
+              }}
+              alt={`추천 ${index + 1}`}
+            />
           </ThumbnailLink>
           <Info>
             <TopRow>
               <NameWrapper>
                 <Crown rank={index} />
-                <Name>{restaurant.name}</Name>
+                <Name>{`추천 ${index + 1}`}</Name>
               </NameWrapper>
-              <BookmarkButton
-                active={restaurant.bookmarked}
-                onClick={() => toggleBookmark(index)}
-              />
+              <BookmarkButtonWrapper>
+                <BookmarkButton
+                  active={restaurant.bookmarked}
+                  onClick={() => {
+                    // 북마크 API 연동은 나중에
+                  }}
+                />
+              </BookmarkButtonWrapper>
             </TopRow>
-            {detailItems.map(({ icon, text, color, fontSize, fontWeight }) => (
-              <IconTextRow
-                key={icon}
-                icon={icon}
-                text={typeof text === 'function' ? text(restaurant) : text}
-                color={color}
-                fontSize={fontSize}
-                fontWeight={fontWeight}
-              />
-            ))}
+            <IconTextRow
+              icon="/icons/restaurants/price.svg"
+              text={`평균 가격 ${restaurant.menuAverage.toLocaleString()}원`}
+              color="#FF6701"
+              fontSize="var(--font-size-2xs)"
+              fontWeight={600}
+            />
+            <IconTextRow
+              icon="/icons/restaurants/place.svg"
+              text={restaurant.streetAddress}
+              color="#808080"
+              fontSize="var(--font-size-3xs)"
+              fontWeight={600}
+            />
+            <IconTextRow
+              icon="/icons/restaurants/time.svg"
+              text={restaurant.openingHour}
+              color="#808080"
+              fontSize="var(--font-size-3xs)"
+              fontWeight={600}
+            />
+            <IconTextRow
+              icon="/icons/restaurants/menu.svg"
+              text={restaurant.category}
+              color="#808080"
+              fontSize="var(--font-size-3xs)"
+              fontWeight={600}
+            />
           </Info>
         </Card>
       ))}
@@ -92,15 +82,15 @@ export const RestaurantListItem = () => {
 
 const Card = styled.div`
   display: flex;
-  align-items: stretch; /* stretch로 자식 height 맞춤 */
+  align-items: stretch;
   background-color: #fff;
   overflow: hidden;
-  height: 99px; /* Thumbnail과 동일하게 고정 */
+  height: 99px;
 `;
 
 const ThumbnailLink = styled(Link)`
   display: block;
-  height: 100%; /* Card 기준 */
+  height: 100%;
 `;
 
 const Thumbnail = styled.img`
@@ -118,11 +108,11 @@ const Info = styled.div`
 `;
 
 const TopRow = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: var(--font-size-lg);
-  font-weight: bold;
+  gap: 4px;
+  margin-bottom: 4px;
 `;
 
 const NameWrapper = styled.div`
@@ -131,10 +121,21 @@ const NameWrapper = styled.div`
   gap: 4px;
 `;
 
-const Name = styled.span`
-  font-size: var(--font-size-md);
-  font-weight: 500;
+const BookmarkButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
+
+const Name = styled.span`
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 115px;
+`;
+
 const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;

@@ -141,13 +141,13 @@ public class RestaurantService {
 
         for (Restaurant restaurant : recommendRestaurants) {
             Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
-            Optional<RestaurantImage> restaurantImage = restaurantImageRepository.findByRestaurantId(restaurant.getId());
+            List<RestaurantImage> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId());
             boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
             result.add(new RecommendRestaurantResponse(
                     restaurant.getId(),
                     restaurant.getMenuAverage(),
-                    restaurantImage.map(RestaurantImage::getImageUrl).orElse(null),
+                    restaurantImages.stream().map(RestaurantImage::getImageUrl).findFirst().orElse(null),
                     restaurant.getStreetAddress(),
                     convertToString(openingHour),
                     restaurant.getCategoryName(),

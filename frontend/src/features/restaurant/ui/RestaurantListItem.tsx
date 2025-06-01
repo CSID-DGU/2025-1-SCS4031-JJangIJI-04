@@ -87,7 +87,12 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
             />
             <IconTextRow
               icon="/icons/restaurants/time.svg"
-              text={restaurant.openingHours}
+              text={(() => {
+                const parts = restaurant.openingHours.split(' ');
+                const day = parts[0];
+                const isClosed = restaurant.openingHours.includes('null');
+                return isClosed ? `${day} 휴무` : restaurant.openingHours;
+              })()}
               color="#808080"
               fontSize="var(--font-size-3xs)"
               fontWeight={600}

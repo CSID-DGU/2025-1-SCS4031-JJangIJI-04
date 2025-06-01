@@ -2,11 +2,13 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRemainingBudget } from '@/features/goals/api/useRemainingBudget';
 import { AxiosError } from 'axios';
+import { format } from 'date-fns';
 
 export const useCheckSavingGoal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { error, data, isSuccess, isLoading } = useRemainingBudget();
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const { error, data, isSuccess, isLoading } = useRemainingBudget(today);
   const redirectAttempted = useRef(false);
 
   useEffect(() => {
@@ -44,7 +46,8 @@ export const useCheckSavingGoal = () => {
     if (error) {
       const axiosError = error as AxiosError<{ exceptionCode: string }>;
       const isGoalMissing =
-        axiosError.response?.data?.exceptionCode === 'EXPENSE_SAVING_GOAL_NOT_FOUND';
+        axiosError.response?.data?.exceptionCode ===
+        'EXPENSE_SAVING_GOAL_NOT_FOUND';
 
       if (
         isGoalMissing &&

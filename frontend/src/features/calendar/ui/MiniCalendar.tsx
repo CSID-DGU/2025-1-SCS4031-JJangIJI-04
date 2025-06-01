@@ -1,7 +1,12 @@
 import styled from 'styled-components';
-import { format, parseISO, eachDayOfInterval } from 'date-fns';
+import {
+  format,
+  parseISO,
+  eachDayOfInterval,
+  startOfWeek,
+  endOfWeek,
+} from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { getCurrentWeek } from '@/lib/date/getCurrentWeek';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 import { formatExpenseAmount } from '@/lib/number/formatExpenseAmount';
 import GoodIcon from '@/assets/icons/good-icon.svg?react';
@@ -16,17 +21,28 @@ interface Props {
   selectedDate?: string;
 }
 
-export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect, selectedDate }: Props) => {
-  const { startDate, endDate } = getCurrentWeek();
+export const MiniCalendar = ({
+  dailyStatusList,
+  onExpand,
+  onDateSelect,
+  selectedDate,
+}: Props) => {
+  const referenceDate = selectedDate ? parseISO(selectedDate) : new Date();
+  const startDate = format(
+    startOfWeek(referenceDate, { weekStartsOn: 0 }),
+    'yyyy-MM-dd'
+  );
+  const endDate = format(
+    endOfWeek(referenceDate, { weekStartsOn: 0 }),
+    'yyyy-MM-dd'
+  );
   const weekDates = eachDayOfInterval({
     start: parseISO(startDate),
     end: parseISO(endDate),
   });
 
   const today = new Date();
-  const statusMap = Object.fromEntries(
-    dailyStatusList.map((d) => [d.date, d])
-  );
+  const statusMap = Object.fromEntries(dailyStatusList.map((d) => [d.date, d]));
 
   return (
     <Wrapper>
@@ -43,8 +59,8 @@ export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect, selected
             : '-';
 
           return (
-            <Day 
-              key={dateStr} 
+            <Day
+              key={dateStr}
               onClick={() => !isFuture && onDateSelect?.(dateStr)}
               $isFuture={isFuture}
             >
@@ -67,10 +83,14 @@ export const MiniCalendar = ({ dailyStatusList, onExpand, onDateSelect, selected
 
 function getIconByStatus(status?: 'GOOD' | 'NOT_BAD' | 'BAD') {
   switch (status) {
-    case 'GOOD': return GoodIcon;
-    case 'NOT_BAD': return NormalIcon;
-    case 'BAD': return DangerousIcon;
-    default: return BasicIcon;
+    case 'GOOD':
+      return GoodIcon;
+    case 'NOT_BAD':
+      return NormalIcon;
+    case 'BAD':
+      return DangerousIcon;
+    default:
+      return BasicIcon;
   }
 }
 

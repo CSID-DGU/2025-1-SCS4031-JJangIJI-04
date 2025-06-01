@@ -1,14 +1,9 @@
 import styled from 'styled-components';
-import {
-  format,
-  parseISO,
-  eachDayOfInterval,
-  startOfWeek,
-  endOfWeek,
-} from 'date-fns';
+import { format, parseISO, eachDayOfInterval } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import type { DailyExpenseStatus } from '@/features/calendar/types/expense';
 import { formatExpenseAmount } from '@/lib/number/formatExpenseAmount';
+import { getWeekRange } from '@/lib/date/getWeekRange';
 import GoodIcon from '@/assets/icons/good-icon.svg?react';
 import NormalIcon from '@/assets/icons/normal-icon.svg?react';
 import DangerousIcon from '@/assets/icons/dangerous-icon.svg?react';
@@ -28,14 +23,7 @@ export const MiniCalendar = ({
   selectedDate,
 }: Props) => {
   const referenceDate = selectedDate ? parseISO(selectedDate) : new Date();
-  const startDate = format(
-    startOfWeek(referenceDate, { weekStartsOn: 0 }),
-    'yyyy-MM-dd'
-  );
-  const endDate = format(
-    endOfWeek(referenceDate, { weekStartsOn: 0 }),
-    'yyyy-MM-dd'
-  );
+  const { startDate, endDate } = getWeekRange(referenceDate);
   const weekDates = eachDayOfInterval({
     start: parseISO(startDate),
     end: parseISO(endDate),

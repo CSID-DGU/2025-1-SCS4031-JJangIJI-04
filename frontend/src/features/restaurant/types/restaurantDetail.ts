@@ -1,3 +1,11 @@
+export interface MenuItemDetail {
+  name: string;
+  introduce: string;
+  price: number;
+  imgUrl: string;
+  main: boolean;
+}
+
 export interface RestaurantDetail {
   id: number;
   name: string;
@@ -6,12 +14,6 @@ export interface RestaurantDetail {
   streetAddress: string;
   openingHour: string[];
   category: string;
-  menu: {
-    name: string;
-    introduce: string;
-    price: number;
-    imgUrl: string;
-    main: boolean;
-  }[];
+  menu: MenuItemDetail[];
   bookmarked: boolean;
 }

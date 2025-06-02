@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
 import { InputField } from '@/shared/ui/InputField';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
+import { useUpdateNickname } from '@/features/auth/mutations/useUpdateNickname';
 
 interface FullScreenPopupProps {
   visible: boolean;
@@ -25,6 +26,7 @@ export const FullScreenPopup = ({
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState('');
   const isNicknameValid = nicknameError === '' && nickname.trim() !== '';
+  const { mutate: updateNickname, isPending } = useUpdateNickname();
 
   useEffect(() => {
     if (visible) document.body.style.overflow = 'hidden';
@@ -70,10 +72,16 @@ export const FullScreenPopup = ({
                 error={nicknameError}
               />
               <BottomButton
-                disabled={!isNicknameValid}
+                disabled={!isNicknameValid || isPending}
                 onClick={() => {
-                  alert(`변경할 닉네임: ${nickname}`);
-                  onClose();
+                  updateNickname(nickname, {
+                    onSuccess: () => {
+                      onClose();
+                    },
+                    onError: () => {
+                      alert('닉네임 변경에 실패했어요. 다시 시도해주세요.');
+                    },
+                  });
                 }}
               >
                 변경하기

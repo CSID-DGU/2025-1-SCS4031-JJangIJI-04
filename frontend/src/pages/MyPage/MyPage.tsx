@@ -125,6 +125,7 @@ const ProfileSection = styled.div`
 const LeftProfile = styled.div`
   display: flex;
   gap: 12px;
+  margin-left: 12px;
 `;
 
 const Avatar = styled.img`
@@ -191,6 +192,8 @@ const ActionButton = styled.button`
   cursor: pointer;
   text-align: center;
   white-space: pre-line;
+  color: #202632;
+  font-weight: 500;
 `;
 
 const TabGroup = styled.div`

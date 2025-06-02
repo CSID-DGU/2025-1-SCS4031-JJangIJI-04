@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
 import { InputField } from '@/shared/ui/InputField';
+import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 
 interface FullScreenPopupProps {
   visible: boolean;
@@ -126,9 +127,8 @@ const SettingsList = () => (
         <img src="/icons/arrow-right.svg" alt="arrow" />
       </SettingItem>
     ))}
-    <Divider />
+    <FullWidthDivider />
     <SettingItem className="logout">로그아웃</SettingItem>
-    <SettingItem className="withdraw">회원탈퇴</SettingItem>
   </SettingsContainer>
 );
 

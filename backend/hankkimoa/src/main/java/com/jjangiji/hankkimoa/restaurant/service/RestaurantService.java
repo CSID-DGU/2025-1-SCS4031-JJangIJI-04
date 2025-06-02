@@ -2,8 +2,6 @@ package com.jjangiji.hankkimoa.restaurant.service;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
-import com.jjangiji.hankkimoa.expense.service.ExpenseSavingGoalService;
-import com.jjangiji.hankkimoa.expense.service.dto.response.RemainingBudgetResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
@@ -15,24 +13,20 @@ import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
-import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendServerRestaurantsRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
 import com.jjangiji.hankkimoa.user.domain.User;
-import com.jjangiji.hankkimoa.user.domain.UserCategory;
 import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
-import com.jjangiji.hankkimoa.user.repository.UserCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,9 +35,7 @@ import java.util.Set;
 @Service
 public class RestaurantService {
 
-    private final ExpenseSavingGoalService expenseSavingGoalService;
     private final RecommendClient recommendClient;
-    private final UserCategoryRepository userCategoryRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final OpeningHoursRepository openingHoursRepository;
@@ -124,38 +116,29 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecommendRestaurantResponse> readRecommendRestaurants(User user) {
-        // todo expenseSavingGoalService 리팩토링
-        List<String> userCategory= userCategoryRepository.findAllByUser(user).stream()
-                .map(UserCategory::getCategoryName)
-                .toList();
-        RemainingBudgetResponse remainingBudgetResponse = expenseSavingGoalService.readRemainingBudget(user, LocalDate.now());
-        RecommendServerRestaurantsRequest request = new RecommendServerRestaurantsRequest(
-                user.getId(),
-                remainingBudgetResponse.remainingBudget(),
-                userCategory);
-        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(request);
+    public List<RestaurantSimpleResponse> readRecommendRestaurants(User user) {
+        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(user);
 
-        List<RecommendRestaurantResponse> result = new ArrayList<>();
         List<Restaurant> recommendRestaurants = restaurantRepository.findAllByUniqueIdIn(recommendResponse.restaurantUniqueIds());
+        return recommendRestaurants.stream()
+                .map(restaurant -> toRestaurantSimpleResponse(user, restaurant))
+                .toList();
+    }
 
-        for (Restaurant restaurant : recommendRestaurants) {
-            Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
-            List<RestaurantImage> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId());
-            boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+    private RestaurantSimpleResponse toRestaurantSimpleResponse(User user, Restaurant restaurant) {
+        Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
+        List<RestaurantImage> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId());
+        boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
-            result.add(new RecommendRestaurantResponse(
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    restaurant.getMenuAverage(),
-                    restaurantImages.stream().map(RestaurantImage::getImageUrl).findFirst().orElse(null),
-                    restaurant.getStreetAddress(),
-                    convertToString(openingHour),
-                    restaurant.getCategoryName(),
-                    bookmared));
-        }
-
-        return result;
+        return new RestaurantSimpleResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getMenuAverage(),
+                restaurantImages.stream().map(RestaurantImage::getImageUrl).findFirst().orElse(null),
+                restaurant.getStreetAddress(),
+                convertToString(openingHour),
+                restaurant.getCategoryName(),
+                bookmared);
     }
 
     private Optional<OpeningHour> readTodayOpeningHour(Restaurant restaurant) {

@@ -11,7 +11,7 @@ import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.MenuRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
-import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
@@ -118,7 +118,7 @@ class RestaurantServiceTest extends IntegrationTest {
                 .thenReturn(new RecommendServerRestaurantsResponse(List.of(uniqueId)));
 
         // when
-        List<RecommendRestaurantResponse> results = restaurantService.readRecommendRestaurants(user);
+        List<RestaurantSimpleResponse> results = restaurantService.readRecommendRestaurants(user);
 
         // then
         Assertions.assertThat(results.get(0).id()).isEqualTo(restaurant.getId());

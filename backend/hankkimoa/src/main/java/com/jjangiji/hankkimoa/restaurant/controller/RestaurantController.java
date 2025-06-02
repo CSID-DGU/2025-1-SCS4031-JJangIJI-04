@@ -2,7 +2,7 @@ package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
-import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendRestaurantResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
@@ -36,8 +36,8 @@ public class RestaurantController {
     }
 
     @GetMapping("/api/recommendation/restaurants")
-    public ResponseEntity<List<RecommendRestaurantResponse>> readRecommendRestaurants(@AuthRequiredPrincipal User user) {
-        List<RecommendRestaurantResponse> recommendRestaurants = restaurantService.readRecommendRestaurants(user);
+    public ResponseEntity<List<RestaurantSimpleResponse>> readRecommendRestaurants(@AuthRequiredPrincipal User user) {
+        List<RestaurantSimpleResponse> recommendRestaurants = restaurantService.readRecommendRestaurants(user);
         return ResponseEntity.ok(recommendRestaurants);
     }
 

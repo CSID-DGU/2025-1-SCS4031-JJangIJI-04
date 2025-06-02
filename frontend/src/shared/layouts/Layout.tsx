@@ -5,7 +5,6 @@ import { useAuthInit } from '@/features/auth/hooks/useAuthInit';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import { BottomNavBar } from '@/widgets/BottomNavBar';
-import { ScrollToTop } from '@/shared/ui/ScrollToTop/ScrollToTop';
 
 interface LayoutProps {
   children?: ReactNode;
@@ -26,7 +25,6 @@ export const Layout = ({ hasFooter = true }: LayoutProps) => {
 
   return (
     <Container>
-      <ScrollToTop />
       <Main $hasFooter={hasFooter}>
         <Outlet />
       </Main>

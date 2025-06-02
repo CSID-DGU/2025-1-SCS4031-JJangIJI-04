@@ -53,10 +53,13 @@ export const ExpandableCalendar = ({
   return (
     <Container>
       <motion.div
-        animate={{ height: isExpanded ? '80vh' : '150px' }} //동적 height
+        animate={{ height: isExpanded ? 'auto' : '150px' }} // PC 기준 기본값
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-        style={{ overflow: 'hidden' }}
+        style={{
+          overflowY: isExpanded && window.innerWidth < 768 ? 'auto' : 'hidden',
+          height: isExpanded && window.innerWidth < 768 ? '80vh' : undefined,
+        }}
       >
         <Wrapper $isMini={!isExpanded}>
           {!isExpanded ? (
@@ -120,4 +123,5 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
+  padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '24px')};
 `;

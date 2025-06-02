@@ -18,9 +18,13 @@ interface RestaurantItem {
 
 interface Props {
   restaurants: RestaurantItem[];
+  showCrown?: boolean;
 }
 
-export const RestaurantListItem = ({ restaurants }: Props) => {
+export const RestaurantListItem = ({
+  restaurants,
+  showCrown = true,
+}: Props) => {
   const { mutate } = useToggleBookmark();
 
   const handleToggle = (restaurant: RestaurantItem) => {
@@ -46,7 +50,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
           <Info>
             <TopRow>
               <NameWrapper>
-                <Crown rank={index} />
+                {showCrown && <Crown rank={index} />}
                 <Name>{restaurant.name || '이름 없는 식당'}</Name>
               </NameWrapper>
               <BookmarkButtonWrapper>

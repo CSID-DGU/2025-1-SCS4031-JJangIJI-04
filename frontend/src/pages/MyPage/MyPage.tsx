@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useMonthlyExpenseTotal } from '@/features/myPage/api/useMonthlyExpenseTotal';
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useUserInfo } from '@/features/auth/api/useUserInfo';
+import { useBookmarkedRestaurants } from '@/features/restaurant/api/useBookmarkedRestaurants';
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState<'bookmark' | 'likes'>('bookmark');
@@ -14,6 +15,8 @@ const MyPage = () => {
   const { userId } = useAuthStore();
   const { data: monthlyTotal } = useMonthlyExpenseTotal(userId ?? null);
   const { data: userInfo, isLoading } = useUserInfo();
+  const { data: bookmarkedRestaurants, isLoading: isBookmarkedLoading } =
+    useBookmarkedRestaurants();
 
   return (
     <Container>
@@ -74,20 +77,19 @@ const MyPage = () => {
       </TabGroup>
 
       {activeTab === 'bookmark' ? (
-        // 북마크 더미 처리
-        false ? (
-          <RestaurantListItem restaurants={[]} />
-        ) : (
+        isBookmarkedLoading ? (
+          <Message>불러오는 중...</Message>
+        ) : !bookmarkedRestaurants || bookmarkedRestaurants.length === 0 ? (
           <EmptyState>
             <EmptyIcon src="/icons/bookmarks.svg" alt="북마크 없음" />
             <Message>아직 북마크한 식당이 없어요</Message>
           </EmptyState>
+        ) : (
+          <RestaurantListItem
+            restaurants={bookmarkedRestaurants}
+            showCrown={false}
+          />
         )
-      ) : // 좋아요 피드도 더미 처리
-      false ? (
-        <PostList>
-          {/* 나중에 useLikedPosts() 훅으로 받은 데이터 map */}
-        </PostList>
       ) : (
         <EmptyState>
           <EmptyIcon src="/icons/insert-comment.svg" alt="이모지 피드 없음" />
@@ -212,13 +214,6 @@ const Tab = styled.button<{ $active?: boolean }>`
     $active ? '1px solid #f97316' : '1px solid #808080'};
   font-weight: bold;
   cursor: pointer;
-`;
-
-const PostList = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-  gap: 24px;
 `;
 
 const EmptyState = styled.div`

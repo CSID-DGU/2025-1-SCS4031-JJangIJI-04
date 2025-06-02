@@ -52,13 +52,22 @@ export const ExpandableCalendar = ({
 
   return (
     <Container>
+      {/* 달력 영역 */}
       <motion.div
-        animate={{ height: isExpanded ? '80vh' : '150px' }}
+        animate={{
+          height: isExpanded
+            ? window.innerWidth < 768
+              ? '80vh'
+              : 'auto'
+            : '150px',
+        }}
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         style={{
+          position: 'relative',
+          zIndex: 10, //FullCalendar가 블러 위로 올라오게
           overflowY: isExpanded && window.innerWidth < 768 ? 'auto' : 'hidden',
-          WebkitOverflowScrolling: 'touch', // iOS 부드러운 스크롤
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         <Wrapper $isMini={!isExpanded}>
@@ -82,6 +91,7 @@ export const ExpandableCalendar = ({
         </Wrapper>
       </motion.div>
 
+      {/* 블러 배경 (달력 아래에 깔리게) */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -112,16 +122,15 @@ const ModalBackground = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  bottom: 70px; // 하단 고정 네비게이션 영역 침범 방지
+  bottom: 70px; // 모바일 하단 네비게이션 보호
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
-  z-index: 5;
+  z-index: 1;
 `;
 
 const Wrapper = styled.div<{ $isMini: boolean }>`
   position: relative;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 10;
   padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '18px')};
 `;

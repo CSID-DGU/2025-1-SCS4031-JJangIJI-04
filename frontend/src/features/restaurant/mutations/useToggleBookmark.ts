@@ -12,9 +12,9 @@ export const useToggleBookmark = () => {
   return useMutation({
     mutationFn: async ({ restaurantId, isBookmarked }: ToggleArgs) => {
       if (isBookmarked) {
-        await api.delete(`/bookmarks/${restaurantId}`);
+        await api.delete(`/bookmarks/restaurants/${restaurantId}`);
       } else {
-        await api.post(`/bookmarks/${restaurantId}`);
+        await api.post(`/bookmarks/restaurants/${restaurantId}`);
       }
     },
     onSuccess: (_, variables) => {

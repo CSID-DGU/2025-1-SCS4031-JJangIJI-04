@@ -108,20 +108,20 @@ const Container = styled.div`
 `;
 
 const ModalBackground = styled.div`
-  position: absolute;
-  top: 420px;
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  bottom: -100vh;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
-  z-index: 1;
+  z-index: 5;
 `;
 
 const Wrapper = styled.div<{ $isMini: boolean }>`
   position: relative;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 2;
-  padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '24px')};
+  z-index: 10;
+  padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '18px')};
 `;

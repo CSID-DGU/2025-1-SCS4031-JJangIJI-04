@@ -38,6 +38,7 @@ export const useToggleEmoji = () => {
     onSuccess: () => {
       // 이모지 누른 피드 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['likedEmojiPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['community-posts'] });
     },
   });
 };

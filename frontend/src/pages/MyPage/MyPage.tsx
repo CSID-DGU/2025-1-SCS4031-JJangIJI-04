@@ -6,7 +6,8 @@ import { useMonthlyExpenseTotal } from '@/features/myPage/api/useMonthlyExpenseT
 import { useAuthStore } from '@/features/auth/store/useAuthStore';
 import { useUserInfo } from '@/features/auth/api/useUserInfo';
 import { useBookmarkedRestaurants } from '@/features/restaurant/api/useBookmarkedRestaurants';
-
+import { useLikedEmojiPosts } from '@/features/community/api/useLikedEmojiPosts';
+import { CommunityCard } from '@/features/community/ui/CommunityCard';
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState<'bookmark' | 'likes'>('bookmark');
   const [popupType, setPopupType] = useState<
@@ -17,6 +18,8 @@ const MyPage = () => {
   const { data: userInfo, isLoading } = useUserInfo();
   const { data: bookmarkedRestaurants, isLoading: isBookmarkedLoading } =
     useBookmarkedRestaurants();
+  const { data: likedPosts = [], isLoading: isLikedLoading } =
+    useLikedEmojiPosts();
 
   return (
     <Container>
@@ -90,12 +93,22 @@ const MyPage = () => {
             showCrown={false}
           />
         )
-      ) : (
-        <EmptyState>
-          <EmptyIcon src="/icons/insert-comment.svg" alt="이모지 피드 없음" />
-          <Message>아직 이모지 누른 피드가 없어요</Message>
-        </EmptyState>
-      )}
+      ) : activeTab === 'likes' ? (
+        isLikedLoading ? (
+          <Message>불러오는 중...</Message>
+        ) : likedPosts.length === 0 ? (
+          <EmptyState>
+            <EmptyIcon src="/icons/insert-comment.svg" alt="이모지 피드 없음" />
+            <Message>아직 이모지 누른 피드가 없어요</Message>
+          </EmptyState>
+        ) : (
+          <PostList>
+            {likedPosts.map((post) => (
+              <CommunityCard key={post.expenseId} post={post} />
+            ))}
+          </PostList>
+        )
+      ) : null}
 
       <FullScreenPopup
         visible={!!popupType}
@@ -236,4 +249,10 @@ const EmptyIcon = styled.img`
 
 const Message = styled.div`
   font-size: var(--font-size-xs);
+`;
+
+const PostList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;

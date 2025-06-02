@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import api from '@/lib/axios';
 import {
@@ -7,6 +7,8 @@ import {
 } from '@/features/community/types/emoji';
 
 export const useToggleEmoji = () => {
+  const queryClient = useQueryClient();
+
   return useMutation<
     void,
     AxiosError<EmojiApiErrorResponse>,
@@ -32,6 +34,10 @@ export const useToggleEmoji = () => {
 
         throw error;
       }
+    },
+    onSuccess: () => {
+      // 이모지 누른 피드 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['likedEmojiPosts'] });
     },
   });
 };

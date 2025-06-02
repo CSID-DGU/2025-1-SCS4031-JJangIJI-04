@@ -53,10 +53,10 @@ export const ExpandableCalendar = ({
   return (
     <Container>
       <motion.div
-        animate={{ height: isExpanded ? 650 : 150 }}
+        animate={{ height: isExpanded ? 'auto' : 150 }}
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-        style={{ overflow: 'hidden' }}
+        style={{ overflow: 'hidden', maxHeight: '90vh' }}
       >
         <Wrapper $isMini={!isExpanded}>
           {!isExpanded ? (
@@ -67,16 +67,14 @@ export const ExpandableCalendar = ({
               selectedDate={selectedDate}
             />
           ) : (
-            <ScrollableArea>
-              <FullCalendar
-                currentDate={currentDate}
-                onDateChange={setCurrentDate}
-                dailyStatusList={dailyStatusList}
-                onCollapse={handleExpand}
-                onDateSelect={onDateSelect}
-                selectedDate={selectedDate}
-              />
-            </ScrollableArea>
+            <FullCalendar
+              currentDate={currentDate}
+              onDateChange={setCurrentDate}
+              dailyStatusList={dailyStatusList}
+              onCollapse={handleExpand}
+              onDateSelect={onDateSelect}
+              selectedDate={selectedDate}
+            />
           )}
         </Wrapper>
       </motion.div>
@@ -122,11 +120,9 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
-`;
-
-const ScrollableArea = styled.div`
-  height: 100%;
+  padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '30px')};
   overflow-y: auto;
+  max-height: 90vh;
   -webkit-overflow-scrolling: touch;
 
   @media (min-width: 768px) {

@@ -254,7 +254,8 @@ const IconWrapper = styled.div.withConfig({
 const HandleWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 30px;
+  margin-bottom: 5px;
 `;
 
 const Handle = styled.div`

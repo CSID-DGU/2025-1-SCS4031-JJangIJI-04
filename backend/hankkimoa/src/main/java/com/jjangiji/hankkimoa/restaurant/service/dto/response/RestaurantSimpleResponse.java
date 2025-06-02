@@ -7,5 +7,5 @@ public record RestaurantSimpleResponse(Long id,
                                        String streetAddress,
                                        String openingHours,
                                        String category,
-                                       boolean bookmared) {
+                                       boolean bookmarked) {
 }

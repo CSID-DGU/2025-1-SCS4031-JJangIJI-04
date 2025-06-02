@@ -45,10 +45,6 @@ const MyPage = () => {
               </SpentText>
             </UserInfo>
           </LeftProfile>
-          <ToggleGroup>
-            <ToggleButton $active={false}>달력 공개</ToggleButton>
-            <ToggleButton $active>달력 비공개</ToggleButton>
-          </ToggleGroup>
         </ProfileSection>
       </Header>
 
@@ -163,28 +159,6 @@ const TopRight = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-`;
-
-const ToggleGroup = styled.div`
-  display: flex;
-  background-color: #ffc288;
-  border-radius: 999px;
-  overflow: hidden;
-  width: 130px;
-  height: 24px;
-`;
-
-const ToggleButton = styled.button<{ $active?: boolean }>`
-  flex: 1;
-  padding: ${({ $active }) => ($active ? '6px 8px' : '6px 0')};
-  border: none;
-  border-radius: ${({ $active }) => ($active ? '20px' : '0')};
-  background-color: ${({ $active }) => ($active ? '#FF6701' : '#FFC288')};
-  color: white;
-  font-weight: bold;
-  font-size: var(--font-size-4xs);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 `;
 
 const GearButton = styled.button`

@@ -132,7 +132,7 @@ public class RestaurantService {
                 .map(RestaurantImage::getImageUrl)
                 .findFirst()
                 .orElse(null);
-        boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+        boolean bookmarked = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
         return new RestaurantSimpleResponse(
                 restaurant.getId(),
@@ -142,7 +142,7 @@ public class RestaurantService {
                 restaurant.getStreetAddress(),
                 convertToString(openingHour),
                 restaurant.getCategoryName(),
-                bookmared);
+                bookmarked);
     }
 
     private Optional<OpeningHour> readTodayOpeningHour(Restaurant restaurant) {
@@ -179,7 +179,7 @@ public class RestaurantService {
                         menu.getImageUrl(),
                         menu.isMain()))
                 .toList();
-        boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+        boolean bookmarked = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
         return new RestaurantResponse(
                 restaurant.getId(),
@@ -190,7 +190,7 @@ public class RestaurantService {
                 openingHours,
                 restaurant.getCategoryName(),
                 menus,
-                bookmared
+                bookmarked
                 );
     }
 

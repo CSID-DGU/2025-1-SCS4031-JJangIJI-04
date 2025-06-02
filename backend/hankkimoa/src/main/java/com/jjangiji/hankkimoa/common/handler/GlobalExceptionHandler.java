@@ -1,10 +1,10 @@
 package com.jjangiji.hankkimoa.common.handler;
 
 import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
-import com.jjangiji.hankkimoa.common.exception.ExceptionResponse;
+import com.jjangiji.hankkimoa.common.exception.response.ExceptionResponse;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.common.exception.OauthException;
-import com.jjangiji.hankkimoa.common.exception.OauthExceptionResponse;
+import com.jjangiji.hankkimoa.common.exception.response.OauthExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;

@@ -5,6 +5,7 @@ import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
 import { useState } from 'react';
 import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
+import { isRestaurantBookmarked } from '@/lib/bookmark/isRestaurantBookmarked';
 
 interface RestaurantItem {
   id: number;
@@ -66,7 +67,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
               </NameWrapper>
               <BookmarkButtonWrapper>
                 <BookmarkButton
-                  active={localBookmarks[restaurant.id]}
+                  active={isRestaurantBookmarked(localBookmarks, restaurant.id)}
                   onClick={() => handleToggle(restaurant)}
                 />
               </BookmarkButtonWrapper>

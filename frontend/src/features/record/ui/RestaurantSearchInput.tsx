@@ -66,10 +66,14 @@ export const RestaurantSearchInput = ({
     onChange(newValue); // 직접 입력값도 전달
   };
 
-  const handleSelectRestaurant = (restaurant: Restaurant) => {
+  const handleSelectRestaurant = (
+    restaurant: Restaurant,
+    event: React.MouseEvent
+  ) => {
+    event.stopPropagation();
     setSearchTerm(restaurant.name);
     setIsOpen(false);
-    onChange(restaurant.name, restaurant); // 선택된 식당 정보도 함께 전달
+    onChange(restaurant.name, restaurant);
   };
 
   const handleWrapperClick = () => {
@@ -92,7 +96,7 @@ export const RestaurantSearchInput = ({
             restaurants.map((restaurant) => (
               <DropdownItem
                 key={restaurant.id}
-                onClick={() => handleSelectRestaurant(restaurant)}
+                onClick={(e) => handleSelectRestaurant(restaurant, e)}
               >
                 <RestaurantName>{restaurant.name}</RestaurantName>
                 <RestaurantAddress>{restaurant.address}</RestaurantAddress>

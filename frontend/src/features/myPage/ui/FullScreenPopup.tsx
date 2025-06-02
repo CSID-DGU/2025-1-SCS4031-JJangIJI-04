@@ -246,9 +246,3 @@ const SettingItem = styled.div`
   align-items: center;
   cursor: pointer;
 `;
-
-const Divider = styled.div`
-  height: 4px;
-  background-color: #fcdcb4;
-  margin: 12px 0;
-`;

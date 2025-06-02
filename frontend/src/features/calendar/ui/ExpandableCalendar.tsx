@@ -125,7 +125,11 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
 `;
 
 const ScrollableArea = styled.div`
-  max-height: 650px;
+  height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+
+  @media (min-width: 768px) {
+    overflow-y: visible;
+  }
 `;

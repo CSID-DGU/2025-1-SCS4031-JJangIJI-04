@@ -15,7 +15,10 @@ interface FullScreenPopupProps {
 const settingData = [
   { label: '공지사항', link: '/' },
   { label: '고객센터', link: '/' },
-  { label: '라이선스 정보', link: '/' },
+  {
+    label: '라이선스 정보',
+    link: 'https://disco-wallflower-918.notion.site/OpenMoji-206b0d86bbbb8033b64cd5d110d225fa?source=copy_link',
+  },
 ];
 
 export const FullScreenPopup = ({
@@ -130,10 +133,18 @@ const NicknameForm = ({
 const SettingsList = () => (
   <SettingsContainer>
     {settingData.map((item) => (
-      <SettingItem key={item.label}>
-        <span>{item.label}</span>
-        <img src="/icons/arrow-right.svg" alt="arrow" />
-      </SettingItem>
+      <a
+        key={item.label}
+        href={item.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: 'none', color: 'inherit' }}
+      >
+        <SettingItem>
+          <span>{item.label}</span>
+          <img src="/icons/arrow-right.svg" alt="arrow" />
+        </SettingItem>
+      </a>
     ))}
     <FullWidthDivider />
     <SettingItem className="logout">로그아웃</SettingItem>

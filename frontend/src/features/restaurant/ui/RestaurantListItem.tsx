@@ -4,6 +4,7 @@ import { Crown } from '@/features/restaurant/ui/crown/Crown';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
 import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
+import { useState } from 'react';
 
 interface RestaurantItem {
   id: number;

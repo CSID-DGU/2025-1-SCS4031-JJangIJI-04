@@ -65,7 +65,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
               </NameWrapper>
               <BookmarkButtonWrapper>
                 <BookmarkButton
-                  active={localBookmarks[restaurant.id]}
+                  active={restaurant.bookmarked}
                   onClick={() => handleToggle(restaurant)}
                 />
               </BookmarkButtonWrapper>

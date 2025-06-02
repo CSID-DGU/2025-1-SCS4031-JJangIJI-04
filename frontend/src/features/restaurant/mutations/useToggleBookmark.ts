@@ -19,9 +19,9 @@ export const useToggleBookmark = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['restaurant-detail', variables.restaurantId],
+        queryKey: ['restaurantDetail', variables.restaurantId],
       });
-      queryClient.invalidateQueries({ queryKey: ['recommended-restaurants'] });
+      queryClient.invalidateQueries({ queryKey: ['recommendedRestaurants'] });
     },
   });
 };

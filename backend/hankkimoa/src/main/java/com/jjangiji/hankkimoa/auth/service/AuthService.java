@@ -81,4 +81,13 @@ public class AuthService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.USER_NOT_FOUND));
     }
+
+    @Transactional
+    public void logout(String accessToken, String refreshToken) {
+        AuthUser accessAuthUser = jwtTokenResolver.resolveAccessToken(accessToken);
+        AuthUser refreshAuthUser = jwtTokenResolver.resolveRefreshToken(refreshToken);
+        if (!accessAuthUser.id().equals(refreshAuthUser.id())) {
+            throw new HankkiMoaException(ExceptionCode.AUTHENTICATION_TOKEN_USER_MISMATCH);
+        }
+    }
 }

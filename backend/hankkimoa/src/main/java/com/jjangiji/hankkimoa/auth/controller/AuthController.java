@@ -59,4 +59,21 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .build();
     }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<Void> logout(@AuthRequiredPrincipal User user,
+                                       HttpServletRequest httpServletRequest) {
+        String accessToken = cookieResolver.extractAccessToken(httpServletRequest);
+        String refreshToken = cookieResolver.extractRefreshToken(httpServletRequest);
+
+        authService.logout(accessToken, refreshToken);
+
+        ResponseCookie deletedAccessTokenCookie = cookieProvider.deleteAccessTokenCookie();
+        ResponseCookie deletedRefreshTokenCookie = cookieProvider.deleteRefreshTokenCookie();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, deletedAccessTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, deletedRefreshTokenCookie.toString())
+                .build();
+    }
 }

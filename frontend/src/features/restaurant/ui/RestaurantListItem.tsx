@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Crown } from '@/features/restaurant/ui/crown/Crown';
 import { BookmarkButton } from '@/features/restaurant/ui/bookmark/BookmarkButton';
 import { IconTextRow } from '@/features/restaurant/ui/IconTextRow';
-import { useState } from 'react';
 import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBookmark';
 
 interface RestaurantItem {
@@ -21,27 +20,13 @@ interface Props {
 }
 
 export const RestaurantListItem = ({ restaurants }: Props) => {
-  const [localBookmarks, setLocalBookmarks] = useState<Record<number, boolean>>(
-    () =>
-      restaurants.reduce(
-        (acc, r) => {
-          acc[r.id] = r.bookmarked;
-          return acc;
-        },
-        {} as Record<number, boolean>
-      )
-  );
-
   const { mutate } = useToggleBookmark();
 
   const handleToggle = (restaurant: RestaurantItem) => {
-    const prev = localBookmarks[restaurant.id];
-    setLocalBookmarks((prevState) => ({
-      ...prevState,
-      [restaurant.id]: !prev,
-    }));
-
-    mutate({ restaurantId: restaurant.id, isBookmarked: prev });
+    mutate({
+      restaurantId: restaurant.id,
+      isBookmarked: restaurant.bookmarked,
+    });
   };
 
   return (

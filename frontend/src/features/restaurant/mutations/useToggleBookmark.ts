@@ -22,6 +22,7 @@ export const useToggleBookmark = () => {
         queryKey: ['restaurantDetail', variables.restaurantId],
       });
       queryClient.invalidateQueries({ queryKey: ['recommendedRestaurants'] });
+      queryClient.invalidateQueries({ queryKey: ['bookmarked-restaurants'] });
     },
   });
 };

@@ -146,6 +146,7 @@ public class RestaurantService {
 
             result.add(new RecommendRestaurantResponse(
                     restaurant.getId(),
+                    restaurant.getName(),
                     restaurant.getMenuAverage(),
                     restaurantImages.stream().map(RestaurantImage::getImageUrl).findFirst().orElse(null),
                     restaurant.getStreetAddress(),

@@ -53,12 +53,12 @@ export const ExpandableCalendar = ({
   return (
     <Container>
       <motion.div
-        animate={{ height: isExpanded ? 'auto' : '150px' }} // PC 기준 기본값
+        animate={{ height: isExpanded ? '80vh' : '150px' }}
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         style={{
           overflowY: isExpanded && window.innerWidth < 768 ? 'auto' : 'hidden',
-          height: isExpanded && window.innerWidth < 768 ? '80vh' : undefined,
+          WebkitOverflowScrolling: 'touch', // iOS 부드러운 스크롤
         }}
       >
         <Wrapper $isMini={!isExpanded}>
@@ -112,7 +112,7 @@ const ModalBackground = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 70px; // 하단 고정 네비게이션 영역 침범 방지
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
   z-index: 5;

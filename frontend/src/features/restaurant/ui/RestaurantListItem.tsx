@@ -55,6 +55,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
                 />
               </BookmarkButtonWrapper>
             </TopRow>
+
             <IconTextRow
               icon="/icons/restaurants/price.svg"
               text={`평균 가격 ${restaurant.menuAverage.toLocaleString()}원`}
@@ -71,12 +72,11 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
             />
             <IconTextRow
               icon="/icons/restaurants/time.svg"
-              text={(() => {
-                const parts = restaurant.openingHours.split(' ');
-                const day = parts[0];
-                const isClosed = restaurant.openingHours.includes('null');
-                return isClosed ? `${day} 휴무` : restaurant.openingHours;
-              })()}
+              text={
+                restaurant.openingHours.includes('null')
+                  ? `${restaurant.openingHours.split(' ')[0]} 휴무`
+                  : restaurant.openingHours
+              }
               color="#808080"
               fontSize="var(--font-size-3xs)"
               fontWeight={600}

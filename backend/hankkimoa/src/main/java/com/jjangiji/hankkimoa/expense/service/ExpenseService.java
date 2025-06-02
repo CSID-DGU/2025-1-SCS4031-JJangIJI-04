@@ -138,36 +138,44 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public List<CommunityExpenseResponse> readCommunityExpenses(Integer size, Integer page) {
-        List<CommunityExpenseResponse> result = new ArrayList<>();
+    public List<CommunityExpenseResponse> readCommunityExpensesByReactedEmoji(User user) {
+        List<Expense> expenses = expenseRepository.findAllByReactedEmoji(user.getId());
+        return expenses.stream()
+                .map(this::toCommunityExpenseResponse)
+                .toList();
+    }
 
+    @Transactional(readOnly = true)
+    public List<CommunityExpenseResponse> readCommunityExpenses(Integer size, Integer page) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Expense> expenses = expenseRepository.findAllWithSavingGoalAndUser(pageable);
 
-        for (Expense expense : expenses) {
-            ExpenseSavingGoal savingGoal = expense.getExpenseSavingGoal();
-            List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(savingGoal);
-            User user = savingGoal.getUser();
-            ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
+        return expenses.stream()
+                .map(this::toCommunityExpenseResponse)
+                .toList();
+    }
 
-            result.add(new CommunityExpenseResponse(
-                    user.getNickname(),
-                    user.getId(),
-                    user.getImageUrl(),
-                    savingGoal.getId(),
-                    expense.getId(),
-                    expense.getRestaurantId(),
-                    expense.getRestaurantName(),
-                    expense.getMenuName(),
-                    expense.getExpense(),
-                    expense.getCreatedAt(),
-                    savingGoal.getBudget(),
-                    savingGoal.calculateRemainingBudget(savingGoalExpenses),
-                    expense.getMemo(),
-                    toEmojiResponses(expenseEmojis)));
-        }
+    private CommunityExpenseResponse toCommunityExpenseResponse(Expense expense) {
+        ExpenseSavingGoal savingGoal = expense.getExpenseSavingGoal();
+        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(savingGoal);
+        User user = savingGoal.getUser();
+        ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
 
-        return result;
+        return new CommunityExpenseResponse(
+                user.getNickname(),
+                user.getId(),
+                user.getImageUrl(),
+                savingGoal.getId(),
+                expense.getId(),
+                expense.getRestaurantId(),
+                expense.getRestaurantName(),
+                expense.getMenuName(),
+                expense.getExpense(),
+                expense.getCreatedAt(),
+                savingGoal.getBudget(),
+                savingGoal.calculateRemainingBudget(savingGoalExpenses),
+                expense.getMemo(),
+                toEmojiResponses(expenseEmojis));
     }
 
     @Transactional

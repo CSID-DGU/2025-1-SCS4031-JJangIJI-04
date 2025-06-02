@@ -19,5 +19,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("SELECT r.uniqueId FROM Restaurant r")
     Set<String> findAllUniqueId();
 
+    @Query("SELECT b.restaurant FROM Bookmark b WHERE b.user.id = :userId ORDER BY b.createdAt DESC ")
+    List<Restaurant> findAllBookmarkedRestaurantsOrderByCreatedAtDESC(@Param("userId") Long userId);
+
     List<Restaurant> findAllByUniqueIdIn(List<String> uniqueIds);
 }

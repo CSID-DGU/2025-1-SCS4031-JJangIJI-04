@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.expense.repository;
 
 import com.jjangiji.hankkimoa.config.RepositoryTest;
 import com.jjangiji.hankkimoa.expense.domain.Expense;
+import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
@@ -25,7 +26,6 @@ class ExpenseRepositoryTest extends RepositoryTest {
 
     private User user;
     private ExpenseSavingGoal expenseSavingGoal;
-    private ExpenseSavingGoal expenseSavingGoal2;
     private Restaurant restaurant;
     private final LocalDate now = LocalDate.now();
     private final LocalDate before = now.minusDays(1);
@@ -39,6 +39,8 @@ class ExpenseRepositoryTest extends RepositoryTest {
     @Autowired
     private ExpenseRepository expenseRepository;
     @Autowired
+    private ExpenseEmojiRepository expenseEmojiRepository;
+    @Autowired
     private UserRepository userRepository;
 
     private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
@@ -47,7 +49,6 @@ class ExpenseRepositoryTest extends RepositoryTest {
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
         expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7)));
-        expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 100_000, LocalDate.now(), LocalDate.now().plusDays(7)));
         Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000, address));
     }
@@ -88,5 +89,26 @@ class ExpenseRepositoryTest extends RepositoryTest {
 
         // then
         Assertions.assertThat(results).containsExactly(expense2);
+    }
+
+    @DisplayName("이모지 누른 지출 내역들 조회 성공")
+    @Test
+    void findAllByReactedEmoji() {
+        // given
+        Expense expense = new Expense(expenseSavingGoal, restaurant,
+                "한끼식당", "순두부", 8_000,
+                "든든하게 먹음!", before.minusDays(1), 5);
+        expenseRepository.save(expense);
+
+        ExpenseEmoji expenseEmoji1 = new ExpenseEmoji(user, expense, 1);
+        ExpenseEmoji expenseEmoji2 = new ExpenseEmoji(user, expense, 2);
+        expenseEmojiRepository.saveAll(List.of(expenseEmoji1, expenseEmoji2));
+
+        // when
+        List<Expense> result = expenseRepository.findAllByReactedEmoji(user.getId());
+
+        // then
+        Assertions.assertThat(result).hasSize(1);
+        Assertions.assertThat(result).containsExactly(expense);
     }
 }

@@ -33,4 +33,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             + "JOIN FETCH e.expenseSavingGoal esg "
             + "JOIN FETCH esg.user ")
     Page<Expense> findAllWithSavingGoalAndUser(Pageable pageable);
+
+    @Query("SELECT DISTINCT e FROM Expense e "
+            + "JOIN FETCH e.expenseSavingGoal esg "
+            + "JOIN FETCH esg.user "
+            + "JOIN e.emojis ee "
+            + "WHERE ee.user.id = :userId")
+    List<Expense> findAllByReactedEmoji(@Param("userId") Long userId);
 }

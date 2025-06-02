@@ -12,9 +12,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -39,11 +36,5 @@ public class BookmarkService {
         Bookmark bookmark = bookmarkRepository.findByUserIdAndRestaurantId(userId, restaurantId)
                 .orElseThrow(()-> new HankkiMoaException(ExceptionCode.BOOKMARK_NOT_FOUND));
         bookmarkRepository.delete(bookmark);
-    }
-
-    public List<Restaurant> getBookmarkedRestaurants(Long userId) {
-        return bookmarkRepository.findByUserId(userId).stream()
-                .map(Bookmark::getRestaurant)
-                .collect(Collectors.toList());
     }
 }

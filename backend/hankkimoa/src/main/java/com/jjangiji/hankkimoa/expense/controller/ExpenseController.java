@@ -55,6 +55,12 @@ public class ExpenseController {
         return ResponseEntity.ok(communityExpenseResponses);
     }
 
+    @GetMapping("/api/community/expenses/emojis")
+    public ResponseEntity<List<CommunityExpenseResponse>> readCommunityExpensesByReactedEmoji(@AuthRequiredPrincipal User user) {
+        List<CommunityExpenseResponse> communityExpenseResponses = expenseService.readCommunityExpensesByReactedEmoji(user);
+        return ResponseEntity.ok(communityExpenseResponses);
+    }
+
     @PostMapping("/api/expenses/{expenseId}")
     public ResponseEntity<Void> deleteExpense(@PathVariable("expenseId") Long expenseId) {
         expenseService.deleteExpense(expenseId);

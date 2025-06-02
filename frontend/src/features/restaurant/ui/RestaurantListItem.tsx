@@ -7,6 +7,7 @@ import { useToggleBookmark } from '@/features/restaurant/mutations/useToggleBook
 
 interface RestaurantItem {
   id: number;
+  name: string;
   menuAverage: number;
   imgUrl: string;
   streetAddress: string;
@@ -46,7 +47,7 @@ export const RestaurantListItem = ({ restaurants }: Props) => {
             <TopRow>
               <NameWrapper>
                 <Crown rank={index} />
-                <Name>{`추천 ${index + 1}`}</Name>
+                <Name>{restaurant.name || '이름 없는 식당'}</Name>
               </NameWrapper>
               <BookmarkButtonWrapper>
                 <BookmarkButton

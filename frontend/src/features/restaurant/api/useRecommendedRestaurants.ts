@@ -3,6 +3,7 @@ import api from '@/lib/axios';
 
 export interface RecommendedRestaurant {
   id: number;
+  name: string;
   menuAverage: number;
   imgUrl: string;
   streetAddress: string;

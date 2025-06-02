@@ -67,14 +67,16 @@ export const ExpandableCalendar = ({
               selectedDate={selectedDate}
             />
           ) : (
-            <FullCalendar
-              currentDate={currentDate}
-              onDateChange={setCurrentDate}
-              dailyStatusList={dailyStatusList}
-              onCollapse={handleExpand}
-              onDateSelect={onDateSelect}
-              selectedDate={selectedDate}
-            />
+            <ScrollableArea>
+              <FullCalendar
+                currentDate={currentDate}
+                onDateChange={setCurrentDate}
+                dailyStatusList={dailyStatusList}
+                onCollapse={handleExpand}
+                onDateSelect={onDateSelect}
+                selectedDate={selectedDate}
+              />
+            </ScrollableArea>
           )}
         </Wrapper>
       </motion.div>
@@ -120,4 +122,10 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
+`;
+
+const ScrollableArea = styled.div`
+  max-height: 650px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 `;

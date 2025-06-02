@@ -53,7 +53,7 @@ export const ExpandableCalendar = ({
   return (
     <Container>
       <motion.div
-        animate={{ height: isExpanded ? 650 : 150 }}
+        animate={{ height: isExpanded ? '80vh' : '150px' }} //동적 height
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         style={{ overflow: 'hidden' }}

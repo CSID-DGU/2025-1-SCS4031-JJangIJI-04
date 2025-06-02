@@ -47,4 +47,10 @@ public class RestaurantController {
         RestaurantResponse restaurantResponse = restaurantService.readRestaurant(user, restaurantId);
         return ResponseEntity.ok(restaurantResponse);
     }
+
+    @GetMapping("/api/bookmarks/restaurants")
+    public ResponseEntity<List<RestaurantSimpleResponse>> readRestaurant(@AuthRequiredPrincipal User user) {
+        List<RestaurantSimpleResponse> bookmarkedRestaurants = restaurantService.readBookmarkedRestaurants(user);
+        return ResponseEntity.ok(bookmarkedRestaurants);
+    }
 }

@@ -127,14 +127,18 @@ public class RestaurantService {
 
     private RestaurantSimpleResponse toRestaurantSimpleResponse(User user, Restaurant restaurant) {
         Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
-        List<RestaurantImage> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId());
+        String restaurantImage = restaurantImageRepository.findAllByRestaurantId(restaurant.getId())
+                .stream()
+                .map(RestaurantImage::getImageUrl)
+                .findFirst()
+                .orElse(null);
         boolean bookmared = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
         return new RestaurantSimpleResponse(
                 restaurant.getId(),
                 restaurant.getName(),
                 restaurant.getMenuAverage(),
-                restaurantImages.stream().map(RestaurantImage::getImageUrl).findFirst().orElse(null),
+                restaurantImage,
                 restaurant.getStreetAddress(),
                 convertToString(openingHour),
                 restaurant.getCategoryName(),
@@ -193,5 +197,32 @@ public class RestaurantService {
     private Restaurant readRestaurant(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.RESTAURANT_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<RestaurantSimpleResponse> readBookmarkedRestaurants(User user) {
+        List<Restaurant> bookmarkedRestaurants = restaurantRepository.findAllBookmarkedRestaurantsOrderByCreatedAtDESC(user.getId());
+        return bookmarkedRestaurants.stream()
+                .map(this::toBookmarkedRestaurantSimpleResponse)
+                .toList();
+    }
+
+    private RestaurantSimpleResponse toBookmarkedRestaurantSimpleResponse(Restaurant restaurant) {
+        Optional<OpeningHour> openingHour = readTodayOpeningHour(restaurant);
+        String restaurantImage = restaurantImageRepository.findAllByRestaurantId(restaurant.getId())
+                .stream()
+                .map(RestaurantImage::getImageUrl)
+                .findFirst()
+                .orElse(null);
+
+        return new RestaurantSimpleResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getMenuAverage(),
+                restaurantImage,
+                restaurant.getStreetAddress(),
+                convertToString(openingHour),
+                restaurant.getCategoryName(),
+                true);
     }
 }

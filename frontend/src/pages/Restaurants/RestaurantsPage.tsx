@@ -3,7 +3,7 @@ import { RestaurantListItem } from '@/features/restaurant/ui/RestaurantListItem'
 import { useRecommendedRestaurants } from '@/features/restaurant/api/useRecommendedRestaurants';
 import { LoadingSpinner } from '@/shared/ui/LoadingSpinner/LoadingSpinner';
 import FileIcon from '@/assets/icons/file.svg?react';
-
+import { FeedbackBox } from '@/features/restaurant/ui/FeedbackBox';
 export const RestaurantsPage = () => {
   const { data: recommendedRestaurants, isLoading } =
     useRecommendedRestaurants();
@@ -23,7 +23,10 @@ export const RestaurantsPage = () => {
       {isLoading ? (
         <LoadingSpinner message="추천 식당을 불러오는 중입니다..." />
       ) : recommendedRestaurants && recommendedRestaurants.length > 0 ? (
-        <RestaurantListItem restaurants={recommendedRestaurants} />
+        <>
+          <RestaurantListItem restaurants={recommendedRestaurants} />
+          <FeedbackBox />
+        </>
       ) : (
         <EmptyBlock>
           <FileIcon />

@@ -6,7 +6,6 @@ import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
-import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.MenuRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
@@ -43,8 +42,6 @@ class RestaurantServiceTest extends IntegrationTest {
     private RestaurantService restaurantService;
     @Autowired
     private RestaurantRepository restaurantRepository;
-    @Autowired
-    private RecommendationFeedbackRepository recommendationFeedbackRepository;
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired

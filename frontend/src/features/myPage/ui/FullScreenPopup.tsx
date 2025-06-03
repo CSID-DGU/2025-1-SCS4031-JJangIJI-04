@@ -5,6 +5,8 @@ import { CategorySelector } from '@/features/preferences/ui/CategorySelector';
 import { InputField } from '@/shared/ui/InputField';
 import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { useUpdateNickname } from '@/features/auth/mutations/useUpdateNickname';
+import { useUpdateCategories } from '@/features/preferences/mutations/useUpdateCategories';
+import { useUserInfo } from '@/features/auth/api/useUserInfo';
 
 interface FullScreenPopupProps {
   visible: boolean;
@@ -30,6 +32,11 @@ export const FullScreenPopup = ({
   const [nicknameError, setNicknameError] = useState('');
   const isNicknameValid = nicknameError === '' && nickname.trim() !== '';
   const { mutate: updateNickname, isPending } = useUpdateNickname();
+  const { data: userInfo } = useUserInfo();
+  const [categories, setCategories] = useState<number[]>(
+    userInfo?.categories.map((c) => c.categoryId) ?? []
+  );
+  const { mutate: updateCategories, isPending: isUpdating } = useUpdateCategories();
 
   useEffect(() => {
     if (visible) document.body.style.overflow = 'hidden';
@@ -95,8 +102,22 @@ export const FullScreenPopup = ({
           {type === 'category' && (
             <>
               <Title>선호하는 음식 카테고리를 선택해 주세요</Title>
-              <CategorySelector selected={[]} onChange={() => {}} />
-              <BottomButton>변경하기</BottomButton>
+              <CategorySelector selected={categories} onChange={setCategories} />
+              <BottomButton
+                disabled={categories.length === 0 || isUpdating}
+                onClick={() => {
+                  updateCategories(categories, {
+                    onSuccess: () => {
+                      onClose();
+                    },
+                    onError: () => {
+                      alert('카테고리 변경에 실패했어요. 다시 시도해주세요.');
+                    },
+                  });
+                }}
+              >
+                변경하기
+              </BottomButton>
             </>
           )}
 

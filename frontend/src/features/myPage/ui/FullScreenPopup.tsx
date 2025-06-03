@@ -7,6 +7,8 @@ import { FullWidthDivider } from '@/shared/ui/Divider/FullWidthDivider';
 import { useUpdateNickname } from '@/features/auth/mutations/useUpdateNickname';
 import { useUpdateCategories } from '@/features/preferences/mutations/useUpdateCategories';
 import { useUserInfo } from '@/features/auth/api/useUserInfo';
+import { useNavigate } from 'react-router-dom';
+import { useLogout } from '@/features/auth/mutations/useLogout';
 
 interface FullScreenPopupProps {
   visible: boolean;
@@ -37,6 +39,8 @@ export const FullScreenPopup = ({
     userInfo?.categories.map((c) => c.categoryId) ?? []
   );
   const { mutate: updateCategories, isPending: isUpdating } = useUpdateCategories();
+  const navigate = useNavigate();
+  const { mutate: logout } = useLogout();
 
   useEffect(() => {
     if (visible) document.body.style.overflow = 'hidden';
@@ -121,7 +125,12 @@ export const FullScreenPopup = ({
             </>
           )}
 
-          {type === 'settings' && <SettingsList />}
+          {type === 'settings' && <SettingsList onLogout={() => {
+            logout(undefined, {
+              onSuccess: () => navigate('/'),
+              onError: () => alert('로그아웃에 실패했어요. 다시 시도해주세요.'),
+            });
+          }} />}
         </Body>
       </Popup>
     </Overlay>,
@@ -151,7 +160,7 @@ const NicknameForm = ({
   </NicknameFormContainer>
 );
 
-const SettingsList = () => (
+const SettingsList = ({ onLogout }: { onLogout: () => void }) => (
   <SettingsContainer>
     {settingData.map((item) => (
       <a
@@ -168,7 +177,9 @@ const SettingsList = () => (
       </a>
     ))}
     <FullWidthDivider />
-    <SettingItem className="logout">로그아웃</SettingItem>
+    <SettingItem className="logout" onClick={onLogout}>
+      로그아웃
+    </SettingItem>
   </SettingsContainer>
 );
 

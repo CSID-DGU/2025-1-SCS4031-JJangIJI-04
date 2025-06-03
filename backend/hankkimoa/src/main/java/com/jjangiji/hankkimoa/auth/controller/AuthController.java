@@ -60,7 +60,7 @@ public class AuthController {
                 .build();
     }
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/api/auth/logout")
     public ResponseEntity<Void> logout(@AuthRequiredPrincipal User user,
                                        HttpServletRequest httpServletRequest) {
         String accessToken = cookieResolver.extractAccessToken(httpServletRequest);

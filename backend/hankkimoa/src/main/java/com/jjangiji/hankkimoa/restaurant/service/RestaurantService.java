@@ -6,13 +6,16 @@ import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
 import com.jjangiji.hankkimoa.restaurant.domain.OpeningHour;
+import com.jjangiji.hankkimoa.restaurant.domain.RecommendationFeedback;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.RestaurantImage;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
+import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
@@ -36,6 +39,7 @@ import java.util.Set;
 public class RestaurantService {
 
     private final RecommendClient recommendClient;
+    private final RecommendationFeedbackRepository recommendationFeedbackRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final OpeningHoursRepository openingHoursRepository;
@@ -101,6 +105,13 @@ public class RestaurantService {
                         menu.isMain(), menu.introduce()))
                 .toList();
         menuRepository.saveAll(menus);
+    }
+
+    @Transactional
+    public Long createRecommendationFeedback(User user, RecommendationFeedbackRequest request) {
+        RecommendationFeedback feedback = new RecommendationFeedback(user, request.feedback());
+        RecommendationFeedback savedFeedback = recommendationFeedbackRepository.save(feedback);
+        return savedFeedback.getId();
     }
 
     @Transactional(readOnly = true)

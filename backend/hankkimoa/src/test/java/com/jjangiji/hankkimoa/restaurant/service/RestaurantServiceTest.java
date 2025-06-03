@@ -6,8 +6,10 @@ import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
+import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.MenuRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
@@ -41,6 +43,8 @@ class RestaurantServiceTest extends IntegrationTest {
     private RestaurantService restaurantService;
     @Autowired
     private RestaurantRepository restaurantRepository;
+    @Autowired
+    private RecommendationFeedbackRepository recommendationFeedbackRepository;
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
@@ -82,6 +86,19 @@ class RestaurantServiceTest extends IntegrationTest {
         // then
         int size = restaurantRepository.findAll().size();
         Assertions.assertThat(size).isEqualTo(2);
+    }
+
+    @DisplayName("추천 피드백 생성 성공")
+    @Test
+    void createRecommendationFeedback() {
+        // given
+        RecommendationFeedbackRequest request = new RecommendationFeedbackRequest(5);
+
+        // when
+        Long savedFeedback = restaurantService.createRecommendationFeedback(user, request);
+
+        // then
+        Assertions.assertThat(savedFeedback).isNotNull();
     }
 
     @DisplayName("식당 생성 성공 : 이미 식당이 존재하는 경우 생성 제외")

@@ -53,6 +53,7 @@ public class RecommendClient {
     }
 
     private RecommendServerRestaurantsRequest toRecommendServerRestaurantRequest(User user) {
+        // todo 추천 로직 분리 고민
         List<String> userCategory= userCategoryRepository.findAllByUser(user)
                 .stream()
                 .map(UserCategory::getCategoryName)

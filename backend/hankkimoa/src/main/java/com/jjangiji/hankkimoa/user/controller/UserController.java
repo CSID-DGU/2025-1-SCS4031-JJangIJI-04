@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -27,13 +28,13 @@ public class UserController {
     }
 
     @PutMapping("/api/categories")
-    public ResponseEntity<Void> updateCategories(@AuthRequiredPrincipal User user, CategoryUpdateRequest request) {
+    public ResponseEntity<Void> updateCategories(@AuthRequiredPrincipal User user, @RequestBody CategoryUpdateRequest request) {
         userService.updateCategories(user, request);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/api/nickname")
-    public ResponseEntity<Void> updateNickname(@AuthRequiredPrincipal User user, NicknameUpdateRequest request) {
+    public ResponseEntity<Void> updateNickname(@AuthRequiredPrincipal User user, @RequestBody NicknameUpdateRequest request) {
         userService.updateNickname(user, request);
         return ResponseEntity.noContent().build();
     }

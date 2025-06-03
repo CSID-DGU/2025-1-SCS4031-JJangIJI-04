@@ -31,6 +31,7 @@ public enum ExceptionCode {
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "카테고리가 존재하지 않습니다."),
     RESTAURANT_DAYOFWEEK_INTERNAL_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "식당 요일을 변환할 수 없습니다."),
     RECOMMEND_SERVER_INTERNAL_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "추천 서버와 통신하는 과정 중 예상치 못한 예외가 발생했습니다."),
+    RECOMMENDATION_FEEDBACK_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "피드백 형태가 올바르지 않습니다."),
 
     // 돈
     MONEY_NEGATIVE(HttpStatus.BAD_REQUEST, "금액은 음수값을 가질 수 없습니다."),

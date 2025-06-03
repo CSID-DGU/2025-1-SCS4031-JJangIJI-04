@@ -2,6 +2,7 @@ package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
@@ -26,6 +27,13 @@ public class RestaurantController {
     @PostMapping("/api/restaurants")
     public ResponseEntity<Void> createRestaurants(@RequestBody List<RestaurantCreateRequest> request) {
         restaurantService.createRestaurants(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/api/recommendation/feedback")
+    public ResponseEntity<Void> createRecommendationFeedback(@AuthRequiredPrincipal User user,
+                                                             @RequestBody RecommendationFeedbackRequest request) {
+        restaurantService.createRecommendationFeedback(user, request);
         return ResponseEntity.noContent().build();
     }
 

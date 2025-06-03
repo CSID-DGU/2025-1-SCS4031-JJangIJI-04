@@ -6,13 +6,16 @@ import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
 import com.jjangiji.hankkimoa.restaurant.domain.OpeningHour;
+import com.jjangiji.hankkimoa.restaurant.domain.RecommendationFeedback;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.RestaurantImage;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
+import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
+import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
@@ -27,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,6 +41,7 @@ import java.util.Set;
 public class RestaurantService {
 
     private final RecommendClient recommendClient;
+    private final RecommendationFeedbackRepository recommendationFeedbackRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final OpeningHoursRepository openingHoursRepository;
@@ -103,6 +109,13 @@ public class RestaurantService {
         menuRepository.saveAll(menus);
     }
 
+    @Transactional
+    public Long createRecommendationFeedback(User user, RecommendationFeedbackRequest request) {
+        RecommendationFeedback feedback = new RecommendationFeedback(user, request.feedback());
+        RecommendationFeedback savedFeedback = recommendationFeedbackRepository.save(feedback);
+        return savedFeedback.getId();
+    }
+
     @Transactional(readOnly = true)
     public List<RestaurantSearchResponse> searchRestaurants(String keyword) {
         List<Restaurant> restaurants = restaurantRepository.findAllByKeyword(keyword);
@@ -162,10 +175,7 @@ public class RestaurantService {
     @Transactional(readOnly = true)
     public RestaurantResponse readRestaurant(User user, Long restaurantId) {
         Restaurant restaurant = readRestaurant(restaurantId);
-        List<String> openingHours = openingHoursRepository.findAllByRestaurantId(restaurant.getId())
-                .stream()
-                .map(openingHour -> convertToString(Optional.of(openingHour)))
-                .toList();
+        List<String> openingHours = readOpeningHoursSorted(restaurant);
         List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId())
                 .stream()
                 .map(RestaurantImage::getImageUrl)
@@ -197,6 +207,31 @@ public class RestaurantService {
     private Restaurant readRestaurant(Long restaurantId) {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.RESTAURANT_NOT_FOUND));
+    }
+
+    private List<String> readOpeningHoursSorted(Restaurant restaurant) {
+        List<OpeningHour> openingHours = openingHoursRepository.findAllByRestaurantId(restaurant.getId());
+        return sortOpeningHours(openingHours)
+                .stream()
+                .map(openingHour -> convertToString(Optional.of(openingHour)))
+                .toList();
+    }
+
+    private List<OpeningHour> sortOpeningHours(List<OpeningHour> openingHours) {
+        // todo view 로직 리팩토링 ,,
+        Map<String, Integer> weekdayOrder = Map.of(
+                "월", 1,
+                "화", 2,
+                "수", 3,
+                "목", 4,
+                "금", 5
+        );
+        return openingHours.stream()
+                .sorted(Comparator.comparingInt(openingHour -> {
+                  String dayOfWeek = openingHour.getDayOfWeek();
+                  return weekdayOrder.getOrDefault(dayOfWeek, Integer.MAX_VALUE);
+                }))
+                .toList();
     }
 
     @Transactional(readOnly = true)

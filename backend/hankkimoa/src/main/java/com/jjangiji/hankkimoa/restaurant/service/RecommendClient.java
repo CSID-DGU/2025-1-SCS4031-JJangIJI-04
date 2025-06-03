@@ -4,11 +4,16 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.RecommendServerException;
 import com.jjangiji.hankkimoa.expense.service.ExpenseSavingGoalService;
 import com.jjangiji.hankkimoa.expense.service.dto.response.RemainingBudgetResponse;
+import com.jjangiji.hankkimoa.restaurant.domain.RecommendationFeedback;
+import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
+import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendServerRestaurantsRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantAverageRatingResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.domain.UserCategory;
 import com.jjangiji.hankkimoa.user.repository.UserCategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
@@ -19,24 +24,18 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 public class RecommendClient {
 
     private final RestClient restClient;
     private final UserCategoryRepository userCategoryRepository;
+    private final RecommendationFeedbackRepository recommendationFeedbackRepository;
+    private final RestaurantRepository restaurantRepository;
     private final ExpenseSavingGoalService expenseSavingGoalService;
-    private final String recommendRestaurantsRequestUri;
 
-    public RecommendClient(
-            RestClient restClient,
-            UserCategoryRepository userCategoryRepository,
-            ExpenseSavingGoalService expenseSavingGoalService,
-            @Value("${recommend-server.restaurants-post-uri}") String recommendRestaurantsRequestUri) {
-        this.restClient = restClient;
-        this.userCategoryRepository = userCategoryRepository;
-        this.expenseSavingGoalService = expenseSavingGoalService;
-        this.recommendRestaurantsRequestUri = recommendRestaurantsRequestUri;
-    }
+    @Value("${recommend-server.restaurants-post-uri}")
+    private String recommendRestaurantsRequestUri;
 
     public RecommendServerRestaurantsResponse requestRecommendRestaurants(User user) {
         RecommendServerRestaurantsRequest recommendRestaurantsRequest = toRecommendServerRestaurantRequest(user);
@@ -54,15 +53,23 @@ public class RecommendClient {
     }
 
     private RecommendServerRestaurantsRequest toRecommendServerRestaurantRequest(User user) {
+        // todo 추천 로직 분리 고민
         List<String> userCategory= userCategoryRepository.findAllByUser(user)
                 .stream()
                 .map(UserCategory::getCategoryName)
                 .toList();
+        Integer feedback = recommendationFeedbackRepository.findTopByUserIdOrderByCreatedAtDesc(user.getId())
+                .map(RecommendationFeedback::getFeedback)
+                .orElse(null);
+        List<RestaurantAverageRatingResponse> restaurantAverageRatings = restaurantRepository.findRestaurantAverageRating(user.getId());
         RemainingBudgetResponse remainingBudgetResponse = expenseSavingGoalService.readRemainingBudget(user, LocalDate.now());
+
         return new RecommendServerRestaurantsRequest(
                 user.getId(),
                 remainingBudgetResponse.remainingBudget(),
-                userCategory);
+                userCategory,
+                feedback,
+                restaurantAverageRatings);
     }
 
     private String getExceptionResponse(ClientHttpResponse response) {

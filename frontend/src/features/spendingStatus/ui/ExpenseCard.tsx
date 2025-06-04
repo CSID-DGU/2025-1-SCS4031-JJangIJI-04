@@ -35,9 +35,7 @@ export const ExpenseCard = ({
         <Memo>{memo}</Memo>
 
         <EmojiWrapper>
-          <EmojiReactionPanel
-            reactions={emojis}
-          />
+          <EmojiReactionPanel reactions={emojis} />
         </EmojiWrapper>
       </Content>
     </Card>
@@ -50,7 +48,7 @@ const Card = styled.div`
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background-color: #fff;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   min-height: 140px;
   display: flex;
   flex-direction: column;

@@ -301,7 +301,7 @@ const HourList = styled.ul`
   li {
     display: flex;
     align-items: center;
-    font-size: var(--font-size-3xs);
+    font-size: 12px;
     color: #555;
     margin-bottom: 2px;
   }

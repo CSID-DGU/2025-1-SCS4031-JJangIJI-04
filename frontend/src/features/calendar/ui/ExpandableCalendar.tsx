@@ -112,25 +112,30 @@ const Container = styled.div`
 `;
 
 const ModalBackground = styled.div`
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
   z-index: 1;
-  pointer-events: none;
-  overscroll-behavior: none;
 
-  // 모바일에서만 블러 처리되도록
-  top: ${MAX_CALENDAR_HEIGHT};
+  @media (max-width: 767px) {
+    position: fixed;
+    top: ${MAX_CALENDAR_HEIGHT};
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    pointer-events: none;
+    overscroll-behavior: none;
+  }
 
   @media (min-width: 768px) {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background-color: transparent;
-    top: auto;
+    position: absolute;
+    top: 420px;
+    left: 0;
+    right: 0;
+    bottom: -100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
   }
 `;
 

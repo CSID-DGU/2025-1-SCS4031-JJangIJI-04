@@ -10,11 +10,13 @@ export const CommunityPage = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useCommunityPosts();
 
-  const loadMoreRef = useIntersectionObserver(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  });
+    const loadMoreRef = useIntersectionObserver(() => {
+      if (hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, {
+      rootMargin: '200px',
+    });
 
   const posts = data?.pages.flat() || [];
 

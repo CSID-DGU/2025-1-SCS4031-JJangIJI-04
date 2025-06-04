@@ -41,14 +41,16 @@ const Icon = styled.img`
 `;
 
 const Text = styled.span<{ $ellipsis: boolean }>`
-  flex: 1;
-  min-width: 0;
   ${({ $ellipsis }) =>
     $ellipsis
       ? `
+    flex: 1;
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
   `
       : `
     white-space: normal;

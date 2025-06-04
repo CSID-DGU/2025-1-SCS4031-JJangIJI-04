@@ -46,7 +46,7 @@ public class RecommendationFeedback extends BaseEntity {
     }
 
     private void validateFeedback(Integer feedback) {
-        if (feedback != null && !(feedback == 1 || feedback == 3 || feedback == 5)) {
+        if (feedback != null && !(feedback == 1 || feedback == 3 || feedback == 5 || feedback == 7)) {
             throw new HankkiMoaException(ExceptionCode.RECOMMENDATION_FEEDBACK_INVALID_FORMAT);
         }
     }

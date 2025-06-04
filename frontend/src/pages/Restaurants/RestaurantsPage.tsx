@@ -76,7 +76,7 @@ const EmptyBlock = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  margin-top: 80px;
+  margin-top: 200px;
 
   svg {
     width: 40px;

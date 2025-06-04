@@ -22,6 +22,7 @@ export const FeedbackBox = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recommendedRestaurants'] });
+      alert('피드백이 새로 반영되었어요!');
     },
     onError: () => {
       alert('피드백 전송에 실패했어요. 다시 시도해주세요.');

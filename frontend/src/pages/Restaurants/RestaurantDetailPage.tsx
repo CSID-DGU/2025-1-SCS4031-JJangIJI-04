@@ -73,7 +73,7 @@ export const RestaurantDetailPage = () => {
                 : '정보 없음'
             }`}
             color="#FF6701"
-            fontSize="var(--font-size-2xs)"
+            fontSize="13px"
             fontWeight={600}
             ellipsis={false}
           />
@@ -81,8 +81,8 @@ export const RestaurantDetailPage = () => {
             icon="/icons/restaurants/place.svg"
             text={restaurant.streetAddress ?? '주소 정보 없음'}
             color="#808080"
-            fontSize="var(--font-size-3xs)"
-            fontWeight={400}
+            fontSize="12px"
+            fontWeight={500}
             ellipsis={false}
           />
           <OpeningHourRow>
@@ -108,8 +108,8 @@ export const RestaurantDetailPage = () => {
             icon="/icons/restaurants/menu.svg"
             text={restaurant.category ?? '카테고리 정보 없음'}
             color="#808080"
-            fontSize="var(--font-size-3xs)"
-            fontWeight={400}
+            fontSize="12px"
+            fontWeight={500}
             ellipsis={false}
           />
         </IconTextList>

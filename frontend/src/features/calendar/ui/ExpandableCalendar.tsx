@@ -21,7 +21,6 @@ export const ExpandableCalendar = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // selectedDate가 변경될 때 currentDate를 동기화
   useEffect(() => {
     if (selectedDate) {
       setCurrentDate(parseISO(selectedDate));
@@ -34,7 +33,6 @@ export const ExpandableCalendar = ({
   );
 
   const handleExpand = () => {
-    // 닫힐 때 선택된 날짜로 currentDate 복원
     if (isExpanded && selectedDate) {
       setCurrentDate(parseISO(selectedDate));
     }
@@ -117,8 +115,12 @@ const ModalBackground = styled.div`
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(1.5px);
   z-index: 1;
+
+  pointer-events: none;
+  overscroll-behavior: none;
+  -webkit-backdrop-filter: blur(1.5px);
 `;
 
 const Wrapper = styled.div<{ $isMini: boolean }>`
@@ -132,6 +134,7 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
   -webkit-overflow-scrolling: touch;
 
   @media (min-width: 768px) {
+    max-height: 640px;
     overflow-y: visible;
   }
 `;

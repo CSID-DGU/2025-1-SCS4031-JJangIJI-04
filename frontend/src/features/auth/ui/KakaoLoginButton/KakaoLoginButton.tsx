@@ -14,7 +14,7 @@ export const KakaoLoginButton = () => {
   return (
     <ButtonWrapper onClick={handleLogin}>
       <ButtonImage
-        src="/images/kakao-login-button.png"
+        src="/icons/kakao-login-button.svg"
         alt="카카오 계정으로 로그인"
       />
     </ButtonWrapper>

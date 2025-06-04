@@ -62,8 +62,8 @@ export const MiniCalendar = ({
           );
         })}
       </Content>
-      <HandleWrapper>
-        <Handle onClick={onExpand} />
+      <HandleWrapper onClick={onExpand}>
+        <Handle />
       </HandleWrapper>
     </Wrapper>
   );

@@ -111,8 +111,8 @@ export const FullCalendar = ({
           );
         })}
       </Grid>
-      <HandleWrapper>
-        <Handle onClick={onCollapse} />
+      <HandleWrapper onClick={onCollapse}>
+        <Handle />
       </HandleWrapper>
     </Wrapper>
   );

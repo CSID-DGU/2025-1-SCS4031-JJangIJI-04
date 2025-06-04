@@ -47,7 +47,7 @@ const Text = styled.span<{ $ellipsis: boolean }>`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 120px;
+    max-width: 100px;
   `
       : `
     white-space: normal;

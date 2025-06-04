@@ -34,6 +34,16 @@ export const RestaurantDetailPage = () => {
 
   return (
     <PageWrapper>
+      <FixedTopControls>
+        <BackButton onClick={() => navigate(-1)}>&lt;</BackButton>
+        <BookmarkWrapper>
+          <BookmarkButton
+            active={bookmarked}
+            onClick={handleToggleBookmark}
+            size={16}
+          />
+        </BookmarkWrapper>
+      </FixedTopControls>
       <ImageSection>
         {Array.isArray(restaurant.imgUrl) && restaurant.imgUrl.length > 0 ? (
           restaurant.imgUrl.map((url, index) => (
@@ -140,7 +150,20 @@ export const RestaurantDetailPage = () => {
 };
 
 const PageWrapper = styled.div`
+  position: relative;
   padding: 0px 0;
+`;
+
+const FixedTopControls = styled.div`
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  pointer-events: none;
 `;
 
 const ImageSection = styled.div`
@@ -157,42 +180,27 @@ const Image = styled.img`
 `;
 
 const BackButton = styled.button`
-  position: absolute;
-  top: 12px;
-  left: 12px;
+  pointer-events: auto;
   background-color: white;
   border: none;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
 `;
 
 const BookmarkWrapper = styled.div`
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  pointer-events: auto;
   background-color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
 `;
 
 const ContentSection = styled.div`
@@ -244,6 +252,13 @@ const MenuPrice = styled.div`
 const MenuDescription = styled.div`
   font-size: var(--font-size-3xs);
   color: #808080;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;    
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  line-height: 1.4;            
 `;
 
 const Badge = styled.span`
@@ -264,8 +279,9 @@ const MenuImage = styled.img`
   object-fit: cover;
   border-radius: 10px;
   margin-left: 12px;
+  flex-shrink: 0;            
+  align-self: flex-start;   
 `;
-
 const OpeningHourRow = styled.div`
   display: flex;
   align-items: flex-start;

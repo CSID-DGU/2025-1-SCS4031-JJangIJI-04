@@ -111,13 +111,13 @@ const Container = styled.div`
 `;
 
 const ModalBackground = styled.div`
-  position: absolute;
-  top: 420px;
+  position: fixed;
+  top: ${MAX_CALENDAR_HEIGHT};
   left: 0;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(2px);
   z-index: 1;
 `;
 

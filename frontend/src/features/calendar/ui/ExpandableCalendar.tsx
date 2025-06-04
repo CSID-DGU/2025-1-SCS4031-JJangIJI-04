@@ -6,6 +6,9 @@ import { FullCalendar } from '@/features/calendar/ui/FullCalendar';
 import { useMonthlyExpenseStatus } from '@/features/calendar/api/useMonthlyExpenseStatus';
 import { parseISO } from 'date-fns';
 
+const BOTTOM_SAFE_AREA = 72;
+const MAX_CALENDAR_HEIGHT = `calc(100dvh - ${BOTTOM_SAFE_AREA}px)`;
+
 export const ExpandableCalendar = ({
   userId,
   onDateSelect,
@@ -56,7 +59,10 @@ export const ExpandableCalendar = ({
         animate={{ height: isExpanded ? 'auto' : 150 }}
         initial={false}
         transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-        style={{ overflow: 'hidden', maxHeight: '90vh' }}
+        style={{
+          overflow: 'hidden',
+          maxHeight: isExpanded ? MAX_CALENDAR_HEIGHT : 'none',
+        }}
       >
         <Wrapper $isMini={!isExpanded}>
           {!isExpanded ? (
@@ -109,7 +115,7 @@ const ModalBackground = styled.div`
   top: 420px;
   left: 0;
   right: 0;
-  bottom: -100vh;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
   z-index: 1;
@@ -122,7 +128,7 @@ const Wrapper = styled.div<{ $isMini: boolean }>`
   z-index: 2;
   padding-bottom: ${({ $isMini }) => ($isMini ? '0px' : '30px')};
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: ${MAX_CALENDAR_HEIGHT};
   -webkit-overflow-scrolling: touch;
 
   @media (min-width: 768px) {

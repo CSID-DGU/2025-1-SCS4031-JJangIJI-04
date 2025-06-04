@@ -125,11 +125,12 @@ const Info = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  min-width: 0;
 `;
 
 const TopRow = styled.div`
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
 `;
@@ -140,9 +141,18 @@ const NameWrapper = styled.div`
   gap: 4px;
   flex: 1;
   min-width: 0;
+  padding-right: 30px;
 `;
 
 const BookmarkButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 `;
 

@@ -30,24 +30,25 @@ export const IconTextRow = ({
 const Row = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 1px;
+  gap: 4px;
+  min-width: 0;
 `;
 
 const Icon = styled.img`
   width: 12px;
   height: 16px;
-  margin-right: 2px;
+  flex-shrink: 0;
 `;
 
 const Text = styled.span<{ $ellipsis: boolean }>`
-  display: inline-block;
+  flex: 1;
+  min-width: 0;
   ${({ $ellipsis }) =>
     $ellipsis
       ? `
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 120px;
   `
       : `
     white-space: normal;

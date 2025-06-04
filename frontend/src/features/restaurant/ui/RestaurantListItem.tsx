@@ -133,12 +133,15 @@ const TopRow = styled.div`
   align-items: center;
   gap: 4px;
   margin-bottom: 4px;
+  min-width: 0;
 `;
 
 const NameWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 1;
+  min-width: 0;
 `;
 
 const BookmarkButtonWrapper = styled.div`
@@ -153,7 +156,8 @@ const Name = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 115px;
+  flex: 1;
+  min-width: 0;
 `;
 
 const ListWrapper = styled.div`

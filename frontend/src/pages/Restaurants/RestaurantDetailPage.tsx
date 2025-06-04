@@ -246,12 +246,12 @@ const MenuDescription = styled.div`
   font-size: var(--font-size-3xs);
   color: #808080;
   display: -webkit-box;
-  -webkit-line-clamp: 2;    
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
-  line-height: 1.4;            
+  line-height: 1.4;
 `;
 
 const Badge = styled.span`
@@ -272,17 +272,19 @@ const MenuImage = styled.img`
   object-fit: cover;
   border-radius: 10px;
   margin-left: 12px;
-  flex-shrink: 0;            
-  align-self: flex-start;   
+  flex-shrink: 0;
+  align-self: flex-start;
 `;
+
 const OpeningHourRow = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   margin-top: 4px;
 `;
 
 const IconWrapper = styled.div`
-  margin-top: 2px;
+  display: flex;
+  align-items: center;
   margin-right: 6px;
 `;
 
@@ -298,6 +300,7 @@ const HourList = styled.ul`
 
   li {
     display: flex;
+    align-items: center;
     font-size: var(--font-size-3xs);
     color: #555;
     margin-bottom: 2px;

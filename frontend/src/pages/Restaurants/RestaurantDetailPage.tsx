@@ -59,14 +59,6 @@ export const RestaurantDetailPage = () => {
         ) : (
           <Image src="/images/basic-restaurant.svg" alt="기본 음식 이미지" />
         )}
-        <BackButton onClick={() => navigate(-1)}>&lt;</BackButton>
-        <BookmarkWrapper>
-          <BookmarkButton
-            active={bookmarked}
-            onClick={handleToggleBookmark}
-            size={16}
-          />
-        </BookmarkWrapper>
       </ImageSection>
 
       <ContentSection>
@@ -189,6 +181,7 @@ const BackButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  color: #202632;
 `;
 
 const BookmarkWrapper = styled.div`

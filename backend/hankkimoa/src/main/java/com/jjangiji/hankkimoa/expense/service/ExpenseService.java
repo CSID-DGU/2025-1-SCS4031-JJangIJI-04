@@ -13,9 +13,10 @@ import com.jjangiji.hankkimoa.expense.service.dto.request.ExpenseCreateRequest;
 import com.jjangiji.hankkimoa.expense.service.dto.response.CommunityExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.DailyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.EmojiResponse;
-import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.ExpenseWithEmojisResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.SavingGoalStatusResponse;
+import com.jjangiji.hankkimoa.expense.service.dto.response.SimpleSavingGoalStatusResponse;
 import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
@@ -28,7 +29,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -59,14 +59,13 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public TodayExpenses readTodayExpenses(Long userId, LocalDate date) {
-        // todo 접근 가능 여부 확인
         ExpenseSavingGoal expenseSavingGoal = readExpenseSavingGoal(userId, date);
         List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(expenseSavingGoal);
         List<Expense> todayExpenses = expenseRepository.findAllByExpenseDateOrderByCreatedAtDesc(expenseSavingGoal, date);
 
         SavingGoalStatusResponse savingGoalStatusResponse = toSavingGoalStatusResponse(expenseSavingGoal, savingGoalExpenses);
-        List<ExpenseResponse> expenseResponses = toExpenseResponses(todayExpenses);
-        return new TodayExpenses(savingGoalStatusResponse, expenseResponses);
+        List<ExpenseWithEmojisResponse> expenseWithEmojisResponse = toExpenseWithEmojisResponses(todayExpenses);
+        return new TodayExpenses(savingGoalStatusResponse, expenseWithEmojisResponse);
     }
 
     private ExpenseSavingGoal readExpenseSavingGoal(Long userId, LocalDate date) {
@@ -75,37 +74,26 @@ public class ExpenseService {
                         ExceptionCode.EXPENSE_SAVING_GOAL_NOT_FOUND));
     }
 
-    private List<DailyExpenseResponse> toDailyExpenseResponses(DailyExpenses expenseByDates) {
-        return expenseByDates.getDailyExpenses().stream()
-                .map(expenseByDate -> new DailyExpenseResponse(
-                        expenseByDate.getExpenseDate(),
-                        expenseByDate.calculateTotalExpense(),
-                        expenseByDate.getExpenseStatus().name()))
-                .toList();
-    }
-
     private SavingGoalStatusResponse toSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, List<Expense> expenses) {
+        int percentage = expenseSavingGoal.calculatePercentage(expenses);
         return new SavingGoalStatusResponse(
                 expenseSavingGoal.getBudget(),
                 expenseSavingGoal.calculateRemainingBudget(expenses),
-                expenseSavingGoal.calculatePercentage(expenses),
-                SavingGoalStatusMessage.convert(expenseSavingGoal.calculatePercentage(expenses)).getMessage()
+                percentage,
+                SavingGoalStatusMessage.from(percentage).getMessage()
         );
     }
 
-    private List<ExpenseResponse> toExpenseResponses(List<Expense> expenses) {
-        List<ExpenseResponse> expenseResponses = new ArrayList<>();
+    private List<ExpenseWithEmojisResponse> toExpenseWithEmojisResponses(List<Expense> expenses) {
+        return expenses
+                .stream()
+                .map(this::toExpenseWithEmojisResponse)
+                .toList();
+    }
 
-        for (Expense expense : expenses) {
-            ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
-            expenseResponses.add(new ExpenseResponse(
-                    expense.getRestaurantName(),
-                    expense.getMenuName(),
-                    expense.getExpense(),
-                    expense.getMemo(),
-                    toEmojiResponses(expenseEmojis)));
-        }
-        return expenseResponses;
+    private ExpenseWithEmojisResponse toExpenseWithEmojisResponse(Expense expense) {
+        ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
+        return new ExpenseWithEmojisResponse(expense, toEmojiResponses(expenseEmojis));
     }
 
     private List<EmojiResponse> toEmojiResponses(ExpenseEmojis expenseEmojis) {
@@ -137,6 +125,13 @@ public class ExpenseService {
         }
     }
 
+    private List<DailyExpenseResponse> toDailyExpenseResponses(DailyExpenses expenseByDates) {
+        return expenseByDates.getDailyExpenses()
+                .stream()
+                .map(DailyExpenseResponse::new)
+                .toList();
+    }
+
     @Transactional(readOnly = true)
     public List<CommunityExpenseResponse> readCommunityExpensesByReactedEmoji(User user) {
         List<Expense> expenses = expenseRepository.findAllByReactedEmoji(user.getId());
@@ -156,26 +151,21 @@ public class ExpenseService {
     }
 
     private CommunityExpenseResponse toCommunityExpenseResponse(Expense expense) {
-        ExpenseSavingGoal savingGoal = expense.getExpenseSavingGoal();
-        List<Expense> savingGoalExpenses = expenseRepository.findAllByExpenseSavingGoal(savingGoal);
-        User user = savingGoal.getUser();
-        ExpenseEmojis expenseEmojis = new ExpenseEmojis(expense.getEmojis());
+        ExpenseSavingGoal expenseSavingGoal = expense.getExpenseSavingGoal();
+        List<Expense> expenses = expenseRepository.findAllByExpenseSavingGoal(expenseSavingGoal);
+        User user = expenseSavingGoal.getUser();
 
-        return new CommunityExpenseResponse(
-                user.getNickname(),
-                user.getId(),
-                user.getImageUrl(),
-                savingGoal.getId(),
-                expense.getId(),
-                expense.getRestaurantId(),
-                expense.getRestaurantName(),
-                expense.getMenuName(),
-                expense.getExpense(),
-                expense.getCreatedAt(),
-                savingGoal.getBudget(),
-                savingGoal.calculateRemainingBudget(savingGoalExpenses),
-                expense.getMemo(),
-                toEmojiResponses(expenseEmojis));
+        SimpleSavingGoalStatusResponse savingGoalStatusResponse = toSimpleSavingGoalStatusResponse(expenseSavingGoal, expenses);
+        ExpenseWithEmojisResponse expenseWithEmojisResponse = toExpenseWithEmojisResponse(expense);
+        return new CommunityExpenseResponse(user, savingGoalStatusResponse, expenseWithEmojisResponse, expense.getCreatedAt());
+    }
+
+    private SimpleSavingGoalStatusResponse toSimpleSavingGoalStatusResponse(ExpenseSavingGoal expenseSavingGoal, List<Expense> expenses) {
+        return new SimpleSavingGoalStatusResponse(
+                expenseSavingGoal.getId(),
+                expenseSavingGoal.getBudget(),
+                expenseSavingGoal.calculateRemainingBudget(expenses)
+        );
     }
 
     @Transactional

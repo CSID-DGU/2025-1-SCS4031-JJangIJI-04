@@ -4,17 +4,13 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.restaurant.domain.Menu;
 import com.jjangiji.hankkimoa.restaurant.domain.OpeningHour;
-import com.jjangiji.hankkimoa.restaurant.domain.RecommendationFeedback;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.domain.RestaurantImage;
 import com.jjangiji.hankkimoa.restaurant.repository.MenuRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.OpeningHoursRepository;
-import com.jjangiji.hankkimoa.restaurant.repository.RecommendationFeedbackRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantImageRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
-import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.MenuResponse;
-import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
@@ -34,20 +30,11 @@ import java.util.Optional;
 @Service
 public class RestaurantService {
 
-    private final RecommendClient recommendClient;
-    private final RecommendationFeedbackRepository recommendationFeedbackRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantImageRepository restaurantImageRepository;
     private final OpeningHoursRepository openingHoursRepository;
     private final MenuRepository menuRepository;
     private final BookmarkRepository bookmarkRepository;
-
-    @Transactional
-    public Long createRecommendationFeedback(User user, RecommendationFeedbackRequest request) {
-        RecommendationFeedback feedback = new RecommendationFeedback(user, request.feedback());
-        RecommendationFeedback savedFeedback = recommendationFeedbackRepository.save(feedback);
-        return savedFeedback.getId();
-    }
 
     @Transactional(readOnly = true)
     public List<RestaurantSearchResponse> searchRestaurants(String keyword) {
@@ -62,11 +49,9 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public List<RestaurantSimpleResponse> readRecommendRestaurants(User user) {
-        RecommendServerRestaurantsResponse recommendResponse = recommendClient.requestRecommendRestaurants(user);
-
-        List<Restaurant> recommendRestaurants = restaurantRepository.findAllByUniqueIdIn(recommendResponse.restaurantUniqueIds());
-        return recommendRestaurants.stream()
+    public List<RestaurantSimpleResponse> readRestaurants(User user, List<String> uniqueIds) {
+        List<Restaurant> restaurants = restaurantRepository.findAllByUniqueIdIn(uniqueIds);
+        return restaurants.stream()
                 .map(restaurant -> {
                         boolean bookmarked = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
                         return toRestaurantSimpleResponse(restaurant, bookmarked);

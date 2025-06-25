@@ -6,7 +6,7 @@ import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
@@ -54,7 +54,7 @@ class ExpenseEmojiRepositoryTest extends RepositoryTest {
                 LocalDate.now(), LocalDate.now().plusDays(6)));
         expenseSavingGoal2 = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user2, 180_000,
                 LocalDate.now(), LocalDate.now().plusDays(6)));
-        Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
+        Category category = categoryRepository.save(new Category(CategoryType.한식));
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000, address));
         expense1 = expenseRepository.save(new Expense(expenseSavingGoal1, restaurant,
                 "한끼식당", "순두부", 8_000,

@@ -3,7 +3,7 @@ package com.jjangiji.hankkimoa.restaurant.domain;
 import java.util.Arrays;
 import java.util.Set;
 
-public enum CategoryDictionary {
+public enum CategoryType {
 
     한식(Set.of("육류,고기요리", "곰탕,설렁탕", "포장마차", "요리주점", "한식",
             "순대,순댓국", "감자탕", "칼국수,만두", "돼지고기구이", "냉면", "국밥", "주꾸미요리",
@@ -18,11 +18,11 @@ public enum CategoryDictionary {
 
     private final Set<String> keywords;
 
-    CategoryDictionary(Set<String> keywords) {
+    CategoryType(Set<String> keywords) {
         this.keywords = keywords;
     }
 
-    public static CategoryDictionary findByKeyword(String keyword) {
+    public static CategoryType findByKeyword(String keyword) {
         return Arrays.stream(values())
                 .filter(value -> value.keywords.contains(keyword))
                 .findAny()

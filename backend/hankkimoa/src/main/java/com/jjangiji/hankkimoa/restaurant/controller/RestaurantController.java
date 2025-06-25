@@ -1,6 +1,7 @@
 package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
+import com.jjangiji.hankkimoa.restaurant.service.RestaurantBatchService;
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
@@ -22,11 +23,12 @@ import java.util.List;
 @RestController
 public class RestaurantController {
 
+    private final RestaurantBatchService restaurantBatchService;
     private final RestaurantService restaurantService;
 
     @PostMapping("/api/restaurants")
     public ResponseEntity<Void> createRestaurants(@RequestBody List<RestaurantCreateRequest> request) {
-        restaurantService.createRestaurants(request);
+        restaurantBatchService.createRestaurants(request);
         return ResponseEntity.noContent().build();
     }
 

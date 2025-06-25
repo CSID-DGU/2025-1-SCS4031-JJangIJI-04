@@ -2,7 +2,7 @@ package com.jjangiji.hankkimoa.expense.domain;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -18,7 +18,7 @@ class ExpenseEmojisTest {
     private final User user = new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER);
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user, 80_000, LocalDate.now(), LocalDate.now().plusDays(7));
     private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
-    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryDictionary.한식), "한끼식당", "12345", 10000, address);
+    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryType.한식), "한끼식당", "12345", 10000, address);
     private final LocalDate now = LocalDate.now();
     private final Expense expense = new Expense(expenseSavingGoal, restaurant, "은화수식당", "돈가스", 10_000, "냠냠굿", now.minusDays(1), 5);
 

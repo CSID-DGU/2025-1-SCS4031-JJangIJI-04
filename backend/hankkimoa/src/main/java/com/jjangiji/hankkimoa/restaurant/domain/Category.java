@@ -24,18 +24,18 @@ public class Category {
 
     @Column(name = "name")
     @Enumerated(EnumType.STRING)
-    private CategoryDictionary categoryDictionary;
+    private CategoryType categoryType;
 
-    public Category(CategoryDictionary categoryDictionary) {
-        this.categoryDictionary = categoryDictionary;
+    public Category(CategoryType categoryType) {
+        this.categoryType = categoryType;
     }
 
     public String getName() {
-        return categoryDictionary.name();
+        return categoryType.name();
     }
 
-    public Category(Integer id, CategoryDictionary categoryDictionary) {
-        this(categoryDictionary);
+    public Category(Integer id, CategoryType categoryType) {
+        this(categoryType);
         this.id = id;
     }
 

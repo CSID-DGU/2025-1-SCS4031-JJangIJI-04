@@ -7,7 +7,7 @@ import com.jjangiji.hankkimoa.common.exception.ExceptionCode;
 import com.jjangiji.hankkimoa.common.exception.HankkiMoaException;
 import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -63,7 +63,7 @@ class AuthServiceTest extends IntegrationTest {
     @Test
     void updateNickname() {
         // given
-        Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
+        Category category = categoryRepository.save(new Category(CategoryType.한식));
         SignupRequest request = new SignupRequest("한끼모아", List.of(category.getId()));
 
         // when
@@ -77,8 +77,8 @@ class AuthServiceTest extends IntegrationTest {
     @Test
     void createCategories() {
         // given
-        Category category1 = categoryRepository.save(new Category(CategoryDictionary.한식));
-        Category category2 = categoryRepository.save(new Category(CategoryDictionary.양식));
+        Category category1 = categoryRepository.save(new Category(CategoryType.한식));
+        Category category2 = categoryRepository.save(new Category(CategoryType.양식));
         SignupRequest request = new SignupRequest("한끼모아", List.of(category1.getId(), category2.getId()));
 
         // when

@@ -3,7 +3,7 @@ package com.jjangiji.hankkimoa.restaurant.service;
 import com.jjangiji.hankkimoa.config.IntegrationTest;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.OpeningHour;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
@@ -44,6 +44,8 @@ class RestaurantServiceTest extends IntegrationTest {
     @Autowired
     private RestaurantService restaurantService;
     @Autowired
+    private RestaurantBatchService restaurantBatchService;
+    @Autowired
     private OpeningHoursRepository openingHoursRepository;
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -62,7 +64,7 @@ class RestaurantServiceTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-        category = categoryRepository.save(new Category(CategoryDictionary.한식));
+        category = categoryRepository.save(new Category(CategoryType.한식));
     }
 
     @DisplayName("식당 생성 성공")
@@ -83,7 +85,7 @@ class RestaurantServiceTest extends IntegrationTest {
                 restaurant2.getCategoryName(),
                 null, 10000,null, null, List.of(menuRequest));
 
-        restaurantService.createRestaurants(List.of(request1, request2));
+        restaurantBatchService.createRestaurants(List.of(request1, request2));
 
         // then
         int size = restaurantRepository.findAll().size();
@@ -115,7 +117,7 @@ class RestaurantServiceTest extends IntegrationTest {
                 restaurant.getName(),
                 restaurant.getCategoryName(),
                 null, 10000, null, null, List.of(menuRequest));
-        restaurantService.createRestaurants(List.of(request1));
+        restaurantBatchService.createRestaurants(List.of(request1));
 
         // then
         int size = restaurantRepository.findAll().size();

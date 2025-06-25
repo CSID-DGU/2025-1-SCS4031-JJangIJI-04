@@ -1,7 +1,6 @@
 package com.jjangiji.hankkimoa.restaurant.domain;
 
 import com.jjangiji.hankkimoa.common.BaseEntity;
-import com.jjangiji.hankkimoa.restaurant.util.DayofWeekDictionary;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +10,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -57,11 +55,6 @@ public class OpeningHour extends BaseEntity {
                        LocalTime breakStartTime, LocalTime breakEndTime, LocalTime lastOrderTime) {
         this(restaurant, dayOfWeek, openTime, closeTime, breakStartTime, breakEndTime, lastOrderTime);
         this.id = id;
-    }
-
-    public boolean isDayOfWeekMatch(DayOfWeek dayOfWeek) {
-        if (this.dayOfWeek.equals("매일")) return true;
-        return DayofWeekDictionary.from(this.dayOfWeek).equals(dayOfWeek);
     }
 
     @Override

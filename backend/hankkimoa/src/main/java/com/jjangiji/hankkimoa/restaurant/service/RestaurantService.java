@@ -23,6 +23,7 @@ import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.util.CategoryMapper;
+import com.jjangiji.hankkimoa.restaurant.util.DayOfWeekMapper;
 import com.jjangiji.hankkimoa.user.domain.User;
 import com.jjangiji.hankkimoa.user.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -149,61 +149,61 @@ public class RestaurantService {
                 .findFirst()
                 .orElse(null);
 
-        return new RestaurantSimpleResponse(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getMenuAverage(),
-                restaurantImage,
-                restaurant.getStreetAddress(),
-                convertToString(openingHour),
-                restaurant.getCategoryName(),
-                bookmarked);
+        return new RestaurantSimpleResponse(restaurant, restaurantImage, formatOpeningHour(openingHour), bookmarked);
     }
 
     private Optional<OpeningHour> readTodayOpeningHour(Restaurant restaurant) {
         DayOfWeek todayDayOfWeek = LocalDate.now().getDayOfWeek();
 
         return openingHoursRepository.findAllByRestaurantId(restaurant.getId()).stream()
-                .filter(openingHour -> openingHour.isDayOfWeekMatch(todayDayOfWeek))
+                .filter(openingHour -> isMatchDayOfWeek(todayDayOfWeek, openingHour))
                 .findAny();
     }
 
-    private String convertToString(Optional<OpeningHour> openingHour) {
+    private boolean isMatchDayOfWeek(DayOfWeek todayDayOfWeek, OpeningHour openingHour) {
+        if (openingHour.getDayOfWeek().equals("매일")) return true;
+
+        DayOfWeek dayOfWeek = DayOfWeekMapper.from(openingHour.getDayOfWeek());
+        return todayDayOfWeek.equals(dayOfWeek);
+    }
+
+    private String formatOpeningHour(Optional<OpeningHour> openingHour) {
         return openingHour
-                .map(oh -> oh.getDayOfWeek() + " " + oh.getOpenTime() + " - " + oh.getCloseTime())
+                .map(oh -> String.format("%s %s-%s", oh.getDayOfWeek(), oh.getOpenTime(), oh.getCloseTime()))
                 .orElse(null);
     }
 
     @Transactional(readOnly = true)
     public RestaurantResponse readRestaurant(User user, Long restaurantId) {
         Restaurant restaurant = readRestaurant(restaurantId);
-        List<String> openingHours = readOpeningHoursSorted(restaurant);
-        List<String> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId())
+        List<OpeningHour> openingHours = openingHoursRepository.findAllByRestaurantId(restaurant.getId());
+        List<RestaurantImage> restaurantImages = restaurantImageRepository.findAllByRestaurantId(restaurant.getId());
+        List<Menu> menus = menuRepository.findAllByRestaurantId(restaurant.getId());
+        boolean bookmarked = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
+
+        return toRestaurantResponse(restaurant, openingHours, restaurantImages, menus, bookmarked);
+    }
+
+    private RestaurantResponse toRestaurantResponse(Restaurant restaurant,
+                                                    List<OpeningHour> openingHours,
+                                                    List<RestaurantImage> restaurantImages,
+                                                    List<Menu> menus,
+                                                    boolean bookmarked)
+    {
+        List<String> formattedOpeningHours = sortOpeningHours(openingHours)
+                .stream()
+                .map(openingHour -> formatOpeningHour(Optional.of(openingHour)))
+                .toList();
+        List<String> imageUrls = restaurantImages
                 .stream()
                 .map(RestaurantImage::getImageUrl)
                 .toList();
-        List<MenuResponse> menus = menuRepository.findAllByRestaurantId(restaurant.getId())
+        List<MenuResponse> menuResponses = menus
                 .stream()
-                .map(menu -> new MenuResponse(
-                        menu.getName(),
-                        menu.getIntroduce(),
-                        menu.getPrice(),
-                        menu.getImageUrl(),
-                        menu.isMain()))
+                .map(MenuResponse::new)
                 .toList();
-        boolean bookmarked = bookmarkRepository.existsByUserIdAndRestaurantId(user.getId(), restaurant.getId());
 
-        return new RestaurantResponse(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getMenuAverage(),
-                restaurantImages,
-                restaurant.getStreetAddress(),
-                openingHours,
-                restaurant.getCategoryName(),
-                menus,
-                bookmarked
-                );
+        return new RestaurantResponse(restaurant, imageUrls, formattedOpeningHours, menuResponses, bookmarked);
     }
 
     private Restaurant readRestaurant(Long restaurantId) {
@@ -211,30 +211,11 @@ public class RestaurantService {
                 .orElseThrow(() -> new HankkiMoaException(ExceptionCode.RESTAURANT_NOT_FOUND));
     }
 
-    private List<String> readOpeningHoursSorted(Restaurant restaurant) {
-        List<OpeningHour> openingHours = openingHoursRepository.findAllByRestaurantId(restaurant.getId());
-        return sortOpeningHours(openingHours)
-                .stream()
-                .map(openingHour -> convertToString(Optional.of(openingHour)))
-                .toList();
-    }
-
     private List<OpeningHour> sortOpeningHours(List<OpeningHour> openingHours) {
-        // todo view 로직 리팩토링 ,,
-        Map<String, Integer> weekdayOrder = Map.of(
-                "월", 1,
-                "화", 2,
-                "수", 3,
-                "목", 4,
-                "금", 5,
-                "토", 6,
-                "일", 7
-        );
+        if (openingHours.size() == 1) return openingHours;
+
         return openingHours.stream()
-                .sorted(Comparator.comparingInt(openingHour -> {
-                  String dayOfWeek = openingHour.getDayOfWeek();
-                  return weekdayOrder.getOrDefault(dayOfWeek, Integer.MAX_VALUE);
-                }))
+                .sorted(Comparator.comparing(oh -> DayOfWeekMapper.from(oh.getDayOfWeek())))
                 .toList();
     }
 
@@ -242,7 +223,7 @@ public class RestaurantService {
     public List<RestaurantSimpleResponse> readBookmarkedRestaurants(User user) {
         List<Restaurant> bookmarkedRestaurants = restaurantRepository.findAllBookmarkedRestaurantsOrderByCreatedAtDESC(user.getId());
         return bookmarkedRestaurants.stream()
-                .map(restaurant -> toRestaurantSimpleResponse(restaurant, true))
+                .map(restaurant -> toRestaurantSimpleResponse(restaurant, true ))
                 .toList();
     }
 }

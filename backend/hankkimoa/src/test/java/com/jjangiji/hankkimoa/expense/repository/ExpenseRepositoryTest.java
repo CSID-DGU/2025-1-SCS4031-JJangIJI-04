@@ -5,8 +5,8 @@ import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseEmoji;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
@@ -19,6 +19,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -110,5 +114,22 @@ class ExpenseRepositoryTest extends RepositoryTest {
         // then
         Assertions.assertThat(result).hasSize(1);
         Assertions.assertThat(result).containsExactly(expense);
+    }
+
+    @DisplayName("커뮤니티 지출 내역 조회")
+    @Test
+    void findAllWithSavingGoalAndUser() {
+        // given
+        Expense expense1 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
+        Expense expense2 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        // when
+        Slice<Expense> results = expenseRepository.findAllWithSavingGoalAndUser(pageable);
+
+        // then
+        Assertions.assertThat(results).containsExactly(expense2, expense1);
     }
 }

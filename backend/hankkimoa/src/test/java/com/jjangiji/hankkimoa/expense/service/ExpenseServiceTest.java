@@ -141,18 +141,16 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void readCommunityExpenses() {
         // given
-        expenseRepository.save(new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
-
-        User user2 = userRepository.save(new User("hankkimoa2@gmail.com", "한끼2", "hankkiImage", LoginType.KAKAO, Role.USER));
-        ExpenseSavingGoal user2expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user2, 100_000, now, sevenDayAfter));
-        expenseRepository.save(new Expense(user2expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
+        Expense expense1 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
+        Expense expense2 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
 
         // when
         List<CommunityExpenseResponse> communityExpenseResponses = expenseService.readCommunityExpenses(10, 0);
 
         // then
         Assertions.assertThat(communityExpenseResponses).hasSize(2);
-        Assertions.assertThat(communityExpenseResponses.get(0).userId()).isEqualTo(user2.getId());
     }
 
     @DisplayName("지출 내역 삭제 성공")

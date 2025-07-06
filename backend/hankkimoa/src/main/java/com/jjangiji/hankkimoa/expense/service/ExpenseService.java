@@ -22,9 +22,9 @@ import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.RestaurantRepository;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -143,8 +143,7 @@ public class ExpenseService {
     @Transactional(readOnly = true)
     public List<CommunityExpenseResponse> readCommunityExpenses(Integer size, Integer page) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Expense> expenses = expenseRepository.findAllWithSavingGoalAndUser(pageable);
-
+        Slice<Expense> expenses = expenseRepository.findAllWithSavingGoalAndUser(pageable);
         return expenses.stream()
                 .map(this::toCommunityExpenseResponse)
                 .toList();

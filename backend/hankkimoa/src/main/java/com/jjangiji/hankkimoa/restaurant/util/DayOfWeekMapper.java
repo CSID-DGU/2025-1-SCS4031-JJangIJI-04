@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import static com.jjangiji.hankkimoa.common.exception.ExceptionCode.RESTAURANT_DAYOFWEEK_INTERNAL_EXCEPTION;
 
-public class DayofWeekDictionary {
+public class DayOfWeekMapper {
 
     private static final Map<Pattern, DayOfWeek> DAYOFWEEK_MAP = Map.of(
             Pattern.compile("일.*"), DayOfWeek.SUNDAY,
@@ -20,9 +20,9 @@ public class DayofWeekDictionary {
             Pattern.compile("토.*"), DayOfWeek.SATURDAY
     );
 
-    public static DayOfWeek from(String stringDayOfWeek) {
+    public static DayOfWeek from(String koreanDayOfWeek) {
         return DAYOFWEEK_MAP.entrySet().stream()
-                .filter(entry -> entry.getKey().matcher(stringDayOfWeek).matches())
+                .filter(entry -> entry.getKey().matcher(koreanDayOfWeek).matches())
                 .findAny()
                 .map(Entry::getValue)
                 .orElseThrow(() -> new HankkiMoaException(RESTAURANT_DAYOFWEEK_INTERNAL_EXCEPTION));

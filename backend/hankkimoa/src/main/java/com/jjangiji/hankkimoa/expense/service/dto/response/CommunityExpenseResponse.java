@@ -1,22 +1,29 @@
 package com.jjangiji.hankkimoa.expense.service.dto.response;
 
+import com.jjangiji.hankkimoa.user.domain.User;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record CommunityExpenseResponse(
         String nickname,
         Long userId,
         String imageUrl,
-        Long savingGoalId,
-        Long expenseId,
-        Long restaurantId,
-        String restaurant,
-        String menu,
-        Integer expense,
+        ExpenseWithEmojisResponse expenseWithEmojisResponse,
         LocalDateTime createdAt,
-        Integer savingGoal,
-        Integer remainingBudget,
-        String memo,
-        List<EmojiResponse> emojis
-) {
+        SimpleSavingGoalStatusResponse savingGoalStatus)
+{
+    public CommunityExpenseResponse(
+            User user,
+            SimpleSavingGoalStatusResponse savingGoalStatus,
+            ExpenseWithEmojisResponse expenseWithEmojisResponse,
+            LocalDateTime createdAt)
+    {
+        this(
+            user.getNickname(),
+            user.getId(),
+            user.getImageUrl(),
+            expenseWithEmojisResponse,
+            createdAt,
+            savingGoalStatus
+        );
+    }
 }

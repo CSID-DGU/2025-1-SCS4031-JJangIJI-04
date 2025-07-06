@@ -1,12 +1,15 @@
 package com.jjangiji.hankkimoa.restaurant.controller;
 
 import com.jjangiji.hankkimoa.auth.config.AuthRequiredPrincipal;
+import com.jjangiji.hankkimoa.restaurant.service.RecommendService;
+import com.jjangiji.hankkimoa.restaurant.service.RestaurantBatchService;
 import com.jjangiji.hankkimoa.restaurant.service.RestaurantService;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RecommendationFeedbackRequest;
-import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.reqeust.RestaurantCreateRequest;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RecommendServerRestaurantsResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantResponse;
 import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSearchResponse;
+import com.jjangiji.hankkimoa.restaurant.service.dto.response.RestaurantSimpleResponse;
 import com.jjangiji.hankkimoa.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,18 +25,20 @@ import java.util.List;
 @RestController
 public class RestaurantController {
 
+    private final RecommendService recommendService;
+    private final RestaurantBatchService restaurantBatchService;
     private final RestaurantService restaurantService;
 
     @PostMapping("/api/restaurants")
     public ResponseEntity<Void> createRestaurants(@RequestBody List<RestaurantCreateRequest> request) {
-        restaurantService.createRestaurants(request);
+        restaurantBatchService.createRestaurants(request);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/api/recommendation/feedback")
     public ResponseEntity<Void> createRecommendationFeedback(@AuthRequiredPrincipal User user,
                                                              @RequestBody RecommendationFeedbackRequest request) {
-        restaurantService.createRecommendationFeedback(user, request);
+        recommendService.createRecommendationFeedback(user, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -45,7 +50,8 @@ public class RestaurantController {
 
     @GetMapping("/api/recommendation/restaurants")
     public ResponseEntity<List<RestaurantSimpleResponse>> readRecommendRestaurants(@AuthRequiredPrincipal User user) {
-        List<RestaurantSimpleResponse> recommendRestaurants = restaurantService.readRecommendRestaurants(user);
+        RecommendServerRestaurantsResponse response = recommendService.readRecommendRestaurants(user);
+        List<RestaurantSimpleResponse> recommendRestaurants = restaurantService.readRestaurants(user, response.uniqueIds());
         return ResponseEntity.ok(recommendRestaurants);
     }
 

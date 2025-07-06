@@ -21,7 +21,7 @@ public enum SavingGoalStatusMessage {
         this.maxPercentage = maxPercentage;
     }
 
-    public static SavingGoalStatusMessage convert(int usedPercentage) {
+    public static SavingGoalStatusMessage from(int usedPercentage) {
         return Arrays.stream(values())
                 .filter(status -> status.minPercentage < usedPercentage && usedPercentage <= status.maxPercentage)
                 .findFirst()

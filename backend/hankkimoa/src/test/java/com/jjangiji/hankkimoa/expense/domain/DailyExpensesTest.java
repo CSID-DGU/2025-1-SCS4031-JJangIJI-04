@@ -2,7 +2,7 @@ package com.jjangiji.hankkimoa.expense.domain;
 
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.user.domain.LoginType;
 import com.jjangiji.hankkimoa.user.domain.Role;
@@ -19,7 +19,7 @@ class DailyExpensesTest {
     private final LocalDate now = LocalDate.now();
     private final ExpenseSavingGoal expenseSavingGoal = new ExpenseSavingGoal(1L, user,70_000, now, now.plusDays(6));
     private final Address address = new Address(0, 0, "서울 중구 퇴계로18길 20");
-    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryDictionary.한식), "한끼식당", "12345", 10000, address);
+    private final Restaurant restaurant = new Restaurant(1L, new Category(CategoryType.한식), "한끼식당", "12345", 10000, address);
 
     @DisplayName("지출 초과 횟수 조회 성공")
     @Test

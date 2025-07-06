@@ -2,8 +2,8 @@ package com.jjangiji.hankkimoa.expense.repository;
 
 import com.jjangiji.hankkimoa.expense.domain.Expense;
 import com.jjangiji.hankkimoa.expense.domain.ExpenseSavingGoal;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,10 +29,12 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
     List<Expense> findAllByExpenseSavingGoal(ExpenseSavingGoal expenseSavingGoal);
 
-    @Query("SELECT e FROM Expense e "
-            + "JOIN FETCH e.expenseSavingGoal esg "
-            + "JOIN FETCH esg.user ")
-    Page<Expense> findAllWithSavingGoalAndUser(Pageable pageable);
+    @Query("""
+        SELECT e FROM Expense e
+        JOIN FETCH e.expenseSavingGoal esg
+        JOIN FETCH esg.user
+        """)
+    Slice<Expense> findAllWithSavingGoalAndUser(Pageable pageable);
 
     @Query("SELECT DISTINCT e FROM Expense e "
             + "JOIN FETCH e.expenseSavingGoal esg "

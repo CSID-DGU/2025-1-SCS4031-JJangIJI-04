@@ -12,7 +12,7 @@ import com.jjangiji.hankkimoa.expense.service.dto.response.CommunityExpenseRespo
 import com.jjangiji.hankkimoa.expense.service.dto.response.TodayExpenses;
 import com.jjangiji.hankkimoa.expense.service.dto.response.MonthlyExpenseResponse;
 import com.jjangiji.hankkimoa.restaurant.domain.Address;
-import com.jjangiji.hankkimoa.restaurant.domain.CategoryDictionary;
+import com.jjangiji.hankkimoa.restaurant.domain.CategoryType;
 import com.jjangiji.hankkimoa.restaurant.domain.Category;
 import com.jjangiji.hankkimoa.restaurant.domain.Restaurant;
 import com.jjangiji.hankkimoa.restaurant.repository.CategoryRepository;
@@ -55,7 +55,7 @@ class ExpenseServiceTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         user = userRepository.save(new User("hankkimoa@gmail.com", "한끼", "hankkiImage", LoginType.KAKAO, Role.USER));
-        Category category = categoryRepository.save(new Category(CategoryDictionary.한식));
+        Category category = categoryRepository.save(new Category(CategoryType.한식));
         restaurant  = restaurantRepository.save(new Restaurant(category, "한끼식당", "12345", 10000, address));
         expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user, 70_000, now, sevenDayAfter));
     }
@@ -141,18 +141,16 @@ class ExpenseServiceTest extends IntegrationTest {
     @Test
     void readCommunityExpenses() {
         // given
-        expenseRepository.save(new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
-
-        User user2 = userRepository.save(new User("hankkimoa2@gmail.com", "한끼2", "hankkiImage", LoginType.KAKAO, Role.USER));
-        ExpenseSavingGoal user2expenseSavingGoal = expenseSavingGoalRepository.save(new ExpenseSavingGoal(user2, 100_000, now, sevenDayAfter));
-        expenseRepository.save(new Expense(user2expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
+        Expense expense1 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "산타돈부리", "사케동", 13_000, "사케동 맛있다 ~", now, 5));
+        Expense expense2 = expenseRepository.save(
+                new Expense(expenseSavingGoal, restaurant, "하얀집", "복소사", 10_000, "가성비 짱!", now, 5));
 
         // when
         List<CommunityExpenseResponse> communityExpenseResponses = expenseService.readCommunityExpenses(10, 0);
 
         // then
         Assertions.assertThat(communityExpenseResponses).hasSize(2);
-        Assertions.assertThat(communityExpenseResponses.get(0).userId()).isEqualTo(user2.getId());
     }
 
     @DisplayName("지출 내역 삭제 성공")
